@@ -1,31 +1,59 @@
-runs
-video
-data
-data_all
-source_videos
+# Runs and output folders
+runs/
+_output/
+
+# Video and data folders
+video/
+videos/
+data/
+source_videos/
+
+# Model files
 yolov8x.pt
-_output
+yolo11x.pt
+
+# Python environment files
 .vscode/
-source_videos
-__pycache__
-run_download.py
-
-# macOS
-**/.DS_Store
-
-# sublime text project files
-*.sublime-project
-*.sublime-workspace
-
-# Python files
-*/__pycache__
+.pytest_cache/
+__pycache__/
 *.pyc
 *.egg-info/
+
+# Scripts
+run_download.py
+check.py
+
+# macOS specific files
+**/.DS_Store
+
+# Sublime Text project files
+*.sublime-project
+*.sublime-workspace
 
 # Instance specific files
 config
 secret
+mapping_queue.csv
+last_updated_pytube.txt
 
 # Pickle files
-city_coordinates.pkl
-analysis_results.pkl
+*.pickle
+
+# Docker files
+docker-compose.debug.yml
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# venv
+/yt
+
+# temp video file in root
+/*.mp4
+
+# log files
+*.log
+*.out
+
+# log of upgrades
+upgrade_log.json
