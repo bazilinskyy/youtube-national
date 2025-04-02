@@ -89,11 +89,11 @@ Crossing speed over crossing decision time, during daytime.
 [![Speed of crossing over crossing decision time night time](figures/scatter_speed_crossing_night-time_crossing_night.png)](https://htmlpreview.github.io/?https://github.com/Shaadalam9/youtube-pedestrian/blob/main/figures/scatter_speed_crossing_night-time_crossing_night.html)
 Crossing speed over crossing decision time, during night time.
 
-[![Speed of crossing over population of city](figures/scatter_speed_crossing-population_city.png)](https://htmlpreview.github.io/?https://github.com/Shaadalam9/youtube-pedestrian/blob/main/figures/scatter_speed_crossing-population_city.html)
-Crossing speed over population of city.
+[![Speed of crossing over population of country](figures/scatter_speed_crossing-population_country.png)](https://htmlpreview.github.io/?https://github.com/Shaadalam9/youtube-pedestrian/blob/main/figures/scatter_speed_crossing-population_country.html)
+Crossing speed over population of country.
 
-[![Crossing decision time over population of city](figures/scatter_time_crossing-population_city.png)](https://htmlpreview.github.io/?https://github.com/Shaadalam9/youtube-pedestrian/blob/main/figures/scatter_time_crossing-population_city.html)
-Crossing decision time over population of city.
+[![Crossing decision time over population of country](figures/scatter_time_crossing-population_country.png)](https://htmlpreview.github.io/?https://github.com/Shaadalam9/youtube-pedestrian/blob/main/figures/scatter_time_crossing-population_country.html)
+Crossing decision time over population of country.
 
 [![Speed of crossing over traffic mortality](figures/scatter_speed_crossing-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/Shaadalam9/youtube-pedestrian/blob/main/figures/scatter_speed_crossing-traffic_mortality.html)
 Crossing speed over traffic mortality.
