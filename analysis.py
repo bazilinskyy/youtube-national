@@ -617,30 +617,30 @@ class Analysis():
                     continue
 
                 # Update the information dictionary
-                if f"{city}_{state}_{condition}" in info:
-                    previous_value = info[f"{city}_{state}_{condition}"]
+                if f"{country}_{condition}" in info:
+                    previous_value = info[f"{country}_{condition}"]
                     # Extracting the old number of detected mobiles
-                    previous_value = previous_value * no_person[f"{city}_{state}_{condition}"] * total_time[
-                        f"{city}_{state}_{condition}"] / 1000 / 60
+                    previous_value = previous_value * no_person[f"{country}_{condition}"] * total_time[
+                        f"{country}_{condition}"] / 1000 / 60
 
                     # Summing up the previous value and the new value
                     total_value = previous_value + mobile_ids
-                    no_person[f"{city}_{state}_{condition}"] += num_person
-                    total_time[f"{city}_{state}_{condition}"] += duration
+                    no_person[f"{country}_{condition}"] += num_person
+                    total_time[f"{country}_{condition}"] += duration
 
                     # Normalising with respect to total person detected and time
-                    info[f"{city}_{state}_{condition}"] = (((total_value * 60) / total_time[
-                        f"{city}_{state}_{condition}"]) / no_person[f"{city}_{state}_{condition}"]) * 1000
+                    info[f"{country}_{condition}"] = (((total_value * 60) / total_time[
+                        f"{country}_{condition}"]) / no_person[f"{country}_{condition}"]) * 1000
                     continue  # Skip saving the variable in plotting variables
                 else:
-                    no_person[f"{city}_{state}_{condition}"] = num_person
-                    total_time[f"{city}_{state}_{condition}"] = duration
+                    no_person[f"{country}_{condition}"] = num_person
+                    total_time[f"{country}_{condition}"] = duration
 
                     """Normalising the detection with respect to time and numvber of person in the video.
                     Multiplied by 1000 to increase the value to look better in plotting."""
 
                     avg_cell_phone = (((mobile_ids * 60) / time_[-1]) / num_person) * 1000
-                    info[f"{city}_{state}_{condition}"] = avg_cell_phone
+                    info[f"{country}_{condition}"] = avg_cell_phone
 
             else:
                 # Handle the case where no data was found for the given key
@@ -884,18 +884,18 @@ class Analysis():
                 count_ = ((len(instrument_ids)/duration) * 60)
 
                 # Update info dictionary with count normalized by duration
-                if f'{city}_{state}_{condition}' in info:
-                    old_count = info[f'{city}_{state}_{condition}']
-                    new_count = (old_count * duration_.get(f'{city}_{state}_{condition}', 0)) + count_
-                    if f'{city}_{state}_{condition}' in duration_:
-                        duration_[f'{city}_{state}_{condition}'] = duration_.get(f'{city}_{state}_{condition}',
-                                                                                 0) + count
+                if f'{country}_{condition}' in info:
+                    old_count = info[f'{country}_{condition}']
+                    new_count = (old_count * duration_.get(f'{country}_{condition}', 0)) + count_
+                    if f'{country}_{condition}' in duration_:
+                        duration_[f'{country}_{condition}'] = duration_.get(f'{country}_{condition}',
+                                                                            0) + count
                     else:
-                        duration_[f'{city}_{state}_{condition}'] = count
-                    info[f'{city}_{state}_{condition}'] = new_count / duration_.get(f'{city}_{state}_{condition}', 0)
+                        duration_[f'{country}_{condition}'] = count
+                    info[f'{country}_{condition}'] = new_count / duration_.get(f'{country}_{condition}', 0)
                     continue
                 else:
-                    info[f'{city}_{state}_{condition}'] = count_
+                    info[f'{country}_{condition}'] = count_
 
         return info
 
@@ -4429,7 +4429,7 @@ if __name__ == "__main__":
                 ] = float(value)  # Explicitly cast speed to float
             else:  # night
                 df_mapping.loc[
-                    (df_mapping["city"] == city), "speed_crossing_night"
+                    (df_mapping["country"] == country), "speed_crossing_night"
                 ] = float(value)  # Explicitly cast speed to float
         # calculate average values
         df_mapping["speed_crossing"] = np.where(
@@ -4466,7 +4466,6 @@ if __name__ == "__main__":
                 np.where(df_mapping["time_crossing_night"] > 0, df_mapping["time_crossing_night"], np.nan)
             )
         )
-        print(df_mapping[df_mapping['country'] == 'China'])
         # todo: these functions are slow, and they are possible not needed now as counts are added to df_mapping
         logger.info("Calculating counts of detected traffic signs.")
         traffic_sign_city = Analysis.calculate_traffic_signs(df_mapping, dfs)
@@ -4533,7 +4532,6 @@ if __name__ == "__main__":
 
         # Save the results to a pickle file
         logger.info("Saving results to a pickle file {}.", file_results)
-        print(df_mapping[df_mapping['country'] == 'China'])
         with open(file_results, 'wb') as file:
             pickle.dump((data,                       # 0
                          person_counter,             # 1
@@ -4568,8 +4566,6 @@ if __name__ == "__main__":
         logger.info("Analysis results saved to pickle file.")
 
     df_countries = Analysis.aggregate_by_iso3(df_mapping)
-    print(df_countries[['country', 'time_crossing']])
-    print(avg_time)
 
     logger.info("Detected:")
     logger.info(f"person: {person_counter}; bicycle: {bicycle_counter}; car: {car_counter}")
@@ -4584,30 +4580,32 @@ if __name__ == "__main__":
 
     df = df_countries.copy()  # copy df to manipulate for output
     # df['state'] = df['state'].fillna('NA')  # Set state to NA
-    # Analysis.get_mapbox_map(df=df, hover_data=hover_data)  # mapbox map
+    Analysis.get_mapbox_map(df=df, hover_data=hover_data)  # mapbox map
 
     # Amount of footage
-    # Analysis.scatter(df=df,
-    #                  x="total_time",
-    #                  y="person",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Total time of footage (s)',
-    #                  yaxis_title='Number of detected pedestrians',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    Analysis.scatter(df=df,
+                     x="total_time",
+                     y="person",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Total time of footage (s)',
+                     yaxis_title='Number of detected pedestrians',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # Analysis.speed_and_time_to_start_cross(df_countries)
-    # Analysis.plot_speed_to_cross_by_alphabetical_order(df_countries)
-    # Analysis.plot_time_to_start_cross_by_alphabetical_order(df_countries)
-    # Analysis.plot_speed_to_cross_by_average(df_countries)
-    # Analysis.plot_time_to_start_cross_by_average(df_countries)
-    # Analysis.correlation_matrix(df_countries)
+    Analysis.speed_and_time_to_start_cross(df_countries)
+    Analysis.plot_speed_to_cross_by_alphabetical_order(df_countries)
+    Analysis.plot_time_to_start_cross_by_alphabetical_order(df_countries)
+    Analysis.plot_speed_to_cross_by_average(df_countries)
+    Analysis.plot_time_to_start_cross_by_average(df_countries)
+    Analysis.correlation_matrix(df_countries)
+
+    df_countries['country'] = df_countries['country'].str.title()
 
     # Speed of crossing vs time to start crossing
     df = df_countries[df_countries["speed_crossing"] != 0].copy()
@@ -4674,7 +4672,7 @@ if __name__ == "__main__":
                      color="continent",
                      text="country",
                      xaxis_title='Crossing decision time (in s)',
-                     yaxis_title='Population of city',
+                     yaxis_title='Population of country',
                      pretty_text=False,
                      save_file=True,
                      hover_data=hover_data,
@@ -4683,7 +4681,7 @@ if __name__ == "__main__":
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
-    # Speed of crossing vs population of city
+    # Speed of crossing vs population of country
     df = df_countries[df_countries["speed_crossing"] != 0].copy()
     df = df[(df["population_country"].notna()) & (df["population_country"] != 0)]
     Analysis.scatter(df=df,
