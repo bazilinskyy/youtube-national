@@ -47,7 +47,7 @@ bar_colour_4 = 'rgb(222, 203, 228)'
 # Consts
 SAVE_PNG = True
 SAVE_EPS = True
-BASE_HEIGHT_PER_ROW = 20  # Adjust as needed
+BASE_HEIGHT_PER_ROW = 30  # Adjust as needed
 FLAG_SIZE = 12
 TEXT_SIZE = 12
 SCALE = 1  # scale=3 hangs often
@@ -1977,7 +1977,7 @@ class Analysis():
         fig.update_layout(margin=dict(l=80, r=80, t=110, b=10))
         Analysis.save_plotly_figure(fig=fig,
                                     filename="crossing_speed_alphabetical",
-                                    width=2480,
+                                    width=1240,
                                     height=TALL_FIG_HEIGHT,
                                     scale=SCALE,
                                     save_final=True)
@@ -2388,11 +2388,17 @@ class Analysis():
 
         # Sort cities by the sum of speed_0 and speed_1 values
         countries_ordered = sorted(
-            final_dict.keys(),
-            key=lambda city: (final_dict[country]["speed_0"] or 0) + (
-                final_dict[city]["speed_1"] or 0), reverse=True)
+            [
+                city for city in final_dict.keys()
+                if (((final_dict[city].get("speed_0") or 0) + (final_dict[city].get("speed_1") or 0)) / 2) >= 0.005
+            ],
+            key=lambda city: (
+                ((final_dict[city].get("speed_0") or 0) + (final_dict[city].get("speed_1") or 0)) / 2
+            ), reverse=True
+        )
+
         # Extract unique cities
-        countries = list(set([key.split('_')[0] for key in final_dict.keys()]))
+        # countries = list(set([key.split('_')[0] for key in final_dict.keys()]))
 
         # Prepare data for day and night stacking
         day_avg_speed = [final_dict[city]['speed_0'] for city in countries_ordered]
@@ -2428,7 +2434,7 @@ class Analysis():
                     text=[''], textposition='inside', showlegend=False), row=row, col=1)
 
             elif day_avg_speed[i] is not None:  # Only day data available
-                value = (day_avg_speed[i])/2
+                value = (day_avg_speed[i])
                 fig.add_trace(go.Bar(
                     x=[day_avg_speed[i]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} speed during day", marker=dict(color=bar_colour_1), text=[''],
@@ -2436,7 +2442,7 @@ class Analysis():
                     textfont=dict(size=14, color='white')), row=row, col=1)
 
             elif night_avg_speed[i] is not None:  # Only night data available
-                value = (night_avg_speed[i])/2
+                value = (night_avg_speed[i])
                 fig.add_trace(go.Bar(
                     x=[night_avg_speed[i]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} speed during night", marker=dict(color=bar_colour_2),
@@ -2461,7 +2467,7 @@ class Analysis():
                     text=[''], textposition='inside', showlegend=False), row=row, col=2)
 
             elif day_avg_speed[idx] is not None:
-                value = (day_avg_speed[idx])/2
+                value = (day_avg_speed[idx])
                 fig.add_trace(go.Bar(
                     x=[day_avg_speed[idx]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} speed during day", marker=dict(color=bar_colour_1), text=[''],
@@ -2469,7 +2475,7 @@ class Analysis():
                     textfont=dict(size=14, color='white')), row=row, col=2)
 
             elif night_avg_speed[idx] is not None:
-                value = (night_avg_speed[idx])/2
+                value = (night_avg_speed[idx])
                 fig.add_trace(go.Bar(
                     x=[night_avg_speed[idx]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} speed during night", marker=dict(color=bar_colour_2),
@@ -2485,7 +2491,7 @@ class Analysis():
 
         # Identify the last row for each column where the last city is plotted
         last_row_left_column = num_cities_per_col * 2  # The last row in the left column
-        last_row_right_column = (len(countries) - num_cities_per_col) * 2  # The last row in the right column
+        last_row_right_column = (len(countries_ordered) - num_cities_per_col) * 2  # The last row in the right column
         first_row_left_column = 1  # The first row in the left column
         first_row_right_column = 1  # The first row in the right column
 
@@ -2557,7 +2563,7 @@ class Analysis():
         )
 
         # Manually add gridlines using `shapes`
-        x_grid_values = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8]  # Define the gridline positions on the x-axis
+        x_grid_values = [0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4]  # Define the gridline positions on the x-axis
         for x in x_grid_values:
             fig.add_shape(
                 type="line",
@@ -2584,12 +2590,12 @@ class Analysis():
         ]
 
         # Add vertical legends with the positions you will provide
-        x_legend_position = 0.92  # Position close to the left edge
-        y_legend_start_bottom = 0.02  # Lower position to the bottom left corner
+        x_legend_position = 0.85  # Position close to the left edge
+        y_legend_start_bottom = 0.05  # Lower position to the bottom left corner
 
         # Add the vertical legends at the top and bottom
         Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
-                                                 y_start=y_legend_start_bottom, spacing=0.015, font_size=40)
+                                                 y_start=y_legend_start_bottom, spacing=0.03, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -2655,7 +2661,7 @@ class Analysis():
 
         # Final adjustments and display
         fig.update_layout(margin=dict(l=10, r=10, t=150, b=10))
-        Analysis.save_plotly_figure(fig, "crossing_speed_avg", width=2400, height=TALL_FIG_HEIGHT, scale=SCALE,
+        Analysis.save_plotly_figure(fig, "crossing_speed_avg", width=1200, height=TALL_FIG_HEIGHT, scale=SCALE,
                                     save_final=True)
 
     @staticmethod
@@ -2892,12 +2898,12 @@ class Analysis():
         ]
 
         # Add vertical legends with the positions you will provide
-        x_legend_position = 0.92  # Position close to the left edge
-        y_legend_start_bottom = 0.02  # Lower position to the bottom left corner
+        x_legend_position = 0.85  # Position close to the left edge
+        y_legend_start_bottom = 0.05  # Lower position to the bottom left corner
 
         # Add the vertical legends at the top and bottom
         Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
-                                                 y_start=y_legend_start_bottom, spacing=0.015, font_size=40)
+                                                 y_start=y_legend_start_bottom, spacing=0.03, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -2955,7 +2961,7 @@ class Analysis():
 
         # Final adjustments and display
         fig.update_layout(margin=dict(l=10, r=10, t=150, b=10))
-        Analysis.save_plotly_figure(fig, "time_crossing_avg", width=2400, height=TALL_FIG_HEIGHT, scale=SCALE,
+        Analysis.save_plotly_figure(fig, "time_crossing_avg", width=1200, height=TALL_FIG_HEIGHT, scale=SCALE,
                                     save_final=True)
 
     @staticmethod
@@ -3852,7 +3858,7 @@ class Analysis():
             'truck_city': 'Detected truck', 'cross_evnt_city': 'Crossing without traffic light',
             'vehicle_city': 'Detected total number of motor vehicle', 'cellphone_city': 'Detected cellphone',
             'trf_sign_city': 'Detected traffic signs',
-            'traffic_mortality_city': 'Traffic mortality', 'literacy_rate_city': 'Literacy rate',
+            'traffic_mortality': 'Traffic mortality', 'literacy_rate': 'Literacy rate',
             'gini': 'Gini coefficient', 'traffic_index': 'Traffic Index'
             }
 
@@ -4579,7 +4585,7 @@ if __name__ == "__main__":
     hover_data = list(set(df_countries.columns) - set(columns_remove))
 
     df = df_countries.copy()  # copy df to manipulate for output
-    # df['state'] = df['state'].fillna('NA')  # Set state to NA
+    df['state'] = df['state'].fillna('NA')  # Set state to NA
     Analysis.get_mapbox_map(df=df, hover_data=hover_data)  # mapbox map
 
     # Amount of footage
