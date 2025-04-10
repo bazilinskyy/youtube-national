@@ -407,7 +407,7 @@ class Analysis():
                                     save_final=True)
 
     @staticmethod
-    def get_mapbox_map(df, hover_data=None):
+    def get_mapbox_map(df, df_mapping, hover_data=None):
         """Generate world map with countries colored by continent using choropleth.
 
         Args:
@@ -426,26 +426,79 @@ class Analysis():
         # Replace the names in your DataFrame
         df['country'] = df['country'].replace(country_name_map)
 
-        # Define consistent color mapping
-        continent_colors = {
-            "Africa": "#636EFA",
-            "Asia": "#EF553B",
-            "Europe": "#00CC96",
-            "North America": "#AB63FA",
-            "South America": "#FFA15A",
-            "Oceania": "#19D3F3",
-            "Antarctica": "#FF6692"
-        }
+        # # Define consistent color mapping
+        # continent_colors = {
+        #     "Africa": "#636EFA",
+        #     "Asia": "#EF553B",
+        #     "Europe": "#00CC96",
+        #     "North America": "#AB63FA",
+        #     "South America": "#FFA15A",
+        #     "Oceania": "#19D3F3",
+        #     "Antarctica": "#FF6692"
+        # }
 
         # Plot country-level choropleth
+        print(df_mapping['lat'], df_mapping['lat'])
         fig = px.choropleth(df,
                             locations="country",
                             locationmode="country names",
                             color="continent",
                             hover_name="country",
                             hover_data=hover_data,
-                            projection="natural earth",
-                            color_discrete_map=continent_colors)
+                            projection="natural earth")
+
+        # add city markers as scattergeo
+        fig.add_trace(go.Scattergeo(
+            lon=df_mapping['lon'],
+            lat=df_mapping['lat'],
+            text=df_mapping.get('city', None),
+            mode='markers',
+            marker=dict(
+                size=4,
+                color='black',
+                opacity=0.7,
+                symbol='circle'
+            ),
+            name='cities'
+        ))
+
+        # define city images with positions
+        city_images = [
+            {"city": "Beijing", "file": "beijing.png", "x": 0.1, "y": 0.9},
+            {"city": "Cairo", "file": "cairo.png", "x": 0.1, "y": 0.7},
+            {"city": "New York", "file": "new_york.png", "x": 0.9, "y": 0.9},
+            {"city": "Paris", "file": "paris.png", "x": 0.1, "y": 0.5},
+            {"city": "Rio de Janeiro", "file": "rio_de_janeiro.png", "x": 0.9, "y": 0.3},
+            {"city": "Sydney", "file": "sydney.png", "x": 0.1, "y": 0.3},
+        ]
+        path_screenshots = os.path.join(common.root_dir, 'screenshots')
+        # add each image
+        for item in city_images:
+            fig.add_layout_image(
+                dict(
+                    source=os.path.join(path_screenshots, item['file']),  # or use PIL.Image.open if needed
+                    xref="paper", yref="paper",
+                    x=item["x"], y=item["y"],
+                    sizex=0.1, sizey=0.1,
+                    xanchor="center", yanchor="middle",
+                    layer="above"
+                )
+            )
+
+        # draw arrows from image to city location
+        for item in city_images:
+            row = df_mapping[df_mapping['city'].str.lower() == item['city'].lower()]
+            if not row.empty:
+                print(row['lon'].values[0])
+                fig.add_trace(go.Scattergeo(
+                    lon=[None, row['lon'].values[0]],
+                    lat=[None, row['lat'].values[0]],
+                    mode='lines',
+                    line=dict(width=1, color='gray'),
+                    showlegend=False,
+                    geo='geo',
+                    hoverinfo='skip'
+                ))
 
         # Remove color bar
         fig.update_coloraxes(showscale=False)
@@ -5782,6 +5835,9 @@ if __name__ == "__main__":
                         file)
         logger.info("Analysis results saved to pickle file.")
 
+    # Sort by continent and city, both in ascending order
+    df_mapping = df_mapping.sort_values(by=["continent", "city"], ascending=[True, True])
+
     df_countries = Analysis.aggregate_by_iso3(df_mapping)
 
     logger.info("Detected:")
@@ -5796,7 +5852,9 @@ if __name__ == "__main__":
     hover_data = list(set(df_countries.columns) - set(columns_remove))
 
     df = df_countries.copy()  # copy df to manipulate for output
-    # Analysis.get_mapbox_map(df=df, hover_data=hover_data)  # mapbox map
+    # Sort by continent and city, both in ascending order
+    df = df.sort_values(by=["continent", "country"], ascending=[True, True])
+    Analysis.get_mapbox_map(df=df, df_mapping=df_mapping, hover_data=hover_data)  # mapbox map
 
     # Amount of footage
     # Analysis.scatter(df=df,
@@ -5821,8 +5879,8 @@ if __name__ == "__main__":
     # Analysis.plot_speed_to_cross_by_average_in_day(df_countries)
     # Analysis.plot_speed_to_cross_by_average_in_night(df_countries)
     # Analysis.plot_time_to_start_cross_by_average(df_countries)
-    Analysis.plot_time_to_start_cross_by_average_day(df_countries)
-    Analysis.plot_time_to_start_cross_by_average_night(df_countries)
+    # Analysis.plot_time_to_start_cross_by_average_day(df_countries)
+    # Analysis.plot_time_to_start_cross_by_average_night(df_countries)
     # Analysis.correlation_matrix(df_countries)
 
     # df_countries['country'] = df_countries['country'].str.title()
