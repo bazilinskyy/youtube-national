@@ -439,7 +439,6 @@ class Analysis():
         # }
 
         # Plot country-level choropleth
-        print(df_mapping['lat'], df_mapping['lat'])
         fig = px.choropleth(df,
                             locations="country",
                             locationmode="country names",
@@ -454,6 +453,7 @@ class Analysis():
             lat=df_mapping['lat'],
             text=df_mapping.get('city', None),
             mode='markers',
+            hoverinfo='skip',
             marker=dict(
                 size=4,
                 color='black',
@@ -465,13 +465,44 @@ class Analysis():
 
         # define city images with positions
         city_images = [
-            {"city": "Beijing", "file": "beijing.png", "x": 0.1, "y": 0.9},
-            {"city": "Cairo", "file": "cairo.png", "x": 0.1, "y": 0.7},
-            {"city": "New York", "file": "new_york.png", "x": 0.9, "y": 0.9},
-            {"city": "Paris", "file": "paris.png", "x": 0.1, "y": 0.5},
-            {"city": "Rio de Janeiro", "file": "rio_de_janeiro.png", "x": 0.9, "y": 0.3},
-            {"city": "Sydney", "file": "sydney.png", "x": 0.1, "y": 0.3},
+            {
+                "city": "Tokyo",
+                "file": "tokyo.png",
+                "x": 0.935, "y": 0.58,
+                "approx_lon": 175.2, "approx_lat": 7.2
+            },
+            {
+                "city": "Cairo",
+                "file": "cairo.png",
+                "x": 0.72, "y": 0.45,
+                "approx_lon": 75.2, "approx_lat": -9.0
+            },
+            {
+                "city": "Los Angeles",
+                "file": "los_angeles.png",
+                "x": 0.12, "y": 0.5,
+                "approx_lon": -142.2, "approx_lat": 0.0
+            },
+            {
+                "city": "Paris",
+                "file": "paris.png",
+                "x": 0.39, "y": 0.68,
+                "approx_lon": -30.6, "approx_lat": 30.4
+            },
+            {
+                "city": "Rio de Janeiro",
+                "file": "rio_de_janeiro.png",
+                "x": 0.47, "y": 0.2,
+                "approx_lon": 3.8, "approx_lat": -50.2
+            },
+            {
+                "city": "Melbourne",
+                "file": "melbourne.png",
+                "x": 0.74, "y": 0.22,
+                "approx_lon": 90.0, "approx_lat": -52.0
+            }
         ]
+
         path_screenshots = os.path.join(common.root_dir, 'screenshots')
         # add each image
         for item in city_images:
@@ -490,12 +521,11 @@ class Analysis():
         for item in city_images:
             row = df_mapping[df_mapping['city'].str.lower() == item['city'].lower()]
             if not row.empty:
-                print(row['lon'].values[0])
                 fig.add_trace(go.Scattergeo(
-                    lon=[None, row['lon'].values[0]],
-                    lat=[None, row['lat'].values[0]],
+                    lon=[item['approx_lon'], row['lon'].values[0]],
+                    lat=[item['approx_lat'], row['lat'].values[0]],
                     mode='lines',
-                    line=dict(width=1, color='gray'),
+                    line=dict(width=2, color='black'),
                     showlegend=False,
                     geo='geo',
                     hoverinfo='skip'
