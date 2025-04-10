@@ -3,6 +3,7 @@ import math
 import pandas as pd
 import numpy as np
 import os
+from collections import defaultdict
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -551,6 +552,7 @@ class Analysis():
         avg_columns = [
             'speed_crossing', 'speed_crossing_day', 'speed_crossing_night',
             'time_crossing', 'time_crossing_day', 'time_crossing_night',
+            'speed_crossing_avg', 'time_crossing_avg',
             'with_trf_light_day', 'with_trf_light_night',
             'without_trf_light_day', 'without_trf_light_night'
         ]
@@ -861,6 +863,22 @@ class Analysis():
         return avg_speed
 
     @staticmethod
+    def combined_avg_day_and_night_speed(df_mapping, dfs, data):
+        speed = Analysis.calculate_speed_of_crossing(df_mapping, dfs, data)
+
+        country_values = defaultdict(list)
+        for key, values in speed.items():
+            country = key.rsplit('_', 1)[0]  # Remove _0 or _1
+            country_values[country].extend(values)
+
+        # Compute averages and store as Country_2
+        averaged_speed = {}
+        for country, values in country_values.items():
+            avg = sum(values) / len(values)
+            averaged_speed[f"{country}_2"] = avg
+        return averaged_speed
+
+    @staticmethod
     def time_to_start_cross(df_mapping, dfs, data, person_id=0):
         time_dict = {}
         for key, df in tqdm(dfs.items(), total=len(dfs)):
@@ -925,6 +943,22 @@ class Analysis():
         avg_time = {key: sum(values) / len(values) for key, values in time_array.items()}
 
         return avg_time
+
+    @staticmethod
+    def combined_avg_day_and_night_time(df_mapping, dfs, data):
+        speed = Analysis.time_to_start_cross(df_mapping, dfs, data)
+
+        country_values = defaultdict(list)
+        for key, values in speed.items():
+            country = key.rsplit('_', 1)[0]  # Remove _0 or _1
+            country_values[country].extend(values)
+
+        # Compute averages and store as Country_2
+        averaged_time = {}
+        for country, values in country_values.items():
+            avg = sum(values) / len(values)
+            averaged_time[f"{country}_2"] = avg
+        return averaged_time
 
     @staticmethod
     def calculate_traffic_signs(df_mapping, dfs):
@@ -5616,9 +5650,11 @@ if __name__ == "__main__":
         df_mapping['speed_crossing'] = 0.0
         df_mapping['speed_crossing_day'] = 0.0
         df_mapping['speed_crossing_night'] = 0.0
+        df_mapping['speed_crossing_avg'] = 0.0
         df_mapping['time_crossing'] = 0.0
         df_mapping['time_crossing_day'] = 0.0
         df_mapping['time_crossing_night'] = 0.0
+        df_mapping['time_crossing_avg'] = 0.0
         df_mapping['with_trf_light_day'] = 0.0
         df_mapping['with_trf_light_night'] = 0.0
         df_mapping['without_trf_light_day'] = 0.0
@@ -5688,6 +5724,8 @@ if __name__ == "__main__":
         logger.info("Calculating aggregated values for crossing speed.")
         speed_values = Analysis.calculate_speed_of_crossing(df_mapping, dfs, data)
         avg_speed = Analysis.avg_speed_of_crossing(df_mapping, dfs, data)
+        avg_speed_day_and_night = Analysis.combined_avg_day_and_night_speed(df_mapping, dfs, data)
+
         # add to mapping file
         for key, value in tqdm(avg_speed.items(), total=len(avg_speed)):
             parts = key.split("_")
@@ -5701,6 +5739,7 @@ if __name__ == "__main__":
                 df_mapping.loc[
                     (df_mapping["country"] == country), "speed_crossing_night"
                 ] = float(value)  # Explicitly cast speed to float
+
         # calculate average values
         df_mapping["speed_crossing"] = np.where(
             (df_mapping["speed_crossing_day"] > 0) & (df_mapping["speed_crossing_night"] > 0),
@@ -5714,6 +5753,8 @@ if __name__ == "__main__":
         logger.info("Calculating aggregated values for crossing decision time.")
         time_values = Analysis.time_to_start_cross(df_mapping, dfs, data)
         avg_time = Analysis.avg_time_to_start_cross(df_mapping, dfs, data)
+        avg_time_day_and_night = Analysis.combined_avg_day_and_night_time(df_mapping, dfs, data)
+
         # add to mapping file
         for key, value in tqdm(avg_time.items(), total=len(avg_time)):
             parts = key.split("_")
@@ -5727,6 +5768,7 @@ if __name__ == "__main__":
                 df_mapping.loc[
                     (df_mapping["country"] == country), "time_crossing_night"
                 ] = float(value)  # Explicitly cast speed to float
+
         # calculate average values
         df_mapping["time_crossing"] = np.where(
             (df_mapping["time_crossing_day"] > 0) & (df_mapping["time_crossing_night"] > 0),
@@ -5736,6 +5778,7 @@ if __name__ == "__main__":
                 np.where(df_mapping["time_crossing_night"] > 0, df_mapping["time_crossing_night"], np.nan)
             )
         )
+
         # todo: these functions are slow, and they are possible not needed now as counts are added to df_mapping
         logger.info("Calculating counts of detected traffic signs.")
         traffic_sign_city = Analysis.calculate_traffic_signs(df_mapping, dfs)
@@ -5775,6 +5818,7 @@ if __name__ == "__main__":
                 df_mapping.loc[
                     (df_mapping["country"] == country), "with_trf_light_night"
                 ] = int(value)  # Explicitly cast to int
+
         # add to mapping file
         for key, value in without_trf_light.items():
             parts = key.split("_")
@@ -5788,6 +5832,7 @@ if __name__ == "__main__":
                 df_mapping.loc[
                     (df_mapping["country"] == country), "without_trf_light_night"
                 ] = int(value)  # Explicitly cast to int
+
         # Add column with count of videos
         df_mapping["total_videos"] = df_mapping["videos"].apply(lambda x: len(x.strip("[]").split(",")) if x.strip("[]") else 0)  # noqa: E501
         # Get lat and lon for cities
