@@ -549,7 +549,11 @@ class Analysis():
         )
 
         # Save and display the figure
-        Analysis.save_plotly_figure(fig, "mapbox_map", save_final=True)
+        if show_images:
+            name_file = "map_screenshots"
+        else:
+            name_file = "map"
+        Analysis.save_plotly_figure(fig, name_file, save_final=True)
 
     @staticmethod
     def aggregate_by_iso3(df):
@@ -5933,6 +5937,7 @@ if __name__ == "__main__":
     df = df_countries.copy()  # copy df to manipulate for output
     # Sort by continent and city, both in ascending order
     df = df.sort_values(by=["continent", "country"], ascending=[True, True])
+    # map with images
     Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=True, hover_data=hover_data) 
     # map with no images
     Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=False, hover_data=hover_data)
