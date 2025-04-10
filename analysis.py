@@ -408,7 +408,7 @@ class Analysis():
                                     save_final=True)
 
     @staticmethod
-    def get_mapbox_map(df, df_mapping, hover_data=None):
+    def get_map(df, df_mapping, show_images=False, show_cities=True, hover_data=None):
         """Generate world map with countries colored by continent using choropleth.
 
         Args:
@@ -447,89 +447,93 @@ class Analysis():
                             hover_data=hover_data,
                             projection="natural earth")
 
-        # add city markers as scattergeo
-        fig.add_trace(go.Scattergeo(
-            lon=df_mapping['lon'],
-            lat=df_mapping['lat'],
-            text=df_mapping.get('city', None),
-            mode='markers',
-            hoverinfo='skip',
-            marker=dict(
-                size=4,
-                color='black',
-                opacity=0.7,
-                symbol='circle'
-            ),
-            name='cities'
-        ))
+        # add markers of cities
+        if show_cities:
+            # add city markers as scattergeo
+            fig.add_trace(go.Scattergeo(
+                lon=df_mapping['lon'],
+                lat=df_mapping['lat'],
+                text=df_mapping.get('city', None),
+                mode='markers',
+                hoverinfo='skip',
+                marker=dict(
+                    size=4,
+                    color='black',
+                    opacity=0.7,
+                    symbol='circle'
+                ),
+                name='cities'
+            ))
 
-        # define city images with positions
-        city_images = [
-            {
-                "city": "Tokyo",
-                "file": "tokyo.png",
-                "x": 0.935, "y": 0.58,
-                "approx_lon": 175.2, "approx_lat": 7.2
-            },
-            {
-                "city": "Cairo",
-                "file": "cairo.png",
-                "x": 0.72, "y": 0.45,
-                "approx_lon": 75.2, "approx_lat": -9.0
-            },
-            {
-                "city": "Los Angeles",
-                "file": "los_angeles.png",
-                "x": 0.12, "y": 0.5,
-                "approx_lon": -142.2, "approx_lat": 0.0
-            },
-            {
-                "city": "Paris",
-                "file": "paris.png",
-                "x": 0.39, "y": 0.68,
-                "approx_lon": -30.6, "approx_lat": 30.4
-            },
-            {
-                "city": "Rio de Janeiro",
-                "file": "rio_de_janeiro.png",
-                "x": 0.47, "y": 0.2,
-                "approx_lon": 3.8, "approx_lat": -50.2
-            },
-            {
-                "city": "Melbourne",
-                "file": "melbourne.png",
-                "x": 0.74, "y": 0.22,
-                "approx_lon": 90.0, "approx_lat": -52.0
-            }
-        ]
+        # add screenshots of videos
+        if show_images:
+            # define city images with positions
+            city_images = [
+                {
+                    "city": "Tokyo",
+                    "file": "tokyo.png",
+                    "x": 0.935, "y": 0.58,
+                    "approx_lon": 175.2, "approx_lat": 7.2
+                },
+                {
+                    "city": "Cairo",
+                    "file": "cairo.png",
+                    "x": 0.72, "y": 0.45,
+                    "approx_lon": 75.2, "approx_lat": -9.0
+                },
+                {
+                    "city": "Los Angeles",
+                    "file": "los_angeles.png",
+                    "x": 0.12, "y": 0.5,
+                    "approx_lon": -142.2, "approx_lat": 0.0
+                },
+                {
+                    "city": "Paris",
+                    "file": "paris.png",
+                    "x": 0.39, "y": 0.68,
+                    "approx_lon": -30.6, "approx_lat": 30.4
+                },
+                {
+                    "city": "Rio de Janeiro",
+                    "file": "rio_de_janeiro.png",
+                    "x": 0.47, "y": 0.2,
+                    "approx_lon": 3.8, "approx_lat": -50.2
+                },
+                {
+                    "city": "Melbourne",
+                    "file": "melbourne.png",
+                    "x": 0.74, "y": 0.22,
+                    "approx_lon": 90.0, "approx_lat": -52.0
+                }
+            ]
 
-        path_screenshots = os.path.join(common.root_dir, 'screenshots')
-        # add each image
-        for item in city_images:
-            fig.add_layout_image(
-                dict(
-                    source=os.path.join(path_screenshots, item['file']),  # or use PIL.Image.open if needed
-                    xref="paper", yref="paper",
-                    x=item["x"], y=item["y"],
-                    sizex=0.1, sizey=0.1,
-                    xanchor="center", yanchor="middle",
-                    layer="above"
+            path_screenshots = os.path.join(common.root_dir, 'screenshots')
+            # add each image
+            for item in city_images:
+                fig.add_layout_image(
+                    dict(
+                        source=os.path.join(path_screenshots, item['file']),  # or use PIL.Image.open if needed
+                        xref="paper", yref="paper",
+                        x=item["x"], y=item["y"],
+                        sizex=0.1, sizey=0.1,
+                        xanchor="center", yanchor="middle",
+                        layer="above"
+                    )
                 )
-            )
 
-        # draw arrows from image to city location
-        for item in city_images:
-            row = df_mapping[df_mapping['city'].str.lower() == item['city'].lower()]
-            if not row.empty:
-                fig.add_trace(go.Scattergeo(
-                    lon=[item['approx_lon'], row['lon'].values[0]],
-                    lat=[item['approx_lat'], row['lat'].values[0]],
-                    mode='lines',
-                    line=dict(width=2, color='black'),
-                    showlegend=False,
-                    geo='geo',
-                    hoverinfo='skip'
-                ))
+            # draw arrows from image to city location
+            for item in city_images:
+                row = df_mapping[df_mapping['city'].str.lower() == item['city'].lower()]
+                if not row.empty:
+                    fig.add_trace(go.Scattergeo(
+                        lon=[item['approx_lon'], row['lon'].values[0]],
+                        lat=[item['approx_lat'], row['lat'].values[0]],
+                        mode='lines',
+                        line=dict(width=2, color='black'),
+                        showlegend=False,
+                        geo='geo',
+                        hoverinfo='skip'
+                    ))
 
         # Remove color bar
         fig.update_coloraxes(showscale=False)
@@ -5929,7 +5933,9 @@ if __name__ == "__main__":
     df = df_countries.copy()  # copy df to manipulate for output
     # Sort by continent and city, both in ascending order
     df = df.sort_values(by=["continent", "country"], ascending=[True, True])
-    Analysis.get_mapbox_map(df=df, df_mapping=df_mapping, hover_data=hover_data)  # mapbox map
+    Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=True, hover_data=hover_data) 
+    # map with no images
+    Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=False, hover_data=hover_data)
 
     # Amount of footage
     # Analysis.scatter(df=df,
