@@ -61,33 +61,35 @@ class Analysis():
 
     # Read the csv files and stores them as a dictionary in form {Unique_id : CSV}
     @staticmethod
-    def read_csv_files(folder_path):
-        """Reads all CSV files in a specified folder and returns their contents as a dictionary.
+    def read_csv_files(folder_paths):
+        """reads all csv files in the specified folders and returns their contents as a dictionary.
 
-        Args:
-            folder_path (str): Path to the folder where the CSV files are stored.
+        args:
+            folder_paths (list[str]): list of folder paths where the csv files are stored.
 
-        Returns:
-            dict: A dictionary where keys are CSV file names and values are DataFrames containing the
-            content of each CSV file.
-    """
+        returns:
+            dict: a dictionary where keys are csv file names (with folder prefix) and values are dataframes
+            containing the content of each csv file.
+        """
 
-        # Initialize an empty dictionary to store DataFrames
         dfs = {}
+        logger.info("reading csv files.")
+        
+        for folder_path in folder_paths:
+            if not os.path.exists(folder_path):
+                logger.warning(f"folder does not exist: {folder_path}")
+                continue
 
-        # Iterate through files in the folder
-        for file in os.listdir(folder_path):
-            # Check if the file is a CSV file
-            if file.endswith(".csv"):
-                # Read the CSV file into a DataFrame
-                file_path = os.path.join(folder_path, file)
-                df = pd.read_csv(file_path)
-
-                # Extract the filename without extension
-                filename = os.path.splitext(file)[0]
-
-                # Add the DataFrame to the dictionary with the filename as key
-                dfs[filename] = df
+            for file in tqdm(os.listdir(folder_path)):
+                if file.endswith(".csv"):
+                    file_path = os.path.join(folder_path, file)
+                    try:
+                        df = pd.read_csv(file_path)
+                        filename = os.path.splitext(file)[0]
+                        key = f"{os.path.basename(folder_path)}/{filename}"
+                        dfs[key] = df
+                    except Exception as e:
+                        logger.error(f"failed to read {file_path}: {e}")
 
         return dfs
 
