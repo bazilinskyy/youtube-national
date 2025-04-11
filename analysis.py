@@ -4998,6 +4998,8 @@ class Analysis():
                                                 "speed_val_1": None,
                                                 "time_val_0": None,
                                                 "time_val_1": None,
+                                                "avg_day_night_speed": None,
+                                                "avg_day_night_time": None,
                                                 "ped_cross_city_0": 0,
                                                 "ped_cross_city_1": 0,
                                                 "person_city_0": 0,
@@ -5060,6 +5062,10 @@ class Analysis():
                     final_dict[f'{country}'][f"gini_{condition}"] = gini
                     final_dict[f'{country}'][f"traffic_index_{condition}"] = traffic_index
                     final_dict[f'{country}'][f"continent_{condition}"] = continent
+                    final_dict[f'{country}']["avg_day_night_speed"] = avg_speed_day_and_night.get(
+                        f'{country}_{2}', None)
+                    final_dict[f'{country}']["avg_day_night_time"] = avg_time_day_and_night.get(
+                        f'{country}_{2}', None)
 
         # Initialize an empty list to store the rows for the DataFrame
         data_day, data_night = [], []
@@ -5072,7 +5078,14 @@ class Analysis():
             # Add data for condition 0 (ignore 'speed_val' and 'time_val')
             for condition in ['0']:  # Only include condition 0
                 for key, value in final_dict[country].items():
-                    if condition in key and 'speed_val' not in key and 'time_val' not in key and 'continent' not in key:  # noqa:E501
+                    if (
+                        condition in key
+                        and 'speed_val' not in key
+                        and 'time_val' not in key
+                        and 'continent' not in key
+                        and 'avg_day_night_speed' not in key
+                        and 'avg_day_night_time' not in key
+                    ):
                         row_day[key] = value
 
             # Append the row to the data list
@@ -5080,7 +5093,14 @@ class Analysis():
 
             for condition in ['1']:  # Only include condition 1
                 for key, value in final_dict[country].items():
-                    if condition in key and 'speed_val' not in key and 'time_val' not in key and 'continent' not in key:  # noqa:E501
+                    if (
+                        condition in key
+                        and 'speed_val' not in key
+                        and 'time_val' not in key
+                        and 'continent' not in key
+                        and 'avg_day_night_speed' not in key
+                        and 'avg_day_night_time' not in key
+                    ):
                         row_night[key] = value
 
             # Append the row to the data list
@@ -5096,7 +5116,7 @@ class Analysis():
 
         # Rename the variables in the correlation matrix
         rename_dict_1 = {
-            'avg_speed_0': 'Speed of', 'avg_speed_1': 'Crossing speed',
+            'avg_speed_0': 'Speed', 'avg_speed_1': 'Crossing speed',
             'avg_time_0': 'Crossing decision time', 'avg_time_1': 'Crossing decision time',
             'ped_cross_city_0': 'Crossing', 'ped_cross_city_1': 'Crossing',
             'person_city_0': 'Detected persons', 'person_city_1': 'Detected persons',
@@ -5168,38 +5188,48 @@ class Analysis():
                     row_data[f"{var}_{condition}"] = final_dict[country].get(f"{var}_{condition}", 0)
 
                 # Calculate average of speed_val and time_val (assumed to be arrays)
-                speed_vals = final_dict[country].get(f"speed_val_{condition}", [])
-                time_vals = final_dict[country].get(f"time_val_{condition}", [])
+                speed_vals = final_dict[country].get("avg_day_night_speed", [])
+                time_vals = final_dict[country].get("avg_day_night_time", [])
 
                 if speed_vals:  # Avoid division by zero or empty arrays
-                    row_data[f"avg_speed_val_{condition}"] = np.mean(speed_vals)
+                    row_data["avg_day_night_speed"] = np.mean(speed_vals)
                 else:
-                    row_data[f"avg_speed_val_{condition}"] = np.nan  # Handle empty or missing arrays
+                    row_data["avg_day_night_speed"] = np.nan  # Handle empty or missing arrays
 
                 if time_vals:
-                    row_data[f"avg_time_val_{condition}"] = np.mean(time_vals)
+                    row_data["avg_day_night_time"] = np.mean(time_vals)
                 else:
-                    row_data[f"avg_time_val_{condition}"] = np.nan  # Handle empty or missing arrays
+                    row_data["avg_day_night_time"] = np.nan  # Handle empty or missing arrays
 
+            print(row_data)
             # Append the row data for the current country
             data_rows.append(row_data)
 
         # Convert the data into a pandas DataFrame
         df = pd.DataFrame(data_rows)
+        # df = df[[col for col in df.columns if col.endswith("_0") or col.endswith("_1")]]
 
         # Create a new DataFrame to average the columns across conditions
         agg_df = pd.DataFrame()
 
-        # Loop through the columns in the original DataFrame
+        # Define known conditions (from earlier)
+        conditions = ['0', '1']
+
         for col in df.columns:
-            # Extract the feature name (without condition part)
-            feature_name = "_".join(col.split("_")[:-1])
-            condition = col.split("_")[-1]
+            # Check if the column ends with a known condition
+            if any(col.endswith(f"_{cond}") for cond in conditions):
+                feature_name = "_".join(col.split("_")[:-1])
+                if feature_name not in agg_df.columns:
+                    condition_cols = [c for c in df.columns if c.startswith(feature_name + "_")]
+                    agg_df[feature_name] = df[condition_cols].mean(axis=1)
+            else:
+                # Directly copy columns that don't follow the condition pattern (like avg_day_night_speed)
+                agg_df[col] = df[col]
 
             # Create a new column by averaging values across conditions for the same feature
             if feature_name not in agg_df.columns:
                 # Select the columns for this feature across all conditions
-                condition_cols = [c for c in df.columns if feature_name in c]
+                condition_cols = [c for c in df.columns if c.startswith(feature_name + "_")]  # type: ignore
                 agg_df[feature_name] = df[condition_cols].mean(axis=1)
 
         # Compute the correlation matrix on the aggregated DataFrame
@@ -5207,7 +5237,7 @@ class Analysis():
 
         # Rename the variables in the correlation matrix (example: renaming keys)
         rename_dict_2 = {
-            'avg_speed_val': 'Crossing speed', 'avg_time_val': 'Crossing decision time',
+            'avg_day_night_speed': 'Crossing speed', 'avg_day_night_time': 'Crossing decision time',
             'ped_cross_city': 'Crossing', 'person_city': 'Detected persons',
             'bicycle_city': 'Detected bicycles', 'car_city': 'Detected cars',
             'motorcycle_city': 'Detected motorcycles', 'bus_city': 'Detected bus',
@@ -5264,18 +5294,18 @@ class Analysis():
                     row_data[f"{var}_{condition}"] = final_dict[country].get(f"{var}_{condition}", 0)
 
                 # Calculate average of speed_val and time_val (assumed to be arrays)
-                speed_vals = final_dict[country].get(f"speed_val_{condition}", [])
-                time_vals = final_dict[country].get(f"time_val_{condition}", [])
+                speed_vals = final_dict[country].get("avg_day_night_speed", [])
+                time_vals = final_dict[country].get("avg_day_night_time", [])
 
                 if speed_vals:  # Avoid division by zero or empty arrays
-                    row_data[f"avg_speed_val_{condition}"] = np.mean(speed_vals)
+                    row_data["avg_day_night_speed"] = np.mean(speed_vals)
                 else:
-                    row_data[f"avg_speed_val_{condition}"] = np.nan  # Handle empty or missing arrays
+                    row_data["avg_day_night_speed"] = np.nan  # Handle empty or missing arrays
 
                 if time_vals:
-                    row_data[f"avg_time_val_{condition}"] = np.mean(time_vals)
+                    row_data["avg_day_night_time"] = np.mean(time_vals)
                 else:
-                    row_data[f"avg_time_val_{condition}"] = np.nan  # Handle empty or missing arrays
+                    row_data["avg_day_night_time"] = np.nan  # Handle empty or missing arrays
 
             # Append the row data for the current country
             data_rows.append(row_data)
@@ -5288,15 +5318,25 @@ class Analysis():
             # Create a new DataFrame to average the columns across conditions
             agg_df = pd.DataFrame()
 
-            # Loop through the columns in the original DataFrame
-            for col in filtered_df.columns:
-                # Extract the feature name (without condition part)
-                feature_name = "_".join(col.split("_")[:-1])
-                condition = col.split("_")[-1]
+            # Define known conditions (from earlier)
+            conditions = ['0', '1']
 
-                # Skip columns named "continent_0" or "continent_1"
-                if "continent" in feature_name:
-                    continue
+            for col in filtered_df.columns:
+                # Check if the column ends with a known condition
+                if any(col.endswith(f"_{cond}") for cond in conditions):
+                    feature_name = "_".join(col.split("_")[:-1])
+                    # Skip columns named "continent_0" or "continent_1"
+                    if "continent" in feature_name:
+                        continue
+                    if feature_name not in agg_df.columns:
+                        condition_cols = [c for c in filtered_df.columns if c.startswith(feature_name + "_")]
+                        if all(pd.api.types.is_numeric_dtype(filtered_df[c]) for c in condition_cols):
+                            agg_df[feature_name] = filtered_df[condition_cols].mean(axis=1)
+                        else:
+                            print(f"Skipping non-numeric feature: {feature_name}")
+
+                else:
+                    agg_df[col] = filtered_df[col]
 
                 # Create a new column by averaging values across conditions for the same feature
                 if feature_name not in agg_df.columns:
@@ -5309,7 +5349,7 @@ class Analysis():
 
             # Rename the variables in the correlation matrix (example: renaming keys)
             rename_dict_3 = {
-                'avg_speed_val': 'Crossing speed', 'avg_time_val': 'Crossing decision time',
+                'avg_day_night_speed': 'Crossing speed', "avg_day_night_time": 'Crossing decision time',
                 'ped_cross_city': 'Crossing', 'person_city': 'Detected persons',
                 'bicycle_city': 'Detected bicycles', 'car_city': 'Detected cars',
                 'motorcycle_city': 'Detected motorcycles', 'bus_city': 'Detected bus',
@@ -5976,336 +6016,373 @@ if __name__ == "__main__":
     # Sort by continent and city, both in ascending order
     df = df.sort_values(by=["continent", "country"], ascending=[True, True])
     # map with images
-    # Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=True, hover_data=hover_data) 
-    # # map with no images
-    # Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=False, hover_data=hover_data)
+    Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=True, hover_data=hover_data) 
+    # map with no images
+    Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=False, hover_data=hover_data)
 
-    # # Amount of footage
-    # Analysis.scatter(df=df,
-    #                  x="total_time",
-    #                  y="person",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Total time of footage (s)',
-    #                  yaxis_title='Number of detected pedestrians',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Amount of footage
+    Analysis.scatter(df=df,
+                     x="total_time",
+                     y="person",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Total time of footage (s)',
+                     yaxis_title='Number of detected pedestrians',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # Analysis.speed_and_time_to_start_cross(df_countries)
-    # Analysis.plot_speed_to_cross_by_alphabetical_order(df_countries)
-    # Analysis.plot_time_to_start_cross_by_alphabetical_order(df_countries)
-    # Analysis.plot_speed_to_cross_by_average(df_countries)
-    # Analysis.plot_speed_to_cross_by_average_in_day(df_countries)
-    # Analysis.plot_speed_to_cross_by_average_in_night(df_countries)
-    # Analysis.plot_time_to_start_cross_by_average(df_countries)
-    # Analysis.plot_time_to_start_cross_by_average_day(df_countries)
-    # Analysis.plot_time_to_start_cross_by_average_night(df_countries)
-    # Analysis.correlation_matrix(df_countries)
+    Analysis.speed_and_time_to_start_cross(df_countries)
+    Analysis.plot_speed_to_cross_by_alphabetical_order(df_countries)
+    Analysis.plot_time_to_start_cross_by_alphabetical_order(df_countries)
+    Analysis.plot_speed_to_cross_by_average(df_countries)
+    Analysis.plot_speed_to_cross_by_average_in_day(df_countries)
+    Analysis.plot_speed_to_cross_by_average_in_night(df_countries)
+    Analysis.plot_time_to_start_cross_by_average(df_countries)
+    Analysis.plot_time_to_start_cross_by_average_day(df_countries)
+    Analysis.plot_time_to_start_cross_by_average_night(df_countries)
+    Analysis.correlation_matrix(df_countries)
 
-    # df_countries['country'] = df_countries['country'].str.title()
+    df_countries['country'] = df_countries['country'].str.title()
 
-    # # Speed of crossing vs time to start crossing
-    # df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+    # Speed of crossing vs time to start crossing
+    df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
 
-    # df = df[df["time_crossing_avg"] != 0]
+    df = df[df["time_crossing_avg"] != 0]
 
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_avg",
-    #                  y="time_crossing_avg",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed (in m/s)',
-    #                  yaxis_title='Crossing decision time (in s)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    Analysis.scatter(df=df,
+                     x="speed_crossing_avg",
+                     y="time_crossing_avg",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='Crossing decision time (in s)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing during daytime vs time to start crossing during daytime
-    # df = df_countries[df_countries["speed_crossing_day"] != 0].copy()
-    # df = df[df["time_crossing_day"] != 0]
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_day",
-    #                  y="time_crossing_day",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed during daytime (in m/s)',
-    #                  yaxis_title='Crossing decision time during daytime (in s)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing during daytime vs time to start crossing during daytime
+    df = df_countries[df_countries["speed_crossing_day"] != 0].copy()
+    df = df[df["time_crossing_day"] != 0]
+    Analysis.scatter(df=df,
+                     x="speed_crossing_day",
+                     y="time_crossing_day",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed during daytime (in m/s)',
+                     yaxis_title='Crossing decision time during daytime (in s)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing during night time vs time to start crossing during night time
-    # df = df_countries[df_countries["speed_crossing_night"] != 0].copy()
-    # df = df[df["time_crossing_night"] != 0]
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_night",
-    #                  y="time_crossing_night",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed during night time (in m/s)',
-    #                  yaxis_title='Crossing decision time during night time (in s)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing during night time vs time to start crossing during night time
+    df = df_countries[df_countries["speed_crossing_night"] != 0].copy()
+    df = df[df["time_crossing_night"] != 0]
+    Analysis.scatter(df=df,
+                     x="speed_crossing_night",
+                     y="time_crossing_night",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed during night time (in m/s)',
+                     yaxis_title='Crossing decision time during night time (in s)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Time to start crossing vs population of city
-    # df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
-    # df = df[(df["population_country"].notna()) & (df["population_country"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="time_crossing_avg",
-    #                  y="population_country",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing decision time (in s)',
-    #                  yaxis_title='Population of country',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Time to start crossing vs population of city
+    df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
+    df = df[(df["population_country"].notna()) & (df["population_country"] != 0)]
+    Analysis.scatter(df=df,
+                     x="time_crossing_avg",
+                     y="population_country",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
+                     yaxis_title='Population of country',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing vs population of country
-    # df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
-    # df = df[(df["population_country"].notna()) & (df["population_country"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_avg",
-    #                  y="population_country",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed (in m/s)',
-    #                  yaxis_title='Population of country',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing vs population of country
+    df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+    df = df[(df["population_country"].notna()) & (df["population_country"] != 0)]
+    Analysis.scatter(df=df,
+                     x="speed_crossing_avg",
+                     y="population_country",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='Population of country',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Time to start crossing vs population of city
-    # df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
-    # df = df[(df["traffic_mortality"].notna()) & (df["traffic_mortality"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="time_crossing_avg",
-    #                  y="traffic_mortality",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing decision time (in s)',
-    #                  yaxis_title='National traffic mortality rate (per 100,000 of population)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Time to start crossing vs population of city
+    df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
+    df = df[(df["traffic_mortality"].notna()) & (df["traffic_mortality"] != 0)]
+    Analysis.scatter(df=df,
+                     x="time_crossing_avg",
+                     y="traffic_mortality",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
+                     yaxis_title='National traffic mortality rate (per 100,000 of population)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing vs population of city
-    # df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
-    # df = df[(df["traffic_mortality"].notna()) & (df["traffic_mortality"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_avg",
-    #                  y="traffic_mortality",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed (in m/s)',
-    #                  yaxis_title='National traffic mortality rate (per 100,000 of population)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing vs population of city
+    df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+    df = df[(df["traffic_mortality"].notna()) & (df["traffic_mortality"] != 0)]
+    Analysis.scatter(df=df,
+                     x="speed_crossing_avg",
+                     y="traffic_mortality",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='National traffic mortality rate (per 100,000 of population)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Time to start crossing vs population of city
-    # df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
-    # df = df[(df["literacy_rate"].notna()) & (df["literacy_rate"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="time_crossing_avg",
-    #                  y="literacy_rate",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing decision time (in s)',
-    #                  yaxis_title='Literacy rate',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Time to start crossing vs population of city
+    df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
+    df = df[(df["literacy_rate"].notna()) & (df["literacy_rate"] != 0)]
+    Analysis.scatter(df=df,
+                     x="time_crossing_avg",
+                     y="literacy_rate",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
+                     yaxis_title='Literacy rate',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing vs population of city
-    # df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
-    # df = df[(df["literacy_rate"].notna()) & (df["literacy_rate"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_avg",
-    #                  y="literacy_rate",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed (in m/s)',
-    #                  yaxis_title='Literacy rate',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing vs population of city
+    df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+    df = df[(df["literacy_rate"].notna()) & (df["literacy_rate"] != 0)]
+    Analysis.scatter(df=df,
+                     x="speed_crossing_avg",
+                     y="literacy_rate",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='Literacy rate',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Time to start crossing vs population of city
-    # df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
-    # df = df[(df["gini"].notna()) & (df["gini"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="time_crossing_avg",
-    #                  y="gini",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing decision time (in s)',
-    #                  yaxis_title='Gini coefficient',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Time to start crossing vs population of city
+    df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
+    df = df[(df["gini"].notna()) & (df["gini"] != 0)]
+    Analysis.scatter(df=df,
+                     x="time_crossing_avg",
+                     y="gini",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
+                     yaxis_title='Gini coefficient',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing vs population of city
-    # df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
-    # df = df[(df["gini"].notna()) & (df["gini"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_avg",
-    #                  y="gini",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed (in m/s)',
-    #                  yaxis_title='Gini coefficient',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing vs population of city
+    df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+    df = df[(df["gini"].notna()) & (df["gini"] != 0)]
+    Analysis.scatter(df=df,
+                     x="speed_crossing_avg",
+                     y="gini",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='Gini coefficient',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Time to start crossing vs population of city
-    # df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
-    # df = df[(df["traffic_index"].notna()) & (df["traffic_index"] != 0)]
-    # Analysis.scatter(df=df,
-    #                  x="time_crossing_avg",
-    #                  y="traffic_index",
-    #                  color="continent",
-    #                  text="country",
-    #                  # size="gmp",
-    #                  xaxis_title='Crossing decision time (in s)',
-    #                  yaxis_title='Traffic index',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Time to start crossing vs population of city
+    df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
+    df = df[(df["traffic_index"].notna()) & (df["traffic_index"] != 0)]
+    Analysis.scatter(df=df,
+                     x="time_crossing_avg",
+                     y="traffic_index",
+                     color="continent",
+                     text="country",
+                     # size="gmp",
+                     xaxis_title='Crossing decision time (in s)',
+                     yaxis_title='Traffic index',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing vs population of city
-    # df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
-    # df = df[df["traffic_index"] != 0]
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_avg",
-    #                  y="traffic_index",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed (in m/s)',
-    #                  yaxis_title='Traffic index',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing vs population of city
+    df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+    df = df[df["traffic_index"] != 0]
+    Analysis.scatter(df=df,
+                     x="speed_crossing_avg",
+                     y="traffic_index",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='Traffic index',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing vs detected mobile phones
-    # df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
-    # df['cellphone_normalised'] = df['cellphone'] / df['total_time']
-    # Analysis.scatter(df=df,
-    #                  x="time_crossing_avg",
-    #                  y="cellphone_normalised",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing decision time (in s)',
-    #                  yaxis_title='Mobile phones detected (normalised over time)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing vs detected mobile phones
+    df = df_countries[df_countries["time_crossing_avg"] != 0].copy()
+    df['cellphone_normalised'] = df['cellphone'] / df['total_time']
+    Analysis.scatter(df=df,
+                     x="time_crossing_avg",
+                     y="cellphone_normalised",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
+                     yaxis_title='Mobile phones detected (normalised over time)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Speed of crossing vs detected mobile phones
-    # df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
-    # df['cellphone_normalised'] = df['cellphone'] / df['total_time']
-    # Analysis.scatter(df=df,
-    #                  x="speed_crossing_avg",
-    #                  y="cellphone_normalised",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing speed (in m/s)',
-    #                  yaxis_title='Mobile phones detected (normalised over time)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Speed of crossing vs detected mobile phones
+    df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+    df['cellphone_normalised'] = df['cellphone'] / df['total_time']
+    Analysis.scatter(df=df,
+                     x="speed_crossing_avg",
+                     y="cellphone_normalised",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='Mobile phones detected (normalised over time)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
-    # # Jaywalking
-    # Analysis.plot_crossing_without_traffic_light(df_countries)
-    # Analysis.plot_crossing_with_traffic_light(df_countries)
+    # Jaywalking
+    Analysis.plot_crossing_without_traffic_light(df_countries)
+    Analysis.plot_crossing_with_traffic_light(df_countries)
 
-    # # Crossing with and without traffic lights
-    # df = df_countries.copy()
-    # # df['state'] = df['state'].fillna('NA')
-    # df['with_trf_light_norm'] = (df['with_trf_light_day'] + df['with_trf_light_night']) / df['total_time'] / df['population_country']  # noqa: E501
-    # df['without_trf_light_norm'] = (df['without_trf_light_day'] + df['without_trf_light_night']) / df['total_time'] / df['population_country']  # noqa: E501
-    # df['country'] = df['country'].str.title()
-    # Analysis.scatter(df=df,
-    #                  x="with_trf_light_norm",
-    #                  y="without_trf_light_norm",
-    #                  color="continent",
-    #                  text="country",
-    #                  xaxis_title='Crossing events with traffic lights (normalised)',
-    #                  yaxis_title='Crossing events without traffic lights (normalised)',
-    #                  pretty_text=False,
-    #                  save_file=True,
-    #                  hover_data=hover_data,
-    #                  hover_name="country",
-    #                  legend_title="",
-    #                  marginal_x=None,  # type: ignore
-    #                  marginal_y=None)  # type: ignore
+    # Crossing with and without traffic lights
+    df = df_countries.copy()
+    # df['state'] = df['state'].fillna('NA')
+    df['with_trf_light_norm'] = (df['with_trf_light_day'] + df['with_trf_light_night']) / df['total_time'] / df['population_country']  # noqa: E501
+    df['without_trf_light_norm'] = (df['without_trf_light_day'] + df['without_trf_light_night']) / df['total_time'] / df['population_country']  # noqa: E501
+    df['country'] = df['country'].str.title()
+    Analysis.scatter(df=df,
+                     x="with_trf_light_norm",
+                     y="without_trf_light_norm",
+                     color="continent",
+                     text="country",
+                     xaxis_title='Crossing events with traffic lights (normalised)',
+                     yaxis_title='Crossing events without traffic lights (normalised)',
+                     pretty_text=False,
+                     save_file=True,
+                     hover_data=hover_data,
+                     hover_name="country",
+                     legend_title="",
+                     marginal_x=None,  # type: ignore
+                     marginal_y=None)  # type: ignore
 
     Analysis.map(df_countries, 'speed_crossing_avg', "Speed of crossing")
     Analysis.map(df_countries, 'time_crossing_avg', "Time to start crossing")
+
+    # Exclude zero values before finding min
+    nonzero_speed = df_countries[df_countries["speed_crossing_avg"] > 0]
+    nonzero_time = df_countries[df_countries["time_crossing_avg"] > 0]
+
+    max_speed_idx = df_countries["speed_crossing_avg"].idxmax()
+    min_speed_idx = nonzero_speed["speed_crossing_avg"].idxmin()
+
+    max_time_idx = df_countries["time_crossing_avg"].idxmax()
+    min_time_idx = nonzero_time["time_crossing_avg"].idxmin()
+
+    # Mean and standard deviation
+    speed_mean = nonzero_speed["speed_crossing_avg"].mean()
+    speed_std = nonzero_speed["speed_crossing_avg"].std()
+
+    time_mean = nonzero_time["time_crossing_avg"].mean()
+    time_std = nonzero_time["time_crossing_avg"].std()
+
+    logger.info(f"Country with the highest average speed while crossing: {df_countries.loc[max_speed_idx, 'country']} "
+                f"({df_countries.loc[max_speed_idx, 'speed_crossing_avg']:.2f})")
+
+    logger.info(f"Country with the lowest non-zero average speed while crossing: {nonzero_speed.loc[min_speed_idx, 'country']} "  # noqa:E501
+                f"({nonzero_speed.loc[min_speed_idx, 'speed_crossing_avg']:.2f})")
+
+    logger.info(f"Mean speed while crossing (non-zero): {speed_mean:.2f}")
+    logger.info(f"Standard deviation of speed while crossing (non-zero): {speed_std:.2f}")
+
+    logger.info(f"Country with the highest average crossing time: {df_countries.loc[max_time_idx, 'country']} "
+                f"({df_countries.loc[max_time_idx, 'time_crossing_avg']:.2f})")
+
+    logger.info(f"Country with the lowest non-zero average crossing time: {nonzero_time.loc[min_time_idx, 'country']} "
+                f"({nonzero_time.loc[min_time_idx, 'time_crossing_avg']:.2f})")
+
+    logger.info(f"Mean crossing time (non-zero): {time_mean:.2f}")
+    logger.info(f"Standard deviation of crossing time (non-zero): {time_std:.2f}")
+
+    df.to_csv('df_countries.csv', index=False)
