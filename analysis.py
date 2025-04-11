@@ -77,19 +77,20 @@ class Analysis():
         
         for folder_path in folder_paths:
             if not os.path.exists(folder_path):
-                logger.warning(f"folder does not exist: {folder_path}")
+                logger.warning(f"Folder does not exist: {folder_path}.")
                 continue
 
             for file in tqdm(os.listdir(folder_path)):
                 if file.endswith(".csv"):
                     file_path = os.path.join(folder_path, file)
                     try:
+                        logger.debug(f"Adding file {file_path} to dfs.")
                         df = pd.read_csv(file_path)
                         filename = os.path.splitext(file)[0]
                         key = f"{os.path.basename(folder_path)}/{filename}"
                         dfs[key] = df
                     except Exception as e:
-                        logger.error(f"failed to read {file_path}: {e}")
+                        logger.error(f"Failed to read {file_path}: {e}.")
 
         return dfs
 
