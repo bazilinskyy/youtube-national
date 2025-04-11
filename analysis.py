@@ -87,7 +87,7 @@ class Analysis():
                         logger.debug(f"Adding file {file_path} to dfs.")
                         df = pd.read_csv(file_path)
                         filename = os.path.splitext(file)[0]
-                        key = f"{os.path.basename(folder_path)}/{filename}"
+                        key = filename  # includes both video id and suffix
                         dfs[key] = df
                     except Exception as e:
                         logger.error(f"Failed to read {file_path}: {e}.")
@@ -249,6 +249,7 @@ class Analysis():
                     counter = 0
                     # Iterate through each start time
                     for s in start:
+                        logger.debug(f"Finding values for {video} start={start}, end={end}")
                         # Check if the start time matches the specified start time
                         if int(start_) == s:
                             # Return relevant information once found
