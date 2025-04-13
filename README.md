@@ -1,5 +1,3 @@
-# youtube-country
-
 ## Overview
 
 ## Usage of the code
@@ -58,69 +56,82 @@ python3 analysis.py
 Locations of cities with footage in dataset. -->
 
 [![Locations of cities with footage in dataset](figures/map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map.html)
-Locations of cities with footage in dataset. *Note:* continents are based on geography, i.e., the cities in Russia east from Ural mountains are shown as Asia.
+The 133 countries with dashcam footage included in analysis on the political map (coloured by continent). Black dots show the cities included.
 
-<!-- [![Crossing decision time and crossing speed (sorted by countries)](figures/consolidated.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/consolidated.html)
-Crossing decision time and crossing speed (sorted by countries). -->
+<!-- [![Mean time to start crossing and Mean speed of crossing (in m/s, sorted by countries)](figures/consolidated.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/consolidated.html)
+Mean time to start crossing and Mean speed of crossing (in m/s, sorted by countries). -->
 
 [![Total time of footage over number of detected pedestrians](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person.html)
 Total time of footage over number of detected pedestrians.
 
-### Global behaviour of pedestrians
-[![Crossing decision time (sorted by countries](figures/time_crossing_alphabetical.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical.html)
-Crossing decision time (sorted by countries).
+### Time to start crossing
+[![Mean time to start crossing (in s, sorted by countries](figures/time_crossing_alphabetical.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical.html)
+Mean time to start crossing (in s, sorted by countries).
 
-[![Crossing speed (sorted by countries](figures/crossing_speed_alphabetical.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical.html)
-Crossing speed (sorted by countries).
+[![Mean time to start crossing (in s, sorted by average of day and night)](figures/time_crossing_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg.html)
+Mean time to start crossing (in s, sorted by average of day and night).
 
-[![Crossing decision time (sorted by average of day and night)](figures/time_crossing_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg.html)
-Crossing decision time (sorted by average of day and night).
+[![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_avg_day.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg_day.html)
+Mean time to start crossing during daytime (in s).
 
-[![Crossing speed (sorted by average of day and night)](figures/crossing_speed_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_avg.html)
-Crossing speed (sorted by average of day and night).
+[![Mean time to start crossing (in s, sorted by average of night)](figures/time_crossing_avg_night.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg_night.html)
+Mean time to start crossing during night time (in s).
+
+### Speed of crossing
+[![Mean speed of crossing (in m/s, sorted by countries](figures/crossing_speed_alphabetical.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical.html)
+Mean speed of crossing (in m/s, sorted by countries).
+
+[![Mean speed of crossing (in m/s, sorted by average of day and night)](figures/crossing_speed_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_avg.html)
+Mean speed of crossing (in m/s, sorted by average of day and night).
+
+[![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_avg_day.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_avg_day.html)
+Mean speed of crossing during daytime (in m/s).
+
+[![Mean speed of crossing (in m/s, sorted by average of night)](figures/crossing_speed_avg_night.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_avg_night.html)
+Mean speed of crossing during night time (in m/s).
 
 ### Relationship between computed and statistical metrics
 [![Speed of crossing over crossing decision time](figures/scatter_speed_crossing-time_crossing.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing-time_crossing.html)
-Crossing speed over crossing decision time.
+Mean speed of crossing (in m/s) over Mean time to start crossing (in s) (in s).
 
-[![Speed of crossing over crossing decision time daytime](figures/scatter_speed_crossing_day-time_crossing_day.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day-time_crossing_day.html)
-Crossing speed over crossing decision time, during daytime.
+[![Speed of crossing over Mean time to start crossing daytime](figures/scatter_speed_crossing_day-time_crossing_day.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day-time_crossing_day.html)
+Mean speed of crossing (in m/s) over Mean time to start crossing (in s), during daytime.
 
-[![Speed of crossing over crossing decision time night time](figures/scatter_speed_crossing_night-time_crossing_night.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_night-time_crossing_night.html)
-Crossing speed over crossing decision time, during night time.
+[![Speed of crossing over Mean time to start crossing night time](figures/scatter_speed_crossing_night-time_crossing_night.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_night-time_crossing_night.html)
+Mean speed of crossing (in m/s) over Mean time to start crossing (in s), during night time.
 
 [![Speed of crossing over population of country](figures/scatter_speed_crossing-population_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing-population_country.html)
-Crossing speed over population of country.
+Mean speed of crossing over population of country.
 
-[![Crossing decision time over population of country](figures/scatter_time_crossing-population_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-population_country.html)
-Crossing decision time over population of country.
+[![Mean time to start crossing over population of country](figures/scatter_time_crossing-population_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-population_country.html)
+Mean time to start crossing over population of country.
 
 [![Speed of crossing over traffic mortality](figures/scatter_speed_crossing-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing-traffic_mortality.html)
-Crossing speed over traffic mortality.
+Mean speed of crossing over traffic mortality.
 
-[![Crossing decision time over traffic mortality](figures/scatter_time_crossing-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-traffic_mortality.html)
-Crossing decision time over traffic mortality.
+[![Mean time to start crossing over traffic mortality](figures/scatter_time_crossing-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-traffic_mortality.html)
+Mean time to start crossing over traffic mortality.
 
 [![Speed of crossing over literacy rate](figures/scatter_speed_crossing-literacy_rate.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing-literacy_rate.html)
-Crossing speed over literacy rate.
+Mean speed of crossing over literacy rate.
 
-[![Crossing decision time over literacy rate](figures/scatter_time_crossing-literacy_rate.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-literacy_rate.html)
-Crossing decision time over literacy rate.
+[![Mean time to start crossing over literacy rate](figures/scatter_time_crossing-literacy_rate.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-literacy_rate.html)
+Mean time to start crossing over literacy rate.
 
 [![Speed of crossing over Gini coefficient](figures/scatter_speed_crossing-gini.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing-gini.html)
-Crossing speed over Gini coefficient.
+Mean speed of crossing over Gini coefficient.
 
-[![Crossing decision time over Gini coefficient](figures/scatter_time_crossing-gini.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-gini.html)
-Crossing decision time over Gini coefficient.
+[![Mean time to start crossing over Gini coefficient](figures/scatter_time_crossing-gini.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-gini.html)
+Mean time to start crossing over Gini coefficient.
 
 [![Speed of crossing over traffic index](figures/scatter_speed_crossing-traffic_index.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing-traffic_index.html)
-Crossing speed over traffic index.
+Mean speed of crossing over traffic index.
 
-[![Crossing decision time over traffic index](figures/scatter_time_crossing-traffic_index.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-traffic_index.html)
-Crossing decision time over traffic index.
+[![Mean time to start crossing over traffic index](figures/scatter_time_crossing-traffic_index.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-traffic_index.html)
+Mean time to start crossing over traffic index.
 
-[![Crossing decision time over traffic index](figures/scatter_time_crossing-traffic_index.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-traffic_index.html)
-Crossing decision time over traffic index.
+[![Mean time to start crossing over traffic index](figures/scatter_time_crossing-traffic_index.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing-traffic_index.html)
+Mean time to start crossing over traffic index.
 
 ### Correlation matrices
 [![Correlation matrix based on average speed and time to start cross](figures/correlation_matrix_heatmap_averaged.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_averaged.html)
