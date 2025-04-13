@@ -97,13 +97,13 @@ Mean speed of crossing during daytime (in m/s).
 Mean speed of crossing during night time (in m/s).
 
 ### Relationship between computed and statistical metrics
-[![Speed of crossing over crossing decision time](figures/scatter_speed_crossing_avg-time_crossing.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_avg-time_crossing.html)
+[![Speed of crossing over crossing decision time](figures/scatter_speed_crossing_avg-time_crossing_avg.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_avg-time_crossing_avg.html)
 Mean speed of crossing (in m/s) over Mean time to start crossing (in s) (in s).
 
-[![Speed of crossing over Mean time to start crossing daytime](figures/scatter_speed_crossing_avg_day-time_crossing_day.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_avg_day-time_crossing_day.html)
+[![Speed of crossing over Mean time to start crossing daytime](figures/scatter_speed_crossing_day-time_crossing_day.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day-time_crossing_day.html)
 Mean speed of crossing (in m/s) over Mean time to start crossing (in s), during daytime.
 
-[![Speed of crossing over Mean time to start crossing night time](figures/scatter_speed_crossing_avg_night-time_crossing_night.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_avg_night-time_crossing_night.html)
+[![Speed of crossing over Mean time to start crossing night time](figures/scatter_speed_crossing_night-time_crossing_night.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_night-time_crossing_night.html)
 Mean speed of crossing (in m/s) over Mean time to start crossing (in s), during night time.
 
 [![Speed of crossing over population of country](figures/scatter_speed_crossing_avg-population_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_avg-population_country.html)
