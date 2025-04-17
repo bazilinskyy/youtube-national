@@ -46,6 +46,8 @@ bar_colour_3 = 'rgb(204, 235, 197)'
 bar_colour_4 = 'rgb(222, 203, 228)'
 
 # Consts
+SAVE_PNG = True
+SAVE_EPS = True
 BASE_HEIGHT_PER_ROW = 30  # Adjust as needed
 FLAG_SIZE = 12
 TEXT_SIZE = 12
@@ -59,36 +61,33 @@ class Analysis():
 
     # Read the csv files and stores them as a dictionary in form {Unique_id : CSV}
     @staticmethod
-    def read_csv_files(folder_paths):
-        """reads all csv files in the specified folders and returns their contents as a dictionary.
+    def read_csv_files(folder_path):
+        """Reads all CSV files in a specified folder and returns their contents as a dictionary.
 
-        args:
-            folder_paths (list[str]): list of folder paths where the csv files are stored.
+        Args:
+            folder_path (str): Path to the folder where the CSV files are stored.
 
-        returns:
-            dict: a dictionary where keys are csv file names (with folder prefix) and values are dataframes
-            containing the content of each csv file.
-        """
+        Returns:
+            dict: A dictionary where keys are CSV file names and values are DataFrames containing the
+            content of each CSV file.
+    """
 
+        # Initialize an empty dictionary to store DataFrames
         dfs = {}
-        logger.info("reading csv files.")
-        
-        for folder_path in folder_paths:
-            if not os.path.exists(folder_path):
-                logger.warning(f"Folder does not exist: {folder_path}.")
-                continue
 
-            for file in tqdm(os.listdir(folder_path)):
-                if file.endswith(".csv"):
-                    file_path = os.path.join(folder_path, file)
-                    try:
-                        logger.debug(f"Adding file {file_path} to dfs.")
-                        df = pd.read_csv(file_path)
-                        filename = os.path.splitext(file)[0]
-                        key = filename  # includes both video id and suffix
-                        dfs[key] = df
-                    except Exception as e:
-                        logger.error(f"Failed to read {file_path}: {e}.")
+        # Iterate through files in the folder
+        for file in os.listdir(folder_path):
+            # Check if the file is a CSV file
+            if file.endswith(".csv"):
+                # Read the CSV file into a DataFrame
+                file_path = os.path.join(folder_path, file)
+                df = pd.read_csv(file_path)
+
+                # Extract the filename without extension
+                filename = os.path.splitext(file)[0]
+
+                # Add the DataFrame to the dictionary with the filename as key
+                dfs[filename] = df
 
         return dfs
 
@@ -116,8 +115,7 @@ class Analysis():
         return num_groups
 
     @staticmethod
-    def save_plotly_figure(fig, filename, width=1600, height=900, scale=SCALE, save_final=True, save_png=True,
-                           save_eps=True):
+    def save_plotly_figure(fig, filename, width=1600, height=900, scale=SCALE, save_final=True):
         """Saves a Plotly figure as HTML, PNG, SVG, and EPS formats.
 
         Args:
@@ -143,7 +141,7 @@ class Analysis():
 
         try:
             # Save as PNG
-            if save_png:
+            if SAVE_PNG:
                 logger.info(f"Saving png file for {filename}.")
                 fig.write_image(os.path.join(output_folder, filename + ".png"), width=width, height=height,
                                 scale=scale)
@@ -153,7 +151,7 @@ class Analysis():
                                 os.path.join(output_final, filename + ".png"))
 
             # Save as EPS
-            if save_eps:
+            if SAVE_EPS:
                 logger.info(f"Saving eps file for {filename}.")
                 fig.write_image(os.path.join(output_folder, filename + ".eps"), width=width, height=height)
                 # also save the final figure
@@ -248,7 +246,6 @@ class Analysis():
                     counter = 0
                     # Iterate through each start time
                     for s in start:
-                        logger.debug(f"Finding values for {video} start={start}, end={end}")
                         # Check if the start time matches the specified start time
                         if int(start_) == s:
                             # Return relevant information once found
@@ -387,7 +384,7 @@ class Analysis():
             return None
 
     @staticmethod
-    def map(df, color, title, title_colorbar=None, save_file=False):
+    def map(df, color, title):
         """Map of countries of participation with colour based on column in dataframe.
 
         Args:
@@ -430,21 +427,16 @@ class Analysis():
                 y=0.45,            # vertically centered
                 len=0.7,         # adjust the length of the color bar
                 thickness=20,     # make it thinner if needed
-                title=title_colorbar     # optional: title for clarity
+                title=title     # optional: title for clarity
             )
         )
         # save file to local output folder
-        if save_file:
-            # Final adjustments and display
-            fig.update_layout(margin=dict(l=1, r=1, t=1, b=1))
-            Analysis.save_plotly_figure(fig, f"map_{color}", save_final=True)
-        # open it in localhost instead
-        else:
-            fig.show()
+        Analysis.save_plotly_figure(fig,
+                                    f"mapbox_map_{color}",
+                                    save_final=True)
 
     @staticmethod
-    def map_political(df, df_mapping, show_images=False, show_cities=True, hover_data=None, save_file=False,
-                      save_final=False):
+    def get_map(df, df_mapping, show_images=False, show_cities=True, hover_data=None):
         """Generate world map with countries colored by continent using choropleth.
 
         Args:
@@ -508,62 +500,38 @@ class Analysis():
                 {
                     "city": "Tokyo",
                     "file": "tokyo.png",
-                    "x": 0.933, "y": 0.58,
-                    "approx_lon": 165.2, "approx_lat": 7.2,
-                    "label": "Tokyo, Japan",
-                    "x_label": 0.983, "y_label": 0.641,
-                    "video": "oDejyTLYUTE",
-                    "x_video": 0.933-0.0021, "y_video": 0.58-0.059
+                    "x": 0.935, "y": 0.58,
+                    "approx_lon": 175.2, "approx_lat": 7.2
                 },
                 {
-                    "city": "Nairobi",
-                    "file": "nairobi.png",
-                    "x": 0.72, "y": 0.38,
-                    "approx_lon": 70.2, "approx_lat": -20.0,
-                    "label": "Nairobi, Kenya",
-                    "x_label": 0.7695, "y_label": 0.38+0.062,
-                    "video": "VNLqnwoJqmM",
-                    "x_video": 0.72+0.00529, "y_video": 0.38-0.069,
+                    "city": "Cairo",
+                    "file": "cairo.png",
+                    "x": 0.72, "y": 0.45,
+                    "approx_lon": 75.2, "approx_lat": -9.0
                 },
                 {
                     "city": "Los Angeles",
                     "file": "los_angeles.png",
                     "x": 0.12, "y": 0.5,
-                    "approx_lon": -121.7, "approx_lat": 0.0,
-                    "label": "Los Angeles, CA, USA",
-                    "x_label": 0.07, "y_label": 0.5+0.062,
-                    "video": "4uhMg5na888",
-                    "x_video": 0.12-0.002, "y_video": 0.5-0.06,
+                    "approx_lon": -142.2, "approx_lat": 0.0
                 },
                 {
                     "city": "Paris",
                     "file": "paris.png",
-                    "x": 0.3915, "y": 0.68,
-                    "approx_lon": -30.6, "approx_lat": 30.4,
-                    "label": "Paris, France",
-                    "x_label": 0.37, "y_label": 0.68+0.072,
-                    "video": "ZTmjk8mSCq8",
-                    "x_video": 0.3915-0.0225, "y_video": 0.68-0.06,
+                    "x": 0.39, "y": 0.68,
+                    "approx_lon": -30.6, "approx_lat": 30.4
                 },
                 {
                     "city": "Rio de Janeiro",
                     "file": "rio_de_janeiro.png",
                     "x": 0.47, "y": 0.2,
-                    "approx_lon": -1.8, "approx_lat": -60.2,
-                    "label": "Rio de Janeiro, Brazil",
-                    "x_label": 0.4746, "y_label": 0.2+0.05,
-                    "video": "q83bl_GcsCo",
-                    "x_video": 0.47-0.026, "y_video": 0.2-0.069,
+                    "approx_lon": 3.8, "approx_lat": -50.2
                 },
                 {
                     "city": "Melbourne",
                     "file": "melbourne.png",
                     "x": 0.74, "y": 0.22,
-                    "approx_lon": 90.0, "approx_lat": -52.0,
-                    "label": "Melbourne, Australia",
-                    "x_label": 0.7783, "y_label": 0.22+0.05,
-                    "video": "gQ-9mmnfJjE",
-                    "x_video": 0.74, "y_video": 0.22-0.069,
+                    "approx_lon": 90.0, "approx_lat": -52.0
                 }
             ]
 
@@ -572,7 +540,7 @@ class Analysis():
             for item in city_images:
                 fig.add_layout_image(
                     dict(
-                        source=os.path.join(path_screenshots, item['file']),
+                        source=os.path.join(path_screenshots, item['file']),  # or use PIL.Image.open if needed
                         xref="paper", yref="paper",
                         x=item["x"], y=item["y"],
                         sizex=0.1, sizey=0.1,
@@ -580,20 +548,6 @@ class Analysis():
                         layer="above"
                     )
                 )
-                # text label on top
-                if "label" in item:
-                    fig.add_annotation(
-                        text=item["label"],
-                        x=item["x_label"],
-                        y=item["y_label"],
-                        xref="paper",
-                        yref="paper",
-                        showarrow=False,
-                        font=dict(size=12, color="black"),
-                        bgcolor="rgba(255,255,255,0.7)",
-                        bordercolor="black",
-                        borderwidth=1
-                    )                
 
             # draw arrows from image to city location
             for item in city_images:
@@ -608,61 +562,6 @@ class Analysis():
                         geo='geo',
                         hoverinfo='skip'
                     ))
-                    # label with video on the bottom
-                    fig.add_annotation(
-                        dict(
-                            text=item['video'],
-                            x=item["x_video"], y=item["y_video"],
-                            xref="paper", yref="paper",
-                            showarrow=False,
-                            font=dict(size=10, color="black"),
-                            align="center",
-                            bgcolor="rgba(255,255,255,0.7)",
-                            bordercolor="black",
-                            borderwidth=1
-                        )
-                    )
-
-            # add YOLO image
-            fig.add_layout_image(
-                dict(
-                    source=os.path.join(path_screenshots, 'new_york_yolo.png'),  # or use PIL.Image.open if needed
-                    xref="paper", yref="paper",
-                    x=0.2, y=0.25,
-                    sizex=0.2, sizey=0.2,
-                    xanchor="center", yanchor="middle",
-                    layer="above"
-                )
-            )
-            # label on top
-            fig.add_annotation(
-                dict(
-                    text="Example of YOLO output (New York, NY, USA)",
-                    x=0.1001, y=0.25+0.1115,
-                    xref="paper", yref="paper",
-                    showarrow=False,
-                    font=dict(size=12, color="black"),
-                    align="center",
-                    bgcolor="rgba(255,255,255,0.7)",
-                    bordercolor="black",
-                    borderwidth=1
-                )
-            )
-            # label with video on the bottom
-            # text label on top
-            fig.add_annotation(
-                dict(
-                    text="Wyg213IZDI",
-                    x=0.253, y=0.25-0.119,
-                    xref="paper", yref="paper",
-                    showarrow=False,
-                    font=dict(size=10, color="black"),
-                    align="center",
-                    bgcolor="rgba(255,255,255,0.7)",
-                    bordercolor="black",
-                    borderwidth=1
-                )
-            )
 
         # Remove color bar
         fig.update_coloraxes(showscale=False)
@@ -677,18 +576,12 @@ class Analysis():
             )
         )
 
-        # save file to local output folder
-        if save_file:
-            fig.update_layout(margin=dict(l=10, r=10, t=10, b=10))
-            # with screenshots
-            if show_images:
-                Analysis.save_plotly_figure(fig, "map_screenshots", save_final=False)
-            # without screenshots
-            else:
-                Analysis.save_plotly_figure(fig, "map", save_final=True)
-        # open it in localhost instead
+        # Save and display the figure
+        if show_images:
+            name_file = "map_screenshots"
         else:
-            fig.show()
+            name_file = "map"
+        Analysis.save_plotly_figure(fig, name_file, save_final=True)
 
     @staticmethod
     def aggregate_by_iso3(df):
@@ -1084,6 +977,9 @@ class Analysis():
                                 if consecutive_frame == 3:  # Check for three consecutive frames
                                     flag = 1
                             elif flag == 1:
+                                # TODO: Check this out
+                                if consecutive_frame > 9 * (fps / 10):
+                                    continue
                                 data_cross[unique_id] = consecutive_frame
                                 break
                             else:
@@ -1095,6 +991,8 @@ class Analysis():
                                 if consecutive_frame == 3:  # Check for three consecutive frames
                                     flag = 1
                             elif flag == 1:
+                                if consecutive_frame > 9 * (fps / 10):
+                                    continue
                                 data_cross[unique_id] = consecutive_frame
                                 break
                             else:
@@ -1351,10 +1249,9 @@ class Analysis():
         return final
 
     # Plotting functions:
-    # todo: xtick and labels shown incorrectly
+
     @staticmethod
-    def speed_and_time_to_start_cross(df_mapping, font_size_captions=40, x_axis_title_height=150, legend_x=0.81,
-                                      legend_y=0.98, legend_spacing=0.02):
+    def speed_and_time_to_start_cross(df_mapping):
         logger.info("Plotting speed_and_time_to_start_cross")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -1483,7 +1380,7 @@ class Analysis():
             min_time_value_1 = filtered_dict_t_1[min_time_country_1]["time_1"]
 
             logger.info(f"Country with max time at night: {Analysis.format_city_state(max_time_country_1)} with time of {max_time_value_1} s")  # noqa:E501
-            logger.info(f"Country with min time at night: {Analysis.format_city_state(min_time_country_1)} with time of {min_time_value_1} s")  # noqa:E501
+            logger.info(f"Ccountry with min time at night: {Analysis.format_city_state(min_time_country_1)} with time of {min_time_value_1} s")  # noqa:E501
 
         # Extract valid speed and time values and calculate statistics
         speed_0_values = [data['speed_0'] for data in final_dict.values() if pd.notna(data['speed_0'])]
@@ -1559,10 +1456,6 @@ class Analysis():
         # Plot left column (first half of cities)
         for i, country in enumerate(countries_ordered[:num_cities_per_col]):
             iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
-            # build up textual label for left column
-            iso2 = Analysis.iso3_to_iso2(iso_code)
-            # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
-            country = Analysis.iso2_to_flag(iso2) + " " + country
             # Row for speed (Day and Night)
             row = 2 * i + 1
             if day_avg_speed[i] is not None and night_avg_speed[i] is not None:
@@ -1630,11 +1523,6 @@ class Analysis():
             iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
             row = 2 * i + 1
             idx = num_cities_per_col + i
-            # build up textual label for left column
-            iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
-            iso2 = Analysis.iso3_to_iso2(iso_code)
-            # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
-            country = Analysis.iso2_to_flag(iso2) + " " + country
             if day_avg_speed[idx] is not None and night_avg_speed[idx] is not None:
                 value = (day_avg_speed[idx] + night_avg_speed[idx])/2
                 fig.add_trace(go.Bar(
@@ -1737,8 +1625,8 @@ class Analysis():
 
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -1747,8 +1635,8 @@ class Analysis():
             col=1
         )
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -1757,18 +1645,19 @@ class Analysis():
             col=2
         )
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
             tickcolor='black',
             row=num_cities_per_col * 2,
-            col=1,
+            col=1
         )
+
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -1792,7 +1681,6 @@ class Analysis():
         )
 
         # Set the x-axis range to cover the values you want in x_grid_values
-        # todo: move away from hardcoded xtick values
         x_grid_values = [2, 4, 6, 8, 10, 12, 14, 16, 18]
 
         for x in x_grid_values:
@@ -1816,15 +1704,19 @@ class Analysis():
 
         # Define the legend items
         legend_items = [
-            {"name": "Mean speed of crossing during day (in m/s)", "color": bar_colour_1},
-            {"name": "Mean speed of crossing during night (in m/s)", "color": bar_colour_2},
-            {"name": "Mean time to start crossing during day (in s)", "color": bar_colour_3},
-            {"name": "Mean time to start crossing during night (in s) ", "color": bar_colour_4},
+            {"name": "Crossing speed during daytime", "color": bar_colour_1},
+            {"name": "Crossing speed during night time", "color": bar_colour_2},
+            {"name": "Crossing decision time during daytime", "color": bar_colour_3},
+            {"name": "Crossing decision time during night time", "color": bar_colour_4},
         ]
 
+        # Add vertical legends with the positions you will provide
+        x_legend_position = 0.84  # Position close to the left edge
+        y_legend_start_bottom = 0.98  # Lower position to the bottom left corner
+
         # Add the vertical legends at the top and bottom
-        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                                 spacing=legend_spacing, font_size=font_size_captions)
+        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position - 0.03,
+                                                 y_start=y_legend_start_bottom - 0.2, spacing=0.05, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -1840,6 +1732,71 @@ class Analysis():
             line=dict(color="black", width=2)  # Black border for the box
         )
 
+        # Split cities into left and right columns
+        left_column_cities = countries_ordered[:num_cities_per_col]
+        right_column_cities = countries_ordered[num_cities_per_col:]
+
+        # # Adjust x positioning for the left and right columns
+        x_position_left = 0.0  # Position for the left column
+        x_position_right = 1.0  # Position for the right column
+        font_size = 15  # Font size for visibility
+
+        # Initialize variables for dynamic y positioning for both columns
+        current_row_left = 1  # Start from the first row for the left column
+        current_row_right = 1  # Start from the first row for the right column
+        y_position_map_left = {}  # Store y positions for each country (left column)
+        y_position_map_right = {}  # Store y positions for each country (right column)
+
+        # Calculate the y positions dynamically for the left column
+        for country in left_column_cities:
+            country = final_dict[country]['iso3']
+
+            if country not in y_position_map_left:  # Add the country label once per country
+                y_position_map_left[country] = 1 - (current_row_left - 1) / ((len(left_column_cities)-0.56) * 2)
+
+            current_row_left += 2  # Increment the row for each city (speed and time take two rows)
+
+        # Calculate the y positions dynamically for the right column
+        for country in right_column_cities:
+            country = final_dict[country]['iso3']
+
+            if country not in y_position_map_right:  # Add the country label once per country
+                y_position_map_right[country] = 1 - (current_row_right - 1) / ((len(right_column_cities)-0.56) * 2)
+
+            current_row_right += 2  # Increment the row for each city (speed and time take two rows)
+
+        # Add annotations for country names dynamically for the left column
+        for country, y_position in y_position_map_left.items():
+            iso2 = Analysis.iso3_to_iso2(country)
+            country = country + Analysis.iso2_to_flag(iso2)
+            fig.add_annotation(
+                x=x_position_left,  # Left column x position
+                y=y_position,  # Calculated y position based on the city order
+                xref="paper", yref="paper",
+                text=country,  # Country name
+                showarrow=False,
+                font=dict(size=font_size, color="black"),
+                xanchor='right',
+                align='right',
+                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
+                # bordercolor="black",  # Border for visibility
+            )
+        # Add annotations for country names dynamically for the right column
+        for country, y_position in y_position_map_right.items():
+            iso2 = Analysis.iso3_to_iso2(country)
+            country = country + Analysis.iso2_to_flag(iso2)
+            fig.add_annotation(
+                x=x_position_right,  # Right column x position
+                y=y_position,  # Calculated y position based on the city order
+                xref="paper", yref="paper",
+                text=country,  # Country name
+                showarrow=False,
+                font=dict(size=font_size, color="black"),
+                xanchor='left',
+                align='left',
+                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
+                # bordercolor="black",  # Border for visibility
+            )
         fig.update_yaxes(
             tickfont=dict(size=14, color="black"),
             showticklabels=True,  # Ensure city names are visible
@@ -1853,13 +1810,12 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=x_axis_title_height))
+        # fig.update_layout(margin=dict(l=80, r=100, t=150, b=180))
         Analysis.save_plotly_figure(fig, "consolidated", height=TALL_FIG_HEIGHT*2, width=4960, scale=SCALE,
-                                    save_final=True, save_eps=False)
+                                    save_final=True)
 
     @staticmethod
-    def plot_speed_to_cross_by_alphabetical_order(df_mapping, font_size_captions=40, x_axis_title_height=110,
-                                                  legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_speed_to_cross_by_alphabetical_order(df_mapping):
         logger.info("Plotting plot_speed_to_cross_by_alphabetical_order")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -1926,10 +1882,6 @@ class Analysis():
         # Plot left column (first half of cities)
         for i, country in enumerate(countries_ordered[:num_cities_per_col]):
             iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
-            # build up textual label for left column
-            iso2 = Analysis.iso3_to_iso2(iso_code)
-            # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
-            country = Analysis.iso2_to_flag(iso2) + " " + country
             # Row for speed (Day and Night)
             row = i + 1
             if day_avg_speed[i] is not None and night_avg_speed[i] is not None:
@@ -1964,17 +1916,10 @@ class Analysis():
             iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
             row = i + 1
             idx = num_cities_per_col + i
-            # build up textual label for right column
-            iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
-            iso2 = Analysis.iso3_to_iso2(iso_code)
-            # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
-            country = Analysis.iso2_to_flag(iso2) + " " + country
             if day_avg_speed[idx] is not None and night_avg_speed[idx] is not None:
                 value = (day_avg_speed[idx] + night_avg_speed[idx])/2
                 fig.add_trace(go.Bar(
                     x=[day_avg_speed[idx]], y=[f'{country} {value:.2f}'], orientation='h',
-                    # todo: show day and night values in all averaged tall figures, also in the paper-1 repo
-                    # x=[day_avg_speed[idx]], y=[f'{country} {value:.2f} (d={day_avg_speed[idx]:.2f}, n={night_avg_speed[idx]:.2f})'], orientation='h',  # noqa: E501
                     name=f"{country} speed during day", marker=dict(color=bar_colour_1), text=[''],
                     textposition='inside', insidetextanchor='start', showlegend=False,
                     textfont=dict(size=14, color='white')), row=row, col=2)
@@ -2044,8 +1989,8 @@ class Analysis():
 
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -2055,8 +2000,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -2106,9 +2051,13 @@ class Analysis():
             {"name": "Night", "color": bar_colour_2},
         ]
 
+        # Add vertical legends with the positions you will provide
+        x_legend_position = 0.92  # Position close to the left edge
+        y_legend_start_bottom = 0.02  # Lower position to the bottom left corner
+
         # Add the vertical legends at the top and bottom
-        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                                 spacing=legend_spacing, font_size=font_size_captions)
+        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
+                                                 y_start=y_legend_start_bottom, spacing=0.015, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -2132,6 +2081,72 @@ class Analysis():
                 country_city_map[country] = []
             country_city_map[country].append(city)
 
+        # Split cities into left and right columns
+        left_column_cities = countries_ordered[:num_cities_per_col]
+        right_column_cities = countries_ordered[num_cities_per_col:]
+
+        # Adjust x positioning for the left and right columns
+        x_position_left = 0.0  # Position for the left column
+        x_position_right = 1.0  # Position for the right column
+        font_size = FLAG_SIZE  # Font size for visibility
+
+        # Initialize variables for dynamic y positioning for both columns
+        current_row_left = 1  # Start from the first row for the left column
+        current_row_right = 1  # Start from the first row for the right column
+        y_position_map_left = {}  # Store y positions for each country (left column)
+        y_position_map_right = {}  # Store y positions for each country (right column)
+
+        # Calculate the y positions dynamically for the left column
+        for city in left_column_cities:
+            country = final_dict[city]['iso3']
+
+            if country not in y_position_map_left:  # Add the country label once per country
+                y_position_map_left[country] = 1 - (current_row_left - 1) / ((len(left_column_cities)-1.12) * 2)
+
+            current_row_left += 2  # Increment the row for each city (speed and time take two rows)
+
+        # Calculate the y positions dynamically for the right column
+        for city in right_column_cities:
+            country = final_dict[city]['iso3']
+
+            if country not in y_position_map_right:  # Add the country label once per country
+                y_position_map_right[country] = 1 - (current_row_right - 1) / ((len(right_column_cities)-1.12) * 2)
+
+            current_row_right += 2  # Increment the row for each city (speed and time take two rows)
+
+        # Add annotations for country names dynamically for the left column
+        for country, y_position in y_position_map_left.items():
+            iso2 = Analysis.iso3_to_iso2(country)
+            country = country + Analysis.iso2_to_flag(iso2)
+            fig.add_annotation(
+                x=x_position_left,  # Left column x position
+                y=y_position,  # Calculated y position based on the city order
+                xref="paper", yref="paper",
+                text=country,  # Country name
+                showarrow=False,
+                font=dict(size=font_size, color="black"),
+                xanchor='right',
+                align='right',
+                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
+                # bordercolor="black",  # Border for visibility
+            )
+
+        # Add annotations for country names dynamically for the right column
+        for country, y_position in y_position_map_right.items():
+            iso2 = Analysis.iso3_to_iso2(country)
+            country = country + Analysis.iso2_to_flag(iso2)
+            fig.add_annotation(
+                x=x_position_right,  # Right column x position
+                y=y_position,  # Calculated y position based on the city order
+                xref="paper", yref="paper",
+                text=country,  # Country name
+                showarrow=False,
+                font=dict(size=font_size, color="black"),
+                xanchor='left',
+                align='left',
+                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
+                # bordercolor="black",  # Border for visibility
+            )
         fig.update_yaxes(
             tickfont=dict(size=TEXT_SIZE, color="black"),
             showticklabels=True,  # Ensure city names are visible
@@ -2145,7 +2160,7 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=80, r=80, t=110, b=10))
         Analysis.save_plotly_figure(fig=fig,
                                     filename="crossing_speed_alphabetical",
                                     width=1240,
@@ -2167,8 +2182,7 @@ class Analysis():
             )
 
     @staticmethod
-    def plot_time_to_start_cross_by_alphabetical_order(df_mapping, font_size_captions=40, x_axis_title_height=110,
-                                                       legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_time_to_start_cross_by_alphabetical_order(df_mapping):
         logger.info("Plotting plot_time_to_start_cross_by_alphabetical_order.")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -2236,9 +2250,6 @@ class Analysis():
             iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
             # Row for time (Day and Night)
             row = i + 1
-            iso2 = Analysis.iso3_to_iso2(iso_code)
-            # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
-            country = Analysis.iso2_to_flag(iso2) + " " + country
             if day_time_dict[i] is not None and night_time_dict[i] is not None:
                 value = (day_time_dict[i] + night_time_dict[i])/2
                 fig.add_trace(go.Bar(
@@ -2272,10 +2283,6 @@ class Analysis():
             iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
             row = i + 1
             idx = num_cities_per_col + i
-            iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
-            iso2 = Analysis.iso3_to_iso2(iso_code)
-            # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
-            country = Analysis.iso2_to_flag(iso2) + iso_code + " " + country
             if day_time_dict[idx] is not None and night_time_dict[idx] is not None:
                 value = (day_time_dict[idx] + day_time_dict[idx])/2
                 fig.add_trace(go.Bar(
@@ -2349,8 +2356,8 @@ class Analysis():
 
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -2360,8 +2367,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -2411,9 +2418,13 @@ class Analysis():
             {"name": "Night", "color": bar_colour_2},
         ]
 
+        # Add vertical legends with the positions you will provide
+        x_legend_position = 0.92  # Position close to the left edge
+        y_legend_start_bottom = 0.02  # Lower position to the bottom left corner
+
         # Add the vertical legends at the top and bottom
-        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                                 spacing=legend_spacing, font_size=font_size_captions)
+        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
+                                                 y_start=y_legend_start_bottom, spacing=0.015, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -2437,6 +2448,72 @@ class Analysis():
                 country_city_map[country] = []
             country_city_map[country].append(city)
 
+        # Split cities into left and right columns
+        left_column_cities = countries_ordered[:num_cities_per_col]
+        right_column_cities = countries_ordered[num_cities_per_col:]
+
+        # Adjust x positioning for the left and right columns
+        x_position_left = 0.0  # Position for the left column
+        x_position_right = 1.0  # Position for the right column
+        font_size = FLAG_SIZE  # Font size for visibility
+
+        # Initialize variables for dynamic y positioning for both columns
+        current_row_left = 1  # Start from the first row for the left column
+        current_row_right = 1  # Start from the first row for the right column
+        y_position_map_left = {}  # Store y positions for each country (left column)
+        y_position_map_right = {}  # Store y positions for each country (right column)
+
+        # Calculate the y positions dynamically for the left column
+        for city in left_column_cities:
+            country = final_dict[city]['iso3']
+
+            if country not in y_position_map_left:  # Add the country label once per country
+                y_position_map_left[country] = 1 - (current_row_left - 1) / ((len(left_column_cities)-1.12) * 2)
+
+            current_row_left += 2  # Increment the row for each city (speed and time take two rows)
+
+        # Calculate the y positions dynamically for the right column
+        for city in right_column_cities:
+            country = final_dict[city]['iso3']
+
+            if country not in y_position_map_right:  # Add the country label once per country
+                y_position_map_right[country] = 1 - (current_row_right - 1) / ((len(right_column_cities)-1.12) * 2)
+
+            current_row_right += 2  # Increment the row for each city (speed and time take two rows)
+
+        # Add annotations for country names dynamically for the left column
+        for country, y_position in y_position_map_left.items():
+            iso2 = Analysis.iso3_to_iso2(country)
+            country = country + Analysis.iso2_to_flag(iso2)
+            fig.add_annotation(
+                x=x_position_left,  # Left column x position
+                y=y_position,  # Calculated y position based on the city order
+                xref="paper", yref="paper",
+                text=country,  # Country name
+                showarrow=False,
+                font=dict(size=font_size, color="black"),
+                xanchor='right',
+                align='right',
+                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
+                # bordercolor="black",  # Border for visibility
+            )
+
+        # Add annotations for country names dynamically for the right column
+        for country, y_position in y_position_map_right.items():
+            iso2 = Analysis.iso3_to_iso2(country)
+            country = country + Analysis.iso2_to_flag(iso2)
+            fig.add_annotation(
+                x=x_position_right,  # Right column x position
+                y=y_position,  # Calculated y position based on the city order
+                xref="paper", yref="paper",
+                text=country,  # Country name
+                showarrow=False,
+                font=dict(size=font_size, color="black"),
+                xanchor='left',
+                align='left',
+                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
+                # bordercolor="black",  # Border for visibility
+            )
         fig.update_yaxes(
             tickfont=dict(size=TEXT_SIZE, color="black"),
             showticklabels=True,  # Ensure city names are visible
@@ -2450,7 +2527,7 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=80, r=80, t=110, b=10))
         Analysis.save_plotly_figure(fig=fig,
                                     filename="time_crossing_alphabetical",
                                     width=2480,
@@ -2459,8 +2536,7 @@ class Analysis():
                                     save_final=True)
 
     @staticmethod
-    def plot_speed_to_cross_by_average(df_mapping, font_size_captions=40, x_axis_title_height=110,
-                                       legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_speed_to_cross_by_average(df_mapping):
         logger.info("Plotting plot_speed_to_cross_by_average.")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -2637,8 +2713,8 @@ class Analysis():
 
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -2648,8 +2724,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -2699,9 +2775,13 @@ class Analysis():
             {"name": "Night", "color": bar_colour_2},
         ]
 
+        # Add vertical legends with the positions you will provide
+        x_legend_position = 0.85  # Position close to the left edge
+        y_legend_start_bottom = 0.05  # Lower position to the bottom left corner
+
         # Add the vertical legends at the top and bottom
-        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                                 spacing=legend_spacing, font_size=font_size_captions)
+        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
+                                                 y_start=y_legend_start_bottom, spacing=0.03, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -2766,13 +2846,13 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=10, r=10, t=150, b=10))
         Analysis.save_plotly_figure(fig, "crossing_speed_avg", width=1200, height=TALL_FIG_HEIGHT, scale=SCALE,
                                     save_final=True)
 
     @staticmethod
-    def plot_speed_to_cross_by_average_day(df_mapping, font_size_captions=40, x_axis_title_height=110):
-        logger.info("Plotting plot_speed_to_cross_by_average_day.")
+    def plot_speed_to_cross_by_average_in_day(df_mapping):
+        logger.info("Plotting plot_speed_to_cross_by_average_in_day.")
         final_dict = {}
         with open(file_results, 'rb') as file:
             data_tuple = pickle.load(file)
@@ -2945,8 +3025,8 @@ class Analysis():
         tick_vals = [0.3, 0.6, 0.9, 1.2, 1.5]
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -2957,8 +3037,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -3025,6 +3105,34 @@ class Analysis():
                 country_city_map[country] = []
             country_city_map[country].append(city)
 
+        # Split cities into left and right columns
+        left_column_cities = countries_ordered[:num_cities_per_col]
+        right_column_cities = countries_ordered[num_cities_per_col:]
+
+        # Initialize variables for dynamic y positioning for both columns
+        current_row_left = 1  # Start from the first row for the left column
+        current_row_right = 1  # Start from the first row for the right column
+        y_position_map_left = {}  # Store y positions for each country (left column)
+        y_position_map_right = {}  # Store y positions for each country (right column)
+
+        # Calculate the y positions dynamically for the left column
+        for city in left_column_cities:
+            country = final_dict[city]['iso3']
+
+            if country not in y_position_map_left:  # Add the country label once per country
+                y_position_map_left[country] = 1 - (current_row_left - 1) / (len(left_column_cities) * 2)
+
+            current_row_left += 2  # Increment the row for each city (speed and time take two rows)
+
+        # Calculate the y positions dynamically for the right column
+        for city in right_column_cities:
+            country = final_dict[city]['iso3']
+
+            if country not in y_position_map_right:  # Add the country label once per country
+                y_position_map_right[country] = 1 - (current_row_right - 1) / (len(right_column_cities) * 2)
+
+            current_row_right += 2  # Increment the row for each city (speed and time take two rows)
+
         fig.update_yaxes(
             tickfont=dict(size=14, color="black"),
             showticklabels=True,  # Ensure city names are visible
@@ -3038,13 +3146,13 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=10, r=10, t=50, b=10))
         Analysis.save_plotly_figure(fig, "crossing_speed_avg_day", width=1200, height=TALL_FIG_HEIGHT, scale=SCALE,
                                     save_final=True)
 
     @staticmethod
-    def plot_speed_to_cross_by_average_night(df_mapping, font_size_captions=40, x_axis_title_height=110):
-        logger.info("Plotting plot_speed_to_cross_by_average_night.")
+    def plot_speed_to_cross_by_average_in_night(df_mapping):
+        logger.info("Plotting plot_speed_to_cross_by_average_in_night.")
         final_dict = {}
         with open(file_results, 'rb') as file:
             data_tuple = pickle.load(file)
@@ -3216,8 +3324,8 @@ class Analysis():
         tick_vals = [0.3, 0.6, 0.9, 1.2, 1.5]
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -3228,8 +3336,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing speed (m/s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -3337,13 +3445,12 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=10, r=10, t=70, b=10))
         Analysis.save_plotly_figure(fig, "crossing_speed_avg_night", width=1200, height=700, scale=SCALE,
                                     save_final=True)
 
     @staticmethod
-    def plot_time_to_start_cross_by_average(df_mapping, font_size_captions=40, x_axis_title_height=150,
-                                            legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_time_to_start_cross_by_average(df_mapping):
         logger.info("Plotting plot_time_to_start_cross_by_average.")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -3419,7 +3526,7 @@ class Analysis():
                     textposition='inside', showlegend=False), row=row, col=1)
 
             elif day_time_dict[i] is not None:  # Only day time data available
-                value = (day_time_dict[i])
+                value = (day_time_dict[i])/2
                 fig.add_trace(go.Bar(
                     x=[day_time_dict[i]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} time during day", marker=dict(color=bar_colour_1),
@@ -3427,7 +3534,7 @@ class Analysis():
                     textfont=dict(size=14, color='white')), row=row, col=1)
 
             elif night_time_dict[i] is not None:  # Only night time data available
-                value = (night_time_dict[i])
+                value = (night_time_dict[i])/2
                 fig.add_trace(go.Bar(
                     x=[night_time_dict[i]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} time during night", marker=dict(color=bar_colour_2),
@@ -3453,7 +3560,7 @@ class Analysis():
                     textposition='inside', showlegend=False), row=row, col=2)
 
             elif day_time_dict[idx] is not None:  # Only day time data available
-                value = (day_time_dict[idx])
+                value = (day_time_dict[idx])/2
                 fig.add_trace(go.Bar(
                     x=[day_time_dict[idx]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} time during day", marker=dict(color=bar_colour_1),
@@ -3461,7 +3568,7 @@ class Analysis():
                     textfont=dict(size=14, color='white')), row=row, col=2)
 
             elif night_time_dict[idx] is not None:  # Only night time data available
-                value = (night_time_dict[idx])
+                value = (night_time_dict[idx])/2
                 fig.add_trace(go.Bar(
                     x=[night_time_dict[idx]], y=[f'{country} {value:.2f}'], orientation='h',
                     name=f"{country} time during night", marker=dict(color=bar_colour_2),
@@ -3513,8 +3620,8 @@ class Analysis():
 
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -3524,8 +3631,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=40)),
+            tickfont=dict(size=40),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -3575,9 +3682,13 @@ class Analysis():
             {"name": "Night", "color": bar_colour_2},
         ]
 
+        # Add vertical legends with the positions you will provide
+        x_legend_position = 0.85  # Position close to the left edge
+        y_legend_start_bottom = 0.05  # Lower position to the bottom left corner
+
         # Add the vertical legends at the top and bottom
-        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                                 spacing=legend_spacing, font_size=font_size_captions)
+        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
+                                                 y_start=y_legend_start_bottom, spacing=0.03, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -3634,13 +3745,12 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=10, r=10, t=150, b=10))
         Analysis.save_plotly_figure(fig, "time_crossing_avg", width=1200, height=TALL_FIG_HEIGHT, scale=SCALE,
                                     save_final=True)
 
     @staticmethod
-    def plot_time_to_start_cross_by_average_day(df_mapping, font_size_captions=40, x_axis_title_height=110,
-                                                legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_time_to_start_cross_by_average_day(df_mapping):
         logger.info("Plotting plot_time_to_start_cross_by_average_day.")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -3811,8 +3921,8 @@ class Analysis():
 
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -3822,8 +3932,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -3922,13 +4032,12 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=10, r=10, t=100, b=10))
         Analysis.save_plotly_figure(fig, "time_crossing_avg_day", width=1200, height=TALL_FIG_HEIGHT, scale=SCALE,
                                     save_final=True)
 
     @staticmethod
-    def plot_time_to_start_cross_by_average_night(df_mapping, font_size_captions=40, x_axis_title_height=110,
-                                                  legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_time_to_start_cross_by_average_night(df_mapping):
         logger.info("Plotting plot_time_to_start_cross_by_average_night.")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -4099,8 +4208,8 @@ class Analysis():
 
         # Set the x-axis labels (title_text) only for the last row and the first row
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -4110,8 +4219,8 @@ class Analysis():
         )
 
         fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
+            title=dict(text="Crossing decision time (s)", font=dict(size=20)),
+            tickfont=dict(size=20),
             ticks='outside',
             ticklen=10,
             tickwidth=2,
@@ -4210,7 +4319,7 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=10))
+        fig.update_layout(margin=dict(l=10, r=10, t=70, b=10))
         Analysis.save_plotly_figure(fig, "time_crossing_avg_night", width=1200, height=700, scale=SCALE,
                                     save_final=True)
 
@@ -4221,8 +4330,7 @@ class Analysis():
         return sum(valid_values) / len(valid_values) if valid_values else 0
 
     @staticmethod
-    def plot_crossing_without_traffic_light(df_mapping, font_size_captions=40, x_axis_title_height=150,
-                                            legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_crossing_without_traffic_light(df_mapping):
         final_dict = {}
         with open(file_results, 'rb') as file:
             data_tuple = pickle.load(file)
@@ -4408,13 +4516,13 @@ class Analysis():
                 )
 
         # Set the x-axis labels (title_text) only for the last row and the first row
-        fig.update_xaxes(title=dict(text="Road crossings without traffic signals (normalised)",
-                         font=dict(size=font_size_captions)), tickfont=dict(size=font_size_captions),
-                         ticks='outside', ticklen=10, tickwidth=2, tickcolor='black', row=1, col=1)
+        fig.update_xaxes(title=dict(text="Road crossings without traffic signals (normalised)", font=dict(size=40)),
+                         tickfont=dict(size=40), ticks='outside', ticklen=10, tickwidth=2,
+                         tickcolor='black', row=1, col=1)
 
-        fig.update_xaxes(title=dict(text="Road crossings without traffic signals (normalised)",
-                         font=dict(size=font_size_captions)), tickfont=dict(size=font_size_captions),
-                         ticks='outside', ticklen=10, tickwidth=2, tickcolor='black', row=1, col=2)
+        fig.update_xaxes(title=dict(text="Road crossings without traffic signals (normalised)", font=dict(size=40)),
+                         tickfont=dict(size=40), ticks='outside', ticklen=10, tickwidth=2,
+                         tickcolor='black', row=1, col=2)
 
         # Update both y-axes (for left and right columns) to hide the tick labels
         fig.update_yaxes(showticklabels=False)
@@ -4458,9 +4566,13 @@ class Analysis():
             {"name": "Night", "color": bar_colour_2},
         ]
 
+        # Add vertical legends with the positions you will provide
+        x_legend_position = 0.92  # Position close to the left edge
+        y_legend_start_bottom = 0.02  # Lower position to the bottom left corner
+
         # Add the vertical legends at the top and bottom
-        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                                 spacing=legend_spacing, font_size=font_size_captions)
+        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
+                                                 y_start=y_legend_start_bottom, spacing=0.015, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -4513,7 +4625,7 @@ class Analysis():
             current_row_right += 2  # Increment the row for each city (speed and time take two rows)
 
         fig.update_yaxes(
-            tickfont=dict(size=font_size_captions, color="black"),
+            tickfont=dict(size=12, color="black"),
             showticklabels=True,  # Ensure city names are visible
             ticklabelposition='inside',  # Move the tick labels inside the bars
         )
@@ -4525,13 +4637,12 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=80, r=80, t=x_axis_title_height, b=x_axis_title_height))
+        fig.update_layout(margin=dict(l=80, r=100, t=150, b=180))
         Analysis.save_plotly_figure(fig, "crossings_without_traffic_equipment_avg",
                                     width=2480, height=TALL_FIG_HEIGHT, scale=SCALE, save_final=True)
 
     @staticmethod
-    def plot_crossing_with_traffic_light(df_mapping, font_size_captions=40, x_axis_title_height=150,
-                                         legend_x=0.92, legend_y=0.015, legend_spacing=0.02):
+    def plot_crossing_with_traffic_light(df_mapping):
         final_dict = {}
         with open(file_results, 'rb') as file:
             data_tuple = pickle.load(file)
@@ -4719,13 +4830,13 @@ class Analysis():
                 )
 
         # Set the x-axis labels (title_text) only for the last row and the first row
-        fig.update_xaxes(title=dict(text="Road crossings with traffic signals (normalised)",
-                         font=dict(size=font_size_captions)), tickfont=dict(size=font_size_captions),
-                         ticks='outside', ticklen=10, tickwidth=2, tickcolor='black', row=1, col=1)
+        fig.update_xaxes(title=dict(text="Road crossings with traffic signals (normalised)", font=dict(size=40)),
+                         tickfont=dict(size=40), ticks='outside', ticklen=10, tickwidth=2,
+                         tickcolor='black', row=1, col=1)
 
-        fig.update_xaxes(title=dict(text="Road crossings with traffic signals (normalised)",
-                         font=dict(size=font_size_captions)), tickfont=dict(size=font_size_captions),
-                         ticks='outside', ticklen=10, tickwidth=2, tickcolor='black', row=1, col=2)
+        fig.update_xaxes(title=dict(text="Road crossings with traffic signals (normalised)", font=dict(size=40)),
+                         tickfont=dict(size=40), ticks='outside', ticklen=10, tickwidth=2,
+                         tickcolor='black', row=1, col=2)
 
         # Update both y-axes (for left and right columns) to hide the tick labels
         fig.update_yaxes(showticklabels=False)
@@ -4769,9 +4880,13 @@ class Analysis():
             {"name": "Night", "color": bar_colour_2},
         ]
 
+        # Add vertical legends with the positions you will provide
+        x_legend_position = 0.92  # Position close to the left edge
+        y_legend_start_bottom = 0.02  # Lower position to the bottom left corner
+
         # Add the vertical legends at the top and bottom
-        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                                 spacing=legend_spacing, font_size=font_size_captions)
+        Analysis.add_vertical_legend_annotations(fig, legend_items, x_position=x_legend_position,
+                                                 y_start=y_legend_start_bottom, spacing=0.015, font_size=40)
 
         # Add a box around the first column (left side)
         fig.add_shape(
@@ -4836,12 +4951,12 @@ class Analysis():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=80, r=80, t=x_axis_title_height, b=x_axis_title_height))
+        fig.update_layout(margin=dict(l=80, r=100, t=150, b=180))
         Analysis.save_plotly_figure(fig, "crossings_with_traffic_equipment_avg", width=2480, height=TALL_FIG_HEIGHT,
                                     scale=SCALE, save_final=True)
 
     @staticmethod
-    def correlation_matrix(df_mapping, save_file=True):
+    def correlation_matrix(df_mapping):
         logger.info("Plotting correlation matrices.")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -5272,20 +5387,12 @@ class Analysis():
             fig.update_xaxes(tickangle=45, tickfont=dict(size=18))
             fig.update_yaxes(tickangle=0, tickfont=dict(size=18))
 
-            # save file to local output folder
-            if save_file:
-                # Final adjustments and display
-                fig.update_layout(margin=dict(l=10, r=10, t=10, b=10))
-                Analysis.save_plotly_figure(fig, f"correlation_matrix_heatmap_{continents}", save_final=True)
-            # open it in localhost instead
-            else:
-                fig.show()
+            Analysis.save_plotly_figure(fig, f"correlation_matrix_heatmap_{continents}", save_final=True)
 
     @staticmethod
     def iso2_to_flag(iso2):
         if iso2 is None:
             # Return a placeholder or an empty string if the ISO-2 code is not available
-            logger.debug("Set ISO-2 to Kosovo.")
             return "🇽🇰"
         return chr(ord('🇦') + (ord(iso2[0]) - ord('A'))) + chr(ord('🇦') + (ord(iso2[1]) - ord('A')))
 
@@ -5336,7 +5443,7 @@ class Analysis():
                 marker_size=None, pretty_text=False, marginal_x='violin', marginal_y='violin', xaxis_title=None,
                 yaxis_title=None, xaxis_range=None, yaxis_range=None, name_file=None, save_file=False,
                 save_final=False, fig_save_width=1320, fig_save_height=680, font_family=None, font_size=None,
-                hover_name=None, legend_title=None, legend_x=None, legend_y=None, label_distance_factor=1.0):
+                hover_name=None, legend_title=None):
         """
         Output scatter plot of variables x and y with optional assignment of colour and size.
 
@@ -5367,9 +5474,6 @@ class Analysis():
             font_size (int, optional): font size to be used across the figure. None = use config value.
             hover_name (list, optional): title on top of hover popup.
             legend_title (list, optional): title on top of legend.
-            legend_x (float, optional): x position of legend.
-            legend_y (float, optional): y position of legend.
-            label_distance_factor (float, optional): multiplier for the threshold to control density of text labels.
         """
         logger.info('Creating scatter plot for x={} and y={}.', x, y)
         # using size and marker_size is not supported
@@ -5415,17 +5519,17 @@ class Analysis():
         # check and clean the data
         df = df.replace([np.inf, -np.inf], np.nan).dropna()  # Remove NaNs and Infs
 
-        if text:
-            if text in df.columns:
+        if text == 'country':
+            if "country" in df.columns:
                 # use KDTree to check point density
                 tree = KDTree(df[[x, y]].values)  # Ensure finite values
                 distances, _ = tree.query(df[[x, y]].values, k=2)  # Find nearest neighbor distance
 
                 # define a distance threshold for labeling
-                threshold = np.mean(distances[:, 1]) * label_distance_factor
+                threshold = np.mean(distances[:, 1])
 
                 # only label points that are not too close to others
-                df["display_label"] = np.where(distances[:, 1] > threshold, df[text], "")
+                df["display_label"] = np.where(distances[:, 1] > threshold, df["country"], "")
 
                 text = "display_label"
             else:
@@ -5480,9 +5584,6 @@ class Analysis():
         else:
             # use value from config file
             fig.update_layout(font=dict(size=common.get_configs('font_size')))
-        # legend
-        if legend_x and legend_y:
-            fig.update_layout(legend=dict(x=legend_x, y=legend_y, bgcolor='rgba(0,0,0,0)'))
         # save file to local output folder
         if save_file:
             # build filename
@@ -5901,14 +6002,8 @@ if __name__ == "__main__":
 
     # Sort by continent and city, both in ascending order
     df_mapping = df_mapping.sort_values(by=["continent", "city"], ascending=[True, True])
-    # Create new df with data grouped by country
+
     df_countries = Analysis.aggregate_by_iso3(df_mapping)
-    # Sort by continent and city, both in ascending order
-    df_countries = df_countries.sort_values(by=["continent", "country"], ascending=[True, True])
-    # Use title case
-    df_countries['country'] = df_countries['country'].str.title()
-    # Save updated mapping file in output
-    df_countries.to_csv(os.path.join(common.output_dir, "df_countries.csv"))
 
     logger.info("Detected:")
     logger.info(f"person: {person_counter}; bicycle: {bicycle_counter}; car: {car_counter}")
@@ -5921,102 +6016,61 @@ if __name__ == "__main__":
     columns_remove = ['videos', 'time_of_day', 'start_time', 'end_time', 'upload_date', 'fps_list', 'vehicle_type']
     hover_data = list(set(df_countries.columns) - set(columns_remove))
 
-    # Map with images. currently works on a 13" MacBook air screen in chrome, as things are hardcoded...
-    Analysis.map_political(df=df_countries, df_mapping=df_mapping, show_cities=True, show_images=True,
-                           hover_data=hover_data, save_file=True, save_final=False) 
-    # Map with no images
-    Analysis.map_political(df=df_countries, df_mapping=df_mapping, show_cities=True, show_images=False,
-                           hover_data=hover_data, save_file=True, save_final=True)
+    df = df_countries.copy()  # copy df to manipulate for output
+
+    # Sort by continent and city, both in ascending order
+    df = df.sort_values(by=["continent", "country"], ascending=[True, True])
+    # map with images
+    Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=True, hover_data=hover_data) 
+    # map with no images
+    Analysis.get_map(df=df, df_mapping=df_mapping, show_cities=True, show_images=False, hover_data=hover_data)
 
     # Amount of footage
-    Analysis.scatter(df=df_countries,
+    Analysis.scatter(df=df,
                      x="total_time",
                      y="person",
                      color="continent",
-                     text="iso3",
+                     text="country",
                      xaxis_title='Total time of footage (s)',
                      yaxis_title='Number of detected pedestrians',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.01,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
-    Analysis.speed_and_time_to_start_cross(df_countries,
-                                           x_axis_title_height=110,
-                                           font_size_captions=common.get_configs("font_size") + 8,
-                                           legend_x=0.87,
-                                           legend_y=0.04,
-                                           legend_spacing=0.01)
-    Analysis.plot_speed_to_cross_by_alphabetical_order(df_countries,
-                                                       x_axis_title_height=60,
-                                                       font_size_captions=common.get_configs("font_size"),
-                                                       legend_x=0.94,
-                                                       legend_y=0.03,
-                                                       legend_spacing=0.02)
-    Analysis.plot_time_to_start_cross_by_alphabetical_order(df_countries,
-                                                            x_axis_title_height=60,
-                                                            font_size_captions=common.get_configs("font_size"),
-                                                            legend_x=0.96,
-                                                            legend_y=0.03,
-                                                            legend_spacing=0.02)
-    Analysis.plot_speed_to_cross_by_average(df_countries,
-                                            x_axis_title_height=60,
-                                            font_size_captions=common.get_configs("font_size"),
-                                            legend_x=0.93,
-                                            legend_y=0.03,
-                                            legend_spacing=0.02)
-    Analysis.plot_speed_to_cross_by_average_day(df_countries,
-                                                x_axis_title_height=50,
-                                                font_size_captions=common.get_configs("font_size"))
-    Analysis.plot_speed_to_cross_by_average_night(df_countries,
-                                                  x_axis_title_height=50,
-                                                  font_size_captions=common.get_configs("font_size"))
-    Analysis.plot_time_to_start_cross_by_average(df_countries,
-                                                 x_axis_title_height=60,
-                                                 font_size_captions=common.get_configs("font_size"),
-                                                 legend_x=0.93,
-                                                 legend_y=0.03,
-                                                 legend_spacing=0.02)
-    Analysis.plot_time_to_start_cross_by_average_day(df_countries,
-                                                     x_axis_title_height=60,
-                                                     font_size_captions=common.get_configs("font_size"),
-                                                     legend_x=0.96,
-                                                     legend_y=0.03,
-                                                     legend_spacing=0.02)
-    Analysis.plot_time_to_start_cross_by_average_night(df_countries,
-                                                       x_axis_title_height=60,
-                                                       font_size_captions=common.get_configs("font_size"),
-                                                       legend_x=0.96,
-                                                       legend_y=0.03,
-                                                       legend_spacing=0.02)
+    Analysis.speed_and_time_to_start_cross(df_countries)
+    Analysis.plot_speed_to_cross_by_alphabetical_order(df_countries)
+    Analysis.plot_time_to_start_cross_by_alphabetical_order(df_countries)
+    Analysis.plot_speed_to_cross_by_average(df_countries)
+    Analysis.plot_speed_to_cross_by_average_in_day(df_countries)
+    Analysis.plot_speed_to_cross_by_average_in_night(df_countries)
+    Analysis.plot_time_to_start_cross_by_average(df_countries)
+    Analysis.plot_time_to_start_cross_by_average_day(df_countries)
+    Analysis.plot_time_to_start_cross_by_average_night(df_countries)
     Analysis.correlation_matrix(df_countries)
+
+    df_countries['country'] = df_countries['country'].str.title()
 
     # Speed of crossing vs time to start crossing
     df = df_countries[df_countries["speed_crossing_avg"] != 0].copy()
+
     df = df[df["time_crossing_avg"] != 0]
+
     Analysis.scatter(df=df,
                      x="speed_crossing_avg",
                      y="time_crossing_avg",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean speed of crossing (in m/s)',
-                     yaxis_title='Mean time to start crossing (in s)',
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
+                     yaxis_title='Crossing decision time (in s)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6027,18 +6081,14 @@ if __name__ == "__main__":
                      x="speed_crossing_day",
                      y="time_crossing_day",
                      color="continent",
-                     text="iso3",
+                     text="country",
                      xaxis_title='Crossing speed during daytime (in m/s)',
                      yaxis_title='Crossing decision time during daytime (in s)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6049,18 +6099,14 @@ if __name__ == "__main__":
                      x="speed_crossing_night",
                      y="time_crossing_night",
                      color="continent",
-                     text="iso3",
+                     text="country",
                      xaxis_title='Crossing speed during night time (in m/s)',
                      yaxis_title='Crossing decision time during night time (in s)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6071,18 +6117,14 @@ if __name__ == "__main__":
                      x="time_crossing_avg",
                      y="population_country",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean time to start crossing (in s)',
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
                      yaxis_title='Population of country',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6093,18 +6135,14 @@ if __name__ == "__main__":
                      x="speed_crossing_avg",
                      y="population_country",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean speed of crossing (in m/s)',
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
                      yaxis_title='Population of country',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.2,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6115,18 +6153,14 @@ if __name__ == "__main__":
                      x="time_crossing_avg",
                      y="traffic_mortality",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean time to start crossing (in s)',
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
                      yaxis_title='National traffic mortality rate (per 100,000 of population)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6137,18 +6171,14 @@ if __name__ == "__main__":
                      x="speed_crossing_avg",
                      y="traffic_mortality",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean speed of crossing (in m/s)',
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
                      yaxis_title='National traffic mortality rate (per 100,000 of population)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.3,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6159,18 +6189,14 @@ if __name__ == "__main__":
                      x="time_crossing_avg",
                      y="literacy_rate",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean time to start crossing (in s)',
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
                      yaxis_title='Literacy rate',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=0.01,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6181,18 +6207,14 @@ if __name__ == "__main__":
                      x="speed_crossing_avg",
                      y="literacy_rate",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean speed of crossing (in m/s)',
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
                      yaxis_title='Literacy rate',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=0.01,
-                     label_distance_factor=0.4,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6203,18 +6225,14 @@ if __name__ == "__main__":
                      x="time_crossing_avg",
                      y="gini",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean time to start crossing (in s)',
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
                      yaxis_title='Gini coefficient',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6225,18 +6243,14 @@ if __name__ == "__main__":
                      x="speed_crossing_avg",
                      y="gini",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean speed of crossing (in m/s)',
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
                      yaxis_title='Gini coefficient',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6247,19 +6261,15 @@ if __name__ == "__main__":
                      x="time_crossing_avg",
                      y="traffic_index",
                      color="continent",
-                     text="iso3",
+                     text="country",
                      # size="gmp",
-                     xaxis_title='Mean time to start crossing (in s)',
+                     xaxis_title='Crossing decision time (in s)',
                      yaxis_title='Traffic index',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6270,18 +6280,14 @@ if __name__ == "__main__":
                      x="speed_crossing_avg",
                      y="traffic_index",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean speed of crossing (in m/s)',
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
                      yaxis_title='Traffic index',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.4,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6292,18 +6298,14 @@ if __name__ == "__main__":
                      x="time_crossing_avg",
                      y="cellphone_normalised",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean time to start crossing (in s)',
+                     text="country",
+                     xaxis_title='Crossing decision time (in s)',
                      yaxis_title='Mobile phones detected (normalised over time)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -6314,38 +6316,20 @@ if __name__ == "__main__":
                      x="speed_crossing_avg",
                      y="cellphone_normalised",
                      color="continent",
-                     text="iso3",
-                     xaxis_title='Mean speed of crossing (in m/s)',
+                     text="country",
+                     xaxis_title='Crossing speed (in m/s)',
                      yaxis_title='Mobile phones detected (normalised over time)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
     # Jaywalking
-    Analysis.plot_crossing_without_traffic_light(df_countries,
-                                                 x_axis_title_height=60,
-                                                 font_size_captions=common.get_configs("font_size"),
-                                                 legend_x=0.96,
-                                                 legend_y=0.03,
-                                                 legend_spacing=0.02)
-    Analysis.plot_crossing_with_traffic_light(df_countries,
-                                              x_axis_title_height=60,
-                                              font_size_captions=common.get_configs("font_size"),
-                                              legend_x=0.96,
-                                              legend_y=0.03,
-                                              legend_spacing=0.02)
-
-    # Maps with heatmaps
-    Analysis.map(df_countries, 'speed_crossing_avg', "Mean speed of crossing (in m/s)", save_file=True)
-    Analysis.map(df_countries, 'time_crossing_avg', "Mean time to start crossing (in s)", save_file=True)
+    Analysis.plot_crossing_without_traffic_light(df_countries)
+    Analysis.plot_crossing_with_traffic_light(df_countries)
 
     # Crossing with and without traffic lights
     df = df_countries.copy()
@@ -6357,20 +6341,19 @@ if __name__ == "__main__":
                      x="with_trf_light_norm",
                      y="without_trf_light_norm",
                      color="continent",
-                     text="iso3",
+                     text="country",
                      xaxis_title='Crossing events with traffic lights (normalised)',
                      yaxis_title='Crossing events without traffic lights (normalised)',
                      pretty_text=False,
-                     marker_size=10,
                      save_file=True,
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.87,
-                     legend_y=1.0,
-                     label_distance_factor=0.5,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
+
+    Analysis.map(df_countries, 'speed_crossing_avg', "Speed of crossing")
+    Analysis.map(df_countries, 'time_crossing_avg', "Time to start crossing")
 
     # Exclude zero values before finding min
     nonzero_speed = df_countries[df_countries["speed_crossing_avg"] > 0]
@@ -6401,8 +6384,14 @@ if __name__ == "__main__":
     logger.info(f"Country with the highest average crossing time: {df_countries.loc[max_time_idx, 'country']} "
                 f"({df_countries.loc[max_time_idx, 'time_crossing_avg']:.2f})")
 
-    logger.info(f"Country with the lowest non-zero average crossing time: {nonzero_time.loc[min_time_idx, 'country']} "  # noqa: E501
+    logger.info(f"Country with the lowest non-zero average crossing time: {nonzero_time.loc[min_time_idx, 'country']} "
                 f"({nonzero_time.loc[min_time_idx, 'time_crossing_avg']:.2f})")
 
     logger.info(f"Mean crossing time (non-zero): {time_mean:.2f}")
     logger.info(f"Standard deviation of crossing time (non-zero): {time_std:.2f}")
+
+    df.to_csv('df_countries.csv', index=False)
+
+# TODO: need to make a function a function which gives a mp4 or gif file.
+# TODO: check the crossing pedestrian whether they stay for more than a certain period in the screen.
+# TODO: detect the difference between pedestrian and cyclist/motorcyclist.
