@@ -1636,7 +1636,6 @@ class Analysis():
             row = 2 * i + 1
             idx = num_cities_per_col + i
             # build up textual label for left column
-            iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
             iso2 = Analysis.iso3_to_iso2(iso_code)
             # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
             country = Analysis.iso2_to_flag(iso2) + " " + country
@@ -5301,7 +5300,8 @@ class Analysis():
             country = pycountry.countries.get(alpha_3=iso3_code)
             # Return the ISO-2 code
             return country.alpha_2 if country else None
-        except AttributeError:
+        except AttributeError or LookupError as e:
+            logger.debug(f"Converting up ISO-3 {iso3_code} to ISO-2 returned error: {e}.")
             return None
 
     @staticmethod

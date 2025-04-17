@@ -74,7 +74,7 @@ Mean time to start crossing (in s, sorted by countries).
 [![Mean time to start crossing (in s, sorted by average of day and night)](figures/time_crossing_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg.html)
 Mean time to start crossing (in s, sorted by average of day and night).
 
-[![ Map with mean time to start crossing (in s, sorted by average of day and night)](figures/mapbox_map_time_crossing_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/mapbox_map_time_crossing_avg.html)
+[![ Map with mean time to start crossing (in s, sorted by average of day and night)](figures/map_time_crossing_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_time_crossing_avg.html)
 Map with heatmap based on time to start crossing (in s, sorted by average of day and night).
 
 [![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_avg_day.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg_day.html)
@@ -90,7 +90,7 @@ Mean speed of crossing (in m/s, sorted by countries).
 [![Mean speed of crossing (in m/s, sorted by average of day and night)](figures/crossing_speed_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_avg.html)
 Mean speed of crossing (in m/s, sorted by average of day and night).
 
-[![ Map with mean speed of crossing (in m/s, sorted by average of day and night)](figures/mapbox_map_speed_crossing_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/mapbox_map_speed_crossing_avg.html)
+[![ Map with mean speed of crossing (in m/s, sorted by average of day and night)](figures/map_speed_crossing_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_speed_crossing_avg.html)
 Map with heatmap based on mean speed of crossing (in m/s, sorted by average of day and night).
 
 [![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_avg_day.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_avg_day.html)
