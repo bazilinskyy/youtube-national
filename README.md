@@ -64,6 +64,9 @@ Mean time to start crossing and Mean speed of crossing (in m/s, sorted by countr
 [![Total time of footage over number of detected pedestrians](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person.html)
 Total time of footage over number of detected pedestrians.
 
+[![Total time of footage over number of detected bicycles](figures/scatter_total_time-bicycle.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-bicycle.html)
+Total time of footage over number of detected bicycles.
+
 ### Time to start crossing
 [![Mean time to start crossing (in s, sorted by countries](figures/time_crossing_alphabetical.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical.html)
 Mean time to start crossing (in s, sorted by countries).
