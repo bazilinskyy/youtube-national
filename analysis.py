@@ -986,7 +986,7 @@ class Analysis():
         return info
 
     @staticmethod
-    def calculate_speed_of_crossing(df_mapping, dfs, data, person_id=0):
+    def speed_of_crossing(df_mapping, dfs, data, person_id=0):
         speed_dict = {}
         time_ = []
         # Iterate over each video data
@@ -1030,14 +1030,14 @@ class Analysis():
     @staticmethod
     def avg_speed_of_crossing(df_mapping, dfs, data):
 
-        speed_array = Analysis.calculate_speed_of_crossing(df_mapping, dfs, data)
+        speed_array = Analysis.speed_of_crossing(df_mapping, dfs, data)
         avg_speed = {key: sum(values) / len(values) for key, values in speed_array.items()}
 
         return avg_speed
 
     @staticmethod
     def combined_avg_day_and_night_speed(df_mapping, dfs, data):
-        speed = Analysis.calculate_speed_of_crossing(df_mapping, dfs, data)
+        speed = Analysis.speed_of_crossing(df_mapping, dfs, data)
 
         country_values = defaultdict(list)
         for key, values in speed.items():
@@ -1084,6 +1084,9 @@ class Analysis():
                                 if consecutive_frame == 3:  # Check for three consecutive frames
                                     flag = 1
                             elif flag == 1:
+                                # TODO: Check this out
+                                if consecutive_frame > 9 * (fps / 10):
+                                    continue
                                 data_cross[unique_id] = consecutive_frame
                                 break
                             else:
@@ -1095,6 +1098,8 @@ class Analysis():
                                 if consecutive_frame == 3:  # Check for three consecutive frames
                                     flag = 1
                             elif flag == 1:
+                                if consecutive_frame > 9 * (fps / 10):
+                                    continue
                                 data_cross[unique_id] = consecutive_frame
                                 break
                             else:
@@ -2275,7 +2280,7 @@ class Analysis():
             iso_code = Analysis.get_value(df_mapping, "country", country, None, None, "iso3")
             iso2 = Analysis.iso3_to_iso2(iso_code)
             # country = Analysis.iso2_to_flag(iso2) + " " + iso_code + " " + country
-            country = Analysis.iso2_to_flag(iso2) + iso_code + " " + country
+            country = Analysis.iso2_to_flag(iso2) + " " + country
             if day_time_dict[idx] is not None and night_time_dict[idx] is not None:
                 value = (day_time_dict[idx] + day_time_dict[idx])/2
                 fig.add_trace(go.Bar(
@@ -5737,7 +5742,7 @@ if __name__ == "__main__":
 
         # Aggregated values
         logger.info("Calculating aggregated values for crossing speed.")
-        speed_values = Analysis.calculate_speed_of_crossing(df_mapping, dfs, data)
+        speed_values = Analysis.speed_of_crossing(df_mapping, dfs, data)
         avg_speed = Analysis.avg_speed_of_crossing(df_mapping, dfs, data)
         avg_speed_day_and_night = Analysis.combined_avg_day_and_night_speed(df_mapping, dfs, data)
 
