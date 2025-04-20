@@ -1253,7 +1253,7 @@ class Analysis():
                 counter_2[f'{country}_{condition}'] = counter_2.get(f'{country}_{condition}', 0) + counter_nt_exists
         return counter_1, counter_2, time_
 
-    # todo: combine methods for looking at crossing events with/without traffic lights
+    # TODO: combine methods for looking at crossing events with/without traffic lights
     @staticmethod
     def crossing_event_wt_traffic_light(df_mapping, dfs, data):
         """Plots traffic mortality rate vs percentage of crossing events without traffic light.
@@ -1356,7 +1356,7 @@ class Analysis():
         return final
 
     # Plotting functions:
-    # todo: xtick and labels shown incorrectly
+    # TODO: xtick and labels shown incorrectly
     @staticmethod
     def speed_and_time_to_start_cross(df_mapping, font_size_captions=40, x_axis_title_height=150, legend_x=0.81,
                                       legend_y=0.98, legend_spacing=0.02):
@@ -1796,7 +1796,7 @@ class Analysis():
         )
 
         # Set the x-axis range to cover the values you want in x_grid_values
-        # todo: move away from hardcoded xtick values
+        # TODO: move away from hardcoded xtick values
         x_grid_values = [2, 4, 6, 8, 10, 12, 14, 16, 18]
 
         for x in x_grid_values:
@@ -1977,7 +1977,7 @@ class Analysis():
                 value = (day_avg_speed[idx] + night_avg_speed[idx])/2
                 fig.add_trace(go.Bar(
                     x=[day_avg_speed[idx]], y=[f'{country} {value:.2f}'], orientation='h',
-                    # todo: show day and night values in all averaged tall figures, also in the paper-1 repo
+                    # TODO: show day and night values in all averaged tall figures, also in the paper-1 repo
                     # x=[day_avg_speed[idx]], y=[f'{country} {value:.2f} (d={day_avg_speed[idx]:.2f}, n={night_avg_speed[idx]:.2f})'], orientation='h',  # noqa: E501
                     name=f"{country} speed during day", marker=dict(color=bar_colour_1), text=[''],
                     textposition='inside', insidetextanchor='start', showlegend=False,
@@ -5803,7 +5803,7 @@ if __name__ == "__main__":
                     df_mapping["country"] == country, "time_crossing_avg"
                 ] = float(value)
 
-        # todo: these functions are slow, and they are possible not needed now as counts are added to df_mapping
+        # TODO: these functions are slow, and they are possible not needed now as counts are added to df_mapping
         logger.info("Calculating counts of detected traffic signs.")
         traffic_sign_city = Analysis.calculate_traffic_signs(df_mapping, dfs)
         logger.info("Calculating counts of detected mobile phones.")
@@ -5908,12 +5908,16 @@ if __name__ == "__main__":
 
     # Sort by continent and city, both in ascending order
     df_mapping = df_mapping.sort_values(by=["continent", "city"], ascending=[True, True])
+
     # Create new df with data grouped by country
     df_countries = Analysis.aggregate_by_iso3(df_mapping)
+
     # Sort by continent and city, both in ascending order
     df_countries = df_countries.sort_values(by=["continent", "country"], ascending=[True, True])
+
     # Use title case
     df_countries['country'] = df_countries['country'].str.title()
+
     # Save updated mapping file in output
     df_countries.to_csv(os.path.join(common.output_dir, "df_countries.csv"))
 
