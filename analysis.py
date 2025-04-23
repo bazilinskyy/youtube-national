@@ -3984,6 +3984,7 @@ if __name__ == "__main__":
     df_countries['country'] = df_countries['country'].str.title()
 
     # Save updated mapping file in output
+    os.makedirs(common.output_dir, exist_ok=True)  # check if folder exists
     df_countries.to_csv(os.path.join(common.output_dir, "df_countries.csv"))
 
     logger.info("Detected:")
