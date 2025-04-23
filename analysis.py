@@ -4102,9 +4102,9 @@ if __name__ == "__main__":
                                     filename="time_to_cross_avg_day",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4115,9 +4115,9 @@ if __name__ == "__main__":
                                     filename="time_to_cross_alphabetical_day",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4128,9 +4128,9 @@ if __name__ == "__main__":
                                     filename="crossing_speed_avg_day",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4141,9 +4141,9 @@ if __name__ == "__main__":
                                     filename="crossing_speed_avg_day",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     # Plotting stacked plot in night
@@ -4155,9 +4155,9 @@ if __name__ == "__main__":
                                     filename="time_to_cross_avg_night",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4168,9 +4168,9 @@ if __name__ == "__main__":
                                     filename="time_to_cross_alphabetical_night",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4181,9 +4181,9 @@ if __name__ == "__main__":
                                     filename="crossing_speed_avg_day",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4194,9 +4194,9 @@ if __name__ == "__main__":
                                     filename="crossing_speed_alphabetical_day",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
-                                    # legend_x=0.87,
-                                    # legend_y=0.04,
-                                    # legend_spacing=0.01
+                                    legend_x=0.87,
+                                    legend_y=0.04,
+                                    legend_spacing=0.01
                                     )
 
     Analysis.speed_and_time_to_start_cross(df_countries,
