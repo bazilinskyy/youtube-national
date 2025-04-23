@@ -4098,7 +4098,7 @@ if __name__ == "__main__":
                                     data_view="day",
                                     title_text="Time to start crossing (s)",
                                     filename="time_crossing_avg_day",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4107,7 +4107,7 @@ if __name__ == "__main__":
                                     data_view="day",
                                     title_text="Time to start crossing (s)",
                                     filename="time_crossing_alphabetical_day",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4116,7 +4116,7 @@ if __name__ == "__main__":
                                     data_view="day",
                                     title_text="Mean speed of crossing (in m/s)",
                                     filename="crossing_speed_avg_day",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4125,7 +4125,7 @@ if __name__ == "__main__":
                                     data_view="day",
                                     title_text="Mean speed of crossing (in m/s)",
                                     filename="crossing_speed_alphabetical_day",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     # Plotting stacked plot during night
@@ -4135,7 +4135,7 @@ if __name__ == "__main__":
                                     data_view="night",
                                     title_text="Time to start crossing (s)",
                                     filename="time_crossing_avg_night",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4144,7 +4144,7 @@ if __name__ == "__main__":
                                     data_view="night",
                                     title_text="Time to start crossing (s)",
                                     filename="time_crossing_alphabetical_night",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4153,7 +4153,7 @@ if __name__ == "__main__":
                                     data_view="night",
                                     title_text="Mean speed of crossing (in m/s)",
                                     filename="crossing_speed_avg_night",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     Analysis.plot_stacked_bar_graph(df_countries,
@@ -4162,7 +4162,7 @@ if __name__ == "__main__":
                                     data_view="night",
                                     title_text="Mean speed of crossing (in m/s)",
                                     filename="crossing_speed_alphabetical_night",
-                                    x_axis_title_height=60,
+                                    x_axis_title_height=70,
                                     font_size_captions=common.get_configs("font_size"))
 
     Analysis.speed_and_time_to_start_cross(df_countries,
