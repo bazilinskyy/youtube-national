@@ -4178,7 +4178,7 @@ if __name__ == "__main__":
                                     metric="speed",
                                     data_view="night",
                                     title_text="Mean speed of crossing (in m/s)",
-                                    filename="crossing_speed_avg_day",
+                                    filename="crossing_speed_avg_night",
                                     x_axis_title_height=50,
                                     font_size_captions=common.get_configs("font_size"),
                                     legend_x=0.87,
