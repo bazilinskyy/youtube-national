@@ -10,7 +10,7 @@ Tested with Python 3.9.19. To setup the environment run these two commands in a 
 
 Clone the repository
 ```command line
-git clone https://github.com/bazilinskyy/youtube-dashcam
+git clone https://github.com/bazilinskyy/youtube-national
 ```
 
 **Step 2:**
@@ -52,14 +52,9 @@ python3 analysis.py
 
 ## Description and analysis of dataset
 ### Description of dataset
-<!-- [![Locations of cities with footage in dataset](figures/world_map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/world_map.html)
-Locations of cities with footage in dataset. -->
 
 [![Locations of cities with footage in dataset](figures/map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map.html)
 The 133 countries with dashcam footage included in analysis on the political map (coloured by continent). Black dots show the cities included.
-
-<!-- [![Mean time to start crossing and Mean speed of crossing (in m/s, sorted by countries)](figures/consolidated.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/consolidated.html)
-Mean time to start crossing and Mean speed of crossing (in m/s, sorted by countries). -->
 
 [![Total time of footage over number of detected pedestrians](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person.html)
 Total time of footage over number of detected pedestrians.
@@ -184,4 +179,4 @@ Road crossings with and without traffic signals (normalised over time and number
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contact
-If you have any questions or suggestions, feel free to reach out to md_shadab_alam@outlook.com
+If you have any questions or suggestions, feel free to reach out to md_shadab_alam@outlook.com.
