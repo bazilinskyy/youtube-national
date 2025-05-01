@@ -3405,7 +3405,7 @@ class Analysis():
                 marker_size=None, pretty_text=False, marginal_x='violin', marginal_y='violin', xaxis_title=None,
                 yaxis_title=None, xaxis_range=None, yaxis_range=None, name_file=None, save_file=False,
                 save_final=False, fig_save_width=1320, fig_save_height=680, font_family=None, font_size=None,
-                hover_name=None, legend_title=None, legend_x=None, legend_y=None, label_distance_factor=1.0):
+                hover_name=None, legend_title=None, legend_x=None, legend_y=None, label_distance_factor=None):
         """
         Output scatter plot of variables x and y with optional assignment of colour and size.
 
@@ -3486,17 +3486,18 @@ class Analysis():
 
         if text:
             if text in df.columns:
-                # use KDTree to check point density
-                tree = KDTree(df[[x, y]].values)  # Ensure finite values
-                distances, _ = tree.query(df[[x, y]].values, k=2)  # Find nearest neighbor distance
+                if label_distance_factor:
+                    # use KDTree to check point density
+                    tree = KDTree(df[[x, y]].values)  # Ensure finite values
+                    distances, _ = tree.query(df[[x, y]].values, k=2)  # Find nearest neighbor distance
 
-                # define a distance threshold for labeling
-                threshold = np.mean(distances[:, 1]) * label_distance_factor
+                    # define a distance threshold for labeling
+                    threshold = np.mean(distances[:, 1]) * label_distance_factor
 
-                # only label points that are not too close to others
-                df["display_label"] = np.where(distances[:, 1] > threshold, df[text], "")
+                    # only label points that are not too close to others
+                    df["display_label"] = np.where(distances[:, 1] > threshold, df[text], "")
 
-                text = "display_label"
+                    text = "display_label"
             else:
                 logger.warning("Column 'country' not found, skipping display_label logic.")
 
@@ -4045,9 +4046,9 @@ if __name__ == "__main__":
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.01,
+                     legend_x=0.94,
                      legend_y=1.0,
-                     label_distance_factor=0.1,
+                     # label_distance_factor=0.1,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -4087,9 +4088,9 @@ if __name__ == "__main__":
                      hover_data=hover_data,
                      hover_name="country",
                      legend_title="",
-                     legend_x=0.01,
+                     legend_x=0.94,
                      legend_y=1.0,
-                     label_distance_factor=0.1,
+                     # label_distance_factor=0.1,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
