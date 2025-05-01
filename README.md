@@ -87,15 +87,20 @@ Configuration of the project needs to be defined in `config`. Please use the `de
 
 ## Description and analysis of dataset
 ### Description of dataset
-
 [![Locations of cities with footage in dataset](figures/map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map.html)
 The 133 countries with dashcam footage included in analysis on the political map (coloured by continent). Black dots show the cities included.
 
 [![Total time of footage over number of detected pedestrians](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person.html)
 Total time of footage over number of detected pedestrians.
 
+[![Total time of footage over number of detected pedestrians normalised](figures/scatter_total_time-person_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person_norm.html)
+Total time of footage over number of detected pedestrians normalised over amount of footage.
+
 [![Total time of footage over number of detected bicycles](figures/scatter_total_time-bicycle.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-bicycle.html)
 Total time of footage over number of detected bicycles.
+
+[![Total time of footage over number of detected bicycles normalised](figures/scatter_total_time-bicycle_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-bicycle_norm.html)
+Total time of footage over number of detected bicycles normalised over amount of footage.
 
 ### Time to start crossing
 [![Mean time to start crossing (in s, sorted by countries](figures/time_crossing_alphabetical.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical.html)
