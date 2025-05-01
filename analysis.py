@@ -4047,7 +4047,7 @@ if __name__ == "__main__":
                      legend_title="",
                      legend_x=0.01,
                      legend_y=1.0,
-                     label_distance_factor=0.5,
+                     label_distance_factor=0.1,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
@@ -4089,7 +4089,7 @@ if __name__ == "__main__":
                      legend_title="",
                      legend_x=0.01,
                      legend_y=1.0,
-                     label_distance_factor=0.5,
+                     label_distance_factor=0.1,
                      marginal_x=None,  # type: ignore
                      marginal_y=None)  # type: ignore
 
