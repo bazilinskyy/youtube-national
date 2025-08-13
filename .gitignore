@@ -6,11 +6,15 @@ _output/
 video/
 videos/
 data/
+data_country/
+data-bkp/
 source_videos/
+saved_snaps
 
 # Model files
 yolov8x.pt
 yolo11x.pt
+yolo11x-seg.pt
 
 # Python environment files
 .vscode/
@@ -18,10 +22,6 @@ yolo11x.pt
 __pycache__/
 *.pyc
 *.egg-info/
-
-# Scripts
-run_download.py
-check.py
 
 # macOS specific files
 **/.DS_Store
@@ -33,8 +33,9 @@ check.py
 # Instance specific files
 config
 secret
-mapping_queue.csv
-last_updated_pytube.txt
+
+# mapping_queue.csv
+mapping_bkp.csv
 
 # Pickle files
 *.pickle
@@ -57,3 +58,4 @@ Dockerfile
 
 # log of upgrades
 upgrade_log.json
+
