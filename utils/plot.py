@@ -20,6 +20,7 @@ import plotly.express as px
 from scipy.spatial import KDTree
 import statistics
 import itertools
+from PIL import Image
 
 
 # Suppress the specific FutureWarning
@@ -133,1233 +134,6 @@ class Plots():
                                 os.path.join(output_final, filename + ".eps"))
         except ValueError as e:
             logger.error(f"Value error raised when attempted to save image {filename}: {e}")
-
-    def stack_plot(self, df_mapping, order_by, metric, data_view, title_text, filename, analysis_level="city",
-                   font_size_captions=40, x_axis_title_height=110, legend_x=0.92, legend_y=0.015, legend_spacing=0.02,
-                   left_margin=10, right_margin=10):
-        """
-        Plots a stacked bar graph based on the provided data and configuration.
-
-        Parameters:
-            df_mapping (dict): A dictionary mapping categories to their respective DataFrames.
-            order_by (str): Criterion to order the bars, e.g., 'alphabetical' or 'average'.
-            metric (str): The metric to visualise, such as 'speed' or 'time'.
-            data_view (str): Determines which subset of data to visualise, such as 'day', 'night', or 'combined'.
-            title_text (str): The title of the plot.
-            filename (str): The name of the file to save the plot as.
-            font_size_captions (int, optional): Font size for captions. Default is 40.
-            x_axis_title_height (int, optional): Vertical space for x-axis title. Default is 110.
-            legend_x (float, optional): X position of the legend. Default is 0.92.
-            legend_y (float, optional): Y position of the legend. Default is 0.015.
-            legend_spacing (float, optional): Spacing between legend entries. Default is 0.02.
-
-        Returns:
-            None
-        """
-
-        # Define log messages in a structured way
-        log_messages = {
-            ("alphabetical", "speed", "day"): "Plotting speed to cross by alphabetical order during day time.",
-            ("alphabetical", "speed", "night"): "Plotting speed to cross by alphabetical order during night time.",
-            ("alphabetical", "speed", "combined"): "Plotting speed to cross by alphabetical order.",
-            ("alphabetical", "time", "day"): "Plotting time to start cross by alphabetical order during day time.",
-            ("alphabetical", "time", "night"): "Plotting time to start cross by alphabetical order during night time.",
-            ("alphabetical", "time", "combined"): "Plotting time to start cross by alphabetical order.",
-            ("average", "speed", "day"): "Plotting speed to cross by average during day time.",
-            ("average", "speed", "night"): "Plotting speed to cross by averageduring night time.",
-            ("average", "speed", "combined"): "Plotting speed to cross by average.",
-            ("average", "time", "day"): "Plotting time to start cross by average during day time.",
-            ("average", "time", "night"): "Plotting time to start cross by average during night time.",
-            ("average", "time", "combined"): "Plotting time to start cross by average."
-        }
-
-        message = log_messages.get((order_by, metric, data_view))
-        final_dict = {}
-
-        if message:
-            logger.info(message)
-
-        # Map metric names to their index in the data tuple
-        if analysis_level == "city":
-            metric_index_map = {
-                "speed": 25,
-                "time": 24
-            }
-        elif analysis_level == "country":
-            metric_index_map = {
-                "speed": 27,
-                "time": 28
-                }
-
-        if metric not in metric_index_map:
-            raise ValueError(f"Unsupported metric: {metric}")
-
-        with open(file_results, 'rb') as file:
-            data_tuple = pickle.load(file)
-
-        metric_data = data_tuple[metric_index_map[metric]]
-
-        if metric_data is None:
-            raise ValueError(f"'{metric}' returned None, please check the input data or calculations.")
-
-        # Clean NaNs
-        metric_data = {
-            key: value for key, value in metric_data.items()
-            if not (isinstance(value, float) and math.isnan(value))
-        }
-
-        if analysis_level == "city":
-            # Now populate the final_dict with city-wise speed data
-            for city_condition, _ in tqdm(metric_data.items()):
-                city, lat, long, condition = city_condition.split('_')
-
-                # Get the country from the previously stored city_country_map
-                country = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "country")
-                iso_code = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "iso3")
-
-                if country or iso_code is not None:
-                    # Initialise the city's dictionary if not already present
-                    if f'{city}_{lat}_{long}' not in final_dict:
-                        final_dict[f'{city}_{lat}_{long}'] = {f"{metric}_0": None,
-                                                              f"{metric}_1": None,
-                                                              "country": country,
-                                                              "iso": iso_code}
-
-                    # Populate the corresponding speed based on the condition
-                    final_dict[f'{city}_{lat}_{long}'][f"{metric}_{condition}"] = _
-
-        if analysis_level == "country":
-            for country_condition, _ in tqdm(metric_data.items()):
-                country, condition = country_condition.split('_')
-
-                # Get the iso3 from the mapping file
-                iso_code = values_class.get_value(df=df_mapping,
-                                                  column_name1="country",
-                                                  column_value1=country,
-                                                  column_name2=None,
-                                                  column_value2=None,
-                                                  target_column="iso3")
-
-                if country is not None or iso_code is not None:
-                    # Initialise the city's dictionary if not already present
-                    if f'{country}' not in final_dict:
-                        final_dict[f'{country}'] = {f"{metric}_0": None, f"{metric}_1": None,
-                                                    "country": country, "iso3": iso_code}
-                    # Populate the corresponding speed based on the condition
-                    final_dict[f'{country}'][f"{metric}_{condition}"] = _  # type: ignore
-
-        if order_by == "alphabetical":
-            if data_view == "day":
-                cities_ordered = sorted(
-                    [
-                        city for city in final_dict.keys()
-                        if (final_dict[city].get(f"{metric}_0") or 0) >= 0.005
-                    ],
-                    key=lambda city: (final_dict[city].get("iso") or "")
-                )
-            elif data_view == "night":
-                cities_ordered = sorted(
-                    [
-                        city for city in final_dict.keys()
-                        if (final_dict[city].get(f"{metric}_1") or 0) >= 0.005
-                    ],
-                    key=lambda city: (final_dict[city].get("iso") or "")
-                )
-            else:
-                cities_ordered = sorted(
-                    [
-                        city for city in final_dict.keys()
-                        if (((final_dict[city].get(f"{metric}_0") or 0) + (final_dict[city].get(f"{metric}_1") or 0)) / 2) >= 0.005  # noqa:E501
-                    ],
-                    key=lambda city: (final_dict[city].get("iso") or "")
-                )
-
-        elif order_by == "average":
-            if data_view == "day":
-                cities_ordered = sorted(
-                    [
-                        city for city in final_dict.keys()
-                        if (final_dict[city].get(f"{metric}_0") or 0) >= 0.005
-                    ],
-                    key=lambda city: final_dict[city].get(f"{metric}_0") or 0,
-                    reverse=True
-                )
-
-            elif data_view == "night":
-                cities_ordered = sorted(
-                    [
-                        city for city in final_dict.keys()
-                        if (final_dict[city].get(f"{metric}_1") or 0) >= 0.005
-                    ],
-                    key=lambda city: final_dict[city].get(f"{metric}_1") or 0,
-                    reverse=True
-                )
-
-            else:
-                cities_ordered = sorted(
-                    [
-                        city for city in final_dict.keys()
-                        if (((final_dict[city].get(f"{metric}_0") or 0) + (final_dict[city].get(f"{metric}_1") or 0)) / 2) >= 0.005  # noqa:E501  # type: ignore
-                    ],
-                    key=lambda city: (
-                        ((final_dict[city].get(f"{metric}_0") or 0) + (final_dict[city].get(f"{metric}_1") or 0)) / 2  # noqa:E501  # type: ignore
-                    ), reverse=True
-                )
-
-        if len(cities_ordered) == 0:
-            return
-
-        # Prepare data for day and night stacking
-        day_key = f"{metric}_0"
-        night_key = f"{metric}_1"
-
-        if data_view == "combined":
-            day_values = [final_dict[country][day_key] for country in cities_ordered]
-            night_values = [final_dict[country][night_key] for country in cities_ordered]
-        elif data_view == "day":
-            day_values = [final_dict[country][day_key] for country in cities_ordered]
-            night_values = [0 for country in cities_ordered]
-        elif data_view == "night":
-            day_values = [0 for country in cities_ordered]
-            night_values = [final_dict[country][night_key] for country in cities_ordered]
-
-        # Determine how many cities will be in each column
-        num_cities_per_col = len(cities_ordered) // 2 + len(cities_ordered) % 2  # Split cities into two groups
-
-        # Define a base height per row and calculate total figure height
-        TALL_FIG_HEIGHT = num_cities_per_col * BASE_HEIGHT_PER_ROW
-
-        fig = make_subplots(
-            rows=num_cities_per_col, cols=2,  # Two columns
-            vertical_spacing=0.0005,  # Reduce the vertical spacing
-            horizontal_spacing=0.01,  # Reduce horizontal spacing between columns
-            row_heights=[1.0] * (num_cities_per_col),
-        )
-
-        # Plot left column (first half of cities)
-        for i, city in enumerate(cities_ordered[:num_cities_per_col]):
-            city_new, lat, long = city.split('_')
-            city = wrapper_class.process_city_string(city, df_mapping)
-
-            if order_by == "average":
-                iso_code = values_class.get_value(df_mapping, "city", city_new, "lat", float(lat), "iso3")
-                city = wrapper_class.iso2_to_flag(wrapper_class.iso3_to_iso2(iso_code)) + " " + city  # type: ignore
-
-            # Row for speed (Day and Night)
-            row = i + 1
-            if day_values[i] is not None and night_values[i] is not None:
-                if data_view == "combined":
-                    value = (day_values[i] + night_values[i])/2
-                else:
-                    value = (day_values[i] + night_values[i])
-
-                fig.add_trace(go.Bar(
-                    x=[day_values[i]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during day",
-                    marker=dict(color=bar_colour_1),
-                    text=[''],
-                    textposition='inside',
-                    insidetextanchor='start',
-                    showlegend=False,
-                    textfont=dict(size=14,
-                                  color='white')),
-                                  row=row,
-                                  col=1)
-
-                fig.add_trace(go.Bar(
-                    x=[night_values[i]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during night",
-                    marker=dict(color=bar_colour_2),
-                    text=[''],
-                    textposition='inside',
-                    showlegend=False),
-                    row=row,
-                    col=1)
-
-            elif day_values[i] is not None:  # Only day data available
-                value = day_values[i]
-                fig.add_trace(go.Bar(
-                    x=[day_values[i]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during day",
-                    marker=dict(color=bar_colour_1),
-                    text=[''],
-                    textposition='inside',
-                    insidetextanchor='start',
-                    showlegend=False,
-                    textfont=dict(size=14,
-                                  color='white')),
-                                  row=row,
-                                  col=1)
-
-            elif night_values[i] is not None:  # Only night data available
-                value = night_values[i]
-                fig.add_trace(go.Bar(
-                    x=[night_values[i]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during night",
-                    marker=dict(color=bar_colour_2),
-                    text=[''],
-                    textposition='inside',
-                    insidetextanchor='start',
-                    showlegend=False,
-                    textfont=dict(size=14,
-                                  color='white')),
-                                  row=row,
-                                  col=1)
-
-        # Plot right column (second half of cities)
-        for i, city in enumerate(cities_ordered[num_cities_per_col:]):
-            city_new, lat, long = city.split('_')
-            city = wrapper_class.process_city_string(city, df_mapping)
-
-            if order_by == "average":
-                iso_code = values_class.get_value(df_mapping, "city", city_new, "lat", float(lat), "iso3")
-                city = wrapper_class.iso2_to_flag(wrapper_class.iso3_to_iso2(iso_code)) + " " + city  # type: ignore
-
-            # Row for speed (Day and Night)
-            row = i + 1
-            idx = num_cities_per_col + i
-            if day_values[idx] is not None and night_values[idx] is not None:
-                if data_view == "combined":
-                    value = (day_values[i] + night_values[i])/2
-                else:
-                    value = (day_values[i] + night_values[i])
-
-                fig.add_trace(go.Bar(
-                    x=[day_values[idx]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during day",
-                    marker=dict(color=bar_colour_1),
-                    text=[''],
-                    textposition='inside',
-                    insidetextanchor='start',
-                    showlegend=False,
-                    textfont=dict(size=14,
-                                  color='white')),
-                                  row=row,
-                                  col=2)
-
-                fig.add_trace(go.Bar(
-                    x=[night_values[idx]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during night",
-                    marker=dict(color=bar_colour_2),
-                    text=[''],
-                    textposition='inside',
-                    showlegend=False),
-                    row=row,
-                    col=2)
-
-            elif day_values[idx] is not None:
-                value = day_values[idx]
-                fig.add_trace(go.Bar(
-                    x=[day_values[idx]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during day",
-                    marker=dict(color=bar_colour_1),
-                    text=[''],
-                    textposition='inside',
-                    insidetextanchor='start',
-                    showlegend=False,
-                    textfont=dict(size=14,
-                                  color='white')),
-                                  row=row,
-                                  col=2)
-
-            elif night_values[idx] is not None:
-                value = night_values[idx]
-                fig.add_trace(go.Bar(
-                    x=[night_values[idx]],
-                    y=[f'{city} {value:.2f}'],
-                    orientation='h',
-                    name=f"{city} {metric} during night",
-                    marker=dict(color=bar_colour_2),
-                    text=[''],
-                    textposition='inside',
-                    insidetextanchor='start',
-                    showlegend=False,
-                    textfont=dict(size=14,
-                                  color='white')),
-                                  row=row,
-                                  col=2)
-
-        # Calculate the maximum value across all data to use as x-axis range
-        max_value = max([
-            (day_values[i] if day_values[i] is not None else 0) +
-            (night_values[i] if night_values[i] is not None else 0)
-            for i in range(len(cities_ordered))
-        ]) if cities_ordered else 0
-
-        # Identify the last row for each column where the last city is plotted
-        last_row_left_column = num_cities_per_col * 2  # The last row in the left column
-        last_row_right_column = (len(cities_ordered) - num_cities_per_col) * 2  # The last row in the right column
-        first_row_left_column = 1  # The first row in the left column
-        first_row_right_column = 1  # The first row in the right column
-
-        # Update the loop for updating x-axes based on max values for speed and time
-        for i in range(1, num_cities_per_col * 2 + 1):  # Loop through all rows in both columns
-            # Update x-axis for the left column
-            if i % 2 == 1:  # Odd rows
-                fig.update_xaxes(
-                    range=[0, max_value],
-                    row=i,
-                    col=1,
-                    showticklabels=(i == first_row_left_column),
-                    side='top', showgrid=False
-                )
-            else:  # Even rows (representing time)
-                fig.update_xaxes(
-                    range=[0, max_value],
-                    row=i,
-                    col=1,
-                    showticklabels=(i == last_row_left_column),
-                    side='bottom', showgrid=False
-                )
-
-            # Update x-axis for the right column
-            if i % 2 == 1:  # Odd rows
-                fig.update_xaxes(
-                    range=[0, max_value],
-                    row=i,
-                    col=2,  # Use speed max value for top axis
-                    showticklabels=(i == first_row_right_column),
-                    side='top', showgrid=False
-                )
-            else:  # Even rows (representing time)
-                fig.update_xaxes(
-                    range=[0, max_value],
-                    row=i,
-                    col=2,  # Use time max value for bottom axis
-                    showticklabels=(i == last_row_right_column),
-                    side='bottom', showgrid=False
-                )
-
-        # Set the x-axis labels (title_text) only for the last row and the first row
-        fig.update_xaxes(
-            title=dict(text=title_text,
-                       font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
-            ticks='outside',
-            ticklen=10,
-            tickwidth=2,
-            tickcolor='black',
-            row=1,
-            col=1
-        )
-
-        fig.update_xaxes(
-            title=dict(text=title_text,
-                       font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
-            ticks='outside',
-            ticklen=10,
-            tickwidth=2,
-            tickcolor='black',
-            row=1,
-            col=2
-        )
-
-        # Update both y-axes (for left and right columns) to hide the tick labels
-        fig.update_yaxes(showticklabels=False)
-
-        # Ensure no gridlines are shown on x-axes and y-axes
-        fig.update_xaxes(showgrid=False)
-        fig.update_yaxes(showgrid=False)
-
-        # Update layout to hide the main legend and adjust margins
-        fig.update_layout(
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            barmode='stack',
-            height=TALL_FIG_HEIGHT,
-            width=2480,
-            showlegend=False,  # Hide the default legend
-            margin=dict(t=150, b=150),
-            bargap=0,
-            bargroupgap=0
-        )
-
-        # Define gridline generation parameters
-        if metric == "speed":
-            start, step, count = 1, 1, 19
-        elif metric == "time":
-            start, step, count = 1, 1, 26
-
-        # Generate gridline positions
-        x_grid_values = [start + i * step for i in range(count)]
-
-        for x in x_grid_values:
-            fig.add_shape(
-                type="line",
-                x0=x,
-                y0=0,
-                x1=x,
-                y1=1,  # Set the position of the gridlines
-                xref='x',
-                yref='paper',  # Ensure gridlines span the whole chart (yref='paper' spans full height)
-                line=dict(color="darkgray", width=1),  # Customize the appearance of the gridlines
-                layer="above"  # Draw the gridlines above the bars
-            )
-
-        # Manually add gridlines using `shapes` for the right column (x-axis 'x2')
-        for x in x_grid_values:
-            fig.add_shape(
-                type="line",
-                x0=x,
-                y0=0,
-                x1=x,
-                y1=1,  # Set the position of the gridlines
-                xref='x2',
-                yref='paper',  # Apply to right column (x-axis 'x2')
-                line=dict(color="darkgray", width=1),  # Customize the appearance of the gridlines
-                layer="above"  # Draw the gridlines above the bars
-            )
-
-        if data_view == "combined":
-            # Define the legend items
-            legend_items = [
-                {"name": "Day", "color": bar_colour_1},
-                {"name": "Night", "color": bar_colour_2},
-            ]
-
-            # Add the vertical legends at the top and bottom
-            self.add_vertical_legend_annotations(fig,
-                                                 legend_items,
-                                                 x_position=legend_x,
-                                                 y_start=legend_y,
-                                                 spacing=legend_spacing,
-                                                 font_size=font_size_captions)
-
-        # Add a box around the first column (left side)
-        fig.add_shape(
-            type="rect",
-            xref="paper",
-            yref="paper",
-            x0=0,
-            y0=1,
-            x1=0.495,
-            y1=0.0,
-            line=dict(color="black", width=2)  # Black border for the box
-        )
-
-        # Add a box around the second column (right side)
-        fig.add_shape(
-            type="rect",
-            xref="paper",
-            yref="paper",
-            x0=0.505,
-            y0=1,
-            x1=1,
-            y1=0.0,
-            line=dict(color="black", width=2)  # Black border for the box
-        )
-
-        # Create an ordered list of unique countries based on the cities in final_dict
-        country_city_map = {}
-        for city, info in final_dict.items():
-            country = info['iso']  # type: ignore
-            if country not in country_city_map:
-                country_city_map[country] = []
-            country_city_map[country].append(city)
-
-        if order_by == "alphabetical":
-            # Split cities into left and right columns
-            left_column_cities = cities_ordered[:num_cities_per_col]
-            right_column_cities = cities_ordered[num_cities_per_col:]
-
-            # Adjust x positioning for the left and right columns
-            x_position_left = 0.0  # Position for the left column
-            x_position_right = 1.0  # Position for the right column
-            font_size = FLAG_SIZE  # Font size for visibility
-
-            # Initialise variables for dynamic y positioning for both columns
-            current_row_left = 1  # Start from the first row for the left column
-            current_row_right = 1  # Start from the first row for the right column
-            y_position_map_left = {}  # Store y positions for each country (left column)
-            y_position_map_right = {}  # Store y positions for each country (right column)
-
-            # Calculate the y positions dynamically for the left column
-            for city in left_column_cities:
-                country = final_dict[city]['iso']
-
-                if country not in y_position_map_left:  # Add the country label once per country
-                    y_position_map_left[country] = 1 - (current_row_left - 1) / ((len(left_column_cities)-1.12) * 2)
-
-                current_row_left += 2  # Increment the row for each city (speed and time take two rows)
-
-            # Calculate the y positions dynamically for the right column
-            for city in right_column_cities:
-                country = final_dict[city]['iso']
-
-                if country not in y_position_map_right:  # Add the country label once per country
-                    y_position_map_right[country] = 1 - (current_row_right - 1) / ((len(right_column_cities)-1.12) * 2)
-
-                current_row_right += 2  # Increment the row for each city (speed and time take two rows)
-
-            # Add annotations for country names dynamically for the left column
-            for country, y_position in y_position_map_left.items():
-                iso2 = wrapper_class.iso3_to_iso2(country)
-                country = country + wrapper_class.iso2_to_flag(iso2)
-                fig.add_annotation(
-                    x=x_position_left,  # Left column x position
-                    y=y_position,  # Calculated y position based on the city order
-                    xref="paper",
-                    yref="paper",
-                    text=country,  # Country name
-                    showarrow=False,
-                    font=dict(size=font_size, color="black"),
-                    xanchor='right',
-                    align='right',
-                    bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
-                    # bordercolor="black",  # Border for visibility
-                )
-
-            # Add annotations for country names dynamically for the right column
-            for country, y_position in y_position_map_right.items():
-                iso2 = wrapper_class.iso3_to_iso2(country)
-                country = country + wrapper_class.iso2_to_flag(iso2)
-                fig.add_annotation(
-                    x=x_position_right,  # Right column x position
-                    y=y_position,  # Calculated y position based on the city order
-                    xref="paper",
-                    yref="paper",
-                    text=country,  # Country name
-                    showarrow=False,
-                    font=dict(size=font_size, color="black"),
-                    xanchor='left',
-                    align='left',
-                    bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
-                    # bordercolor="black",  # Border for visibility
-                )
-
-        fig.update_yaxes(
-            tickfont=dict(size=TEXT_SIZE, color="black"),
-            showticklabels=True,  # Ensure city names are visible
-            ticklabelposition='inside',  # Move the tick labels inside the bars
-        )
-        fig.update_xaxes(
-            tickangle=0,  # No rotation or small rotation for the x-axis
-        )
-
-        # update font family
-        fig.update_layout(font=dict(family=common.get_configs('font_family')))
-
-        # Final adjustments and display
-        fig.update_layout(margin=dict(l=80, r=80, t=x_axis_title_height, b=10))
-        self.save_plotly_figure(fig=fig,
-                                filename=filename,
-                                width=2400,
-                                height=TALL_FIG_HEIGHT,
-                                scale=SCALE,
-                                save_eps=False,
-                                save_final=True)
-
-    def speed_and_time_to_start_cross(self, df_mapping, font_size_captions=40, x_axis_title_height=150, legend_x=0.81,
-                                      legend_y=0.98, legend_spacing=0.02):
-        logger.info("Plotting speed_and_time_to_start_cross")
-        final_dict = {}
-        with open(file_results, 'rb') as file:
-            data_tuple = pickle.load(file)
-
-        avg_speed = data_tuple[25]
-        avg_time = data_tuple[24]
-
-        # Check if both 'speed' and 'time' are valid dictionaries
-        if avg_speed is None or avg_time is None:
-            raise ValueError("Either 'speed' or 'time' returned None, please check the input data or calculations.")
-
-        # Remove the ones where there is data missing for a specific country and condition
-        common_keys = avg_speed.keys() & avg_time.keys()
-
-        # Retain only the key-value pairs where the key is present in both dictionaries
-        avg_speed = {key: avg_speed[key] for key in common_keys}
-        avg_time = {key: avg_time[key] for key in common_keys}
-
-        # Now populate the final_dict with city-wise data
-        for city_condition, speed in tqdm(avg_speed.items()):
-            city, lat, long, condition = city_condition.split('_')
-
-            # Get the country from the previously stored city_country_map
-            country = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "country")
-            iso_code = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "iso3")
-            if country or iso_code is not None:
-
-                # Initialise the city's dictionary if not already present
-                if f'{city}_{lat}_{long}' not in final_dict:
-                    final_dict[f"{city}_{lat}_{long}"] = {
-                        "speed_0": None, "speed_1": None, "time_0": None, "time_1": None,
-                        "country": country, "iso": iso_code}
-
-                # Populate the corresponding speed and time based on the condition
-                final_dict[f"{city}_{lat}_{long}"][f"speed_{condition}"] = speed
-                if f'{city}_{lat}_{long}_{condition}' in avg_time:
-                    final_dict[f"{city}_{lat}_{long}"][f"time_{condition}"] = avg_time[f'{city}_{lat}_{long}_{condition}']  # noqa: E501
-
-        # Extract all valid speed_0 and speed_1 values along with their corresponding cities
-        diff_speed_values = [(f'{city}', abs(data['speed_0'] - data['speed_1']))
-                             for city, data in final_dict.items()
-                             if data['speed_0'] is not None and data['speed_1'] is not None]
-
-        if diff_speed_values:
-            # Sort the list by the absolute difference and get the top 5 and bottom 5
-            sorted_diff_speed_values = sorted(diff_speed_values, key=lambda x: x[1], reverse=True)
-
-            top_5_max_speed = sorted_diff_speed_values[:5]  # Top 5 maximum differences
-            top_5_min_speed = sorted_diff_speed_values[-5:]  # Top 5 minimum differences (including possible zeroes)
-
-            logger.info("Top 5 cities with max |speed at day - speed at night| differences:")
-            for city, diff in top_5_max_speed:
-                city_state = wrapper_class.process_city_string(city, df_mapping)
-                logger.info(f"{city_state}: {diff}")
-
-            logger.info("Top 5 cities with min |speed at day - speed at night| differences:")
-            for city, diff in top_5_min_speed:
-                city_state = wrapper_class.process_city_string(city, df_mapping)
-                logger.info(f"{city_state}: {diff}")
-        else:
-            logger.info("No valid speed_0 and speed_1 values found for comparison.")
-
-        # Extract all valid time_0 and time_1 values along with their corresponding cities
-        diff_time_values = [(city, abs(data['time_0'] - data['time_1']))
-                            for city, data in final_dict.items()
-                            if data['time_0'] is not None and data['time_1'] is not None]
-
-        if diff_time_values:
-            sorted_diff_time_values = sorted(diff_time_values, key=lambda x: x[1], reverse=True)
-
-            top_5_max = sorted_diff_time_values[:5]  # Top 5 maximum differences
-            top_5_min = sorted_diff_time_values[-5:]  # Top 5 minimum differences (including possible zeroes)
-
-            logger.info("Top 5 cities with max |time_0 - time_1| differences:")
-            for city, diff in top_5_max:
-                city_state = wrapper_class.process_city_string(city, df_mapping)
-                logger.info(f"{city_state}: {diff}")
-
-            logger.info("Top 5 cities with min |time_0 - time_1| differences:")
-            for city, diff in top_5_min:
-                city_state = wrapper_class.process_city_string(city, df_mapping)
-                logger.info(f"{city_state}: {diff}")
-        else:
-            logger.info("No valid time_0 and time_1 values found for comparison.")
-
-        # Filtering out entries where entries is None
-        filtered_dict_s_0 = {city: info for city, info in final_dict.items() if info["speed_0"] is not None}
-        filtered_dict_s_1 = {city: info for city, info in final_dict.items() if info["speed_1"] is not None}
-        filtered_dict_t_0 = {city: info for city, info in final_dict.items() if info["time_0"] is not None}
-        filtered_dict_t_1 = {city: info for city, info in final_dict.items() if info["time_1"] is not None}
-
-        # Find city with max and min speed_0 and speed_1
-        if filtered_dict_s_0:
-            max_speed_city_0 = max(filtered_dict_s_0, key=lambda city: filtered_dict_s_0[city]["speed_0"])
-            min_speed_city_0 = min(filtered_dict_s_0, key=lambda city: filtered_dict_s_0[city]["speed_0"])
-            max_speed_value_0 = filtered_dict_s_0[max_speed_city_0]["speed_0"]
-            min_speed_value_0 = filtered_dict_s_0[min_speed_city_0]["speed_0"]
-
-            logger.info(f"City with max speed at day: {wrapper_class.process_city_string(max_speed_city_0, df_mapping)} with speed of {max_speed_value_0} m/s")  # noqa:E501
-            logger.info(f"City with min speed at day: {wrapper_class.process_city_string(min_speed_city_0, df_mapping)} with speed of {min_speed_value_0} m/s")  # noqa:E501
-
-        if filtered_dict_s_1:
-            max_speed_city_1 = max(filtered_dict_s_1, key=lambda city: filtered_dict_s_1[city]["speed_1"])
-            min_speed_city_1 = min(filtered_dict_s_1, key=lambda city: filtered_dict_s_1[city]["speed_1"])
-            max_speed_value_1 = filtered_dict_s_1[max_speed_city_1]["speed_1"]
-            min_speed_value_1 = filtered_dict_s_1[min_speed_city_1]["speed_1"]
-
-            logger.info(f"City with max speed at night: {wrapper_class.process_city_string(max_speed_city_1, df_mapping)} with speed of {max_speed_value_1} m/s")  # noqa:E501
-            logger.info(f"City with min speed at night: {wrapper_class.process_city_string(min_speed_city_1, df_mapping)} with speed of {min_speed_value_1} m/s")  # noqa:E501
-
-        # Find city with max and min time_0 and time_1
-        if filtered_dict_t_0:
-            max_time_city_0 = max(filtered_dict_t_0, key=lambda city: filtered_dict_t_0[city]["time_0"])
-            min_time_city_0 = min(filtered_dict_t_0, key=lambda city: filtered_dict_t_0[city]["time_0"])
-            max_time_value_0 = filtered_dict_t_0[max_time_city_0]["time_0"]
-            min_time_value_0 = filtered_dict_t_0[min_time_city_0]["time_0"]
-
-            logger.info(f"City with max time at day: {wrapper_class.process_city_string(max_time_city_0, df_mapping)} with time of {max_time_value_0} s")  # noqa:E501
-            logger.info(f"City with min time at day: {wrapper_class.process_city_string(min_time_city_0, df_mapping)} with time of {min_time_value_0} s")  # noqa:E501
-
-        if filtered_dict_t_1:
-            max_time_city_1 = max(filtered_dict_t_1, key=lambda city: filtered_dict_t_1[city]["time_1"])
-            min_time_city_1 = min(filtered_dict_t_1, key=lambda city: filtered_dict_t_1[city]["time_1"])
-            max_time_value_1 = filtered_dict_t_1[max_time_city_1]["time_1"]
-            min_time_value_1 = filtered_dict_t_1[min_time_city_1]["time_1"]
-
-            logger.info(f"City with max time at night: {wrapper_class.process_city_string(max_time_city_1, df_mapping)} with time of {max_time_value_1} s")  # noqa:E501
-            logger.info(f"City with min time at night: {wrapper_class.process_city_string(min_time_city_1, df_mapping)} with time of {min_time_value_1} s")  # noqa:E501
-
-        # Extract valid speed and time values and calculate statistics
-        speed_0_values = [data['speed_0'] for data in final_dict.values() if pd.notna(data['speed_0'])]
-        speed_1_values = [data['speed_1'] for data in final_dict.values() if pd.notna(data['speed_1'])]
-        time_0_values = [data['time_0'] for data in final_dict.values() if pd.notna(data['time_0'])]
-        time_1_values = [data['time_1'] for data in final_dict.values() if pd.notna(data['time_1'])]
-
-        if speed_0_values:
-            mean_speed_0 = statistics.mean(speed_0_values)
-            sd_speed_0 = statistics.stdev(speed_0_values) if len(speed_0_values) > 1 else 0
-            logger.info(f"Mean of speed during day time: {mean_speed_0}")
-            logger.info(f"Standard deviation of speed during day time: {sd_speed_0}")
-        else:
-            logger.error("No valid speed during day time values found.")
-
-        if speed_1_values:
-            mean_speed_1 = statistics.mean(speed_1_values)
-            sd_speed_1 = statistics.stdev(speed_1_values) if len(speed_1_values) > 1 else 0
-            logger.info(f"Mean of speed during night time: {mean_speed_1}")
-            logger.info(f"Standard deviation of speed during night time: {sd_speed_1}")
-        else:
-            logger.error("No valid speed during night time values found.")
-
-        if time_0_values:
-            mean_time_0 = statistics.mean(time_0_values)
-            sd_time_0 = statistics.stdev(time_0_values) if len(time_0_values) > 1 else 0
-            logger.info(f"Mean of time during day time: {mean_time_0}")
-            logger.info(f"Standard deviation of time during day time: {sd_time_0}")
-        else:
-            logger.error("No valid time during day time values found.")
-
-        if time_1_values:
-            mean_time_1 = statistics.mean(time_1_values)
-            sd_time_1 = statistics.stdev(time_1_values) if len(time_1_values) > 1 else 0
-            logger.info(f"Mean of time during night time: {mean_time_1}")
-            logger.info(f"Standard deviation of time during night time: {sd_time_1}")
-        else:
-            logger.error("No valid time during night time values found.")
-
-        # Extract city, condition, and count_ from the info dictionary
-        cities, conditions_, counts = [], [], []
-        for key, value in tqdm(avg_time.items()):
-            city, lat, long, condition = key.split('_')
-            cities.append(f'{city}_{lat}_{long}')
-            conditions_.append(condition)
-            counts.append(value)
-
-        # Combine keys from speed and time to ensure we include all available cities and conditions
-        all_keys = set(avg_speed.keys()).union(set(avg_time.keys()))
-
-        # Extract unique cities
-        cities = list(set(["_".join(key.split('_')[:2]) for key in all_keys]))
-
-        country_city_map = {}
-        for city_state, info in final_dict.items():
-            country = info['iso']
-            if country not in country_city_map:
-                country_city_map[country] = []
-            country_city_map[country].append(city_state)
-
-        # Flatten the city list based on country groupings
-        cities_ordered = []
-        for country in sorted(country_city_map.keys()):  # Sort countries alphabetically
-            cities_in_country = sorted(country_city_map[country])  # Sort cities within each country alphabetically
-            cities_ordered.extend(cities_in_country)
-
-        # Prepare data for day and night stacking
-        day_avg_speed = [final_dict[city]['speed_0'] for city in cities_ordered]
-        night_avg_speed = [final_dict[city]['speed_1'] for city in cities_ordered]
-        day_time_dict = [final_dict[city]['time_0'] for city in cities_ordered]
-        night_time_dict = [final_dict[city]['time_1'] for city in cities_ordered]
-
-        # Ensure that plotting uses cities_ordered
-        assert len(cities_ordered) == len(day_avg_speed) == len(night_avg_speed) == len(
-            day_time_dict) == len(night_time_dict), "Lengths of lists don't match!"
-
-        # Determine how many cities will be in each column
-        num_cities_per_col = len(cities_ordered) // 2 + len(cities_ordered) % 2  # Split cities into two groups
-
-        # Define a base height per row and calculate total figure height
-        TALL_FIG_HEIGHT = num_cities_per_col * BASE_HEIGHT_PER_ROW
-
-        fig = make_subplots(
-            rows=num_cities_per_col * 2, cols=2,  # Two columns
-            vertical_spacing=0,  # Reduce the vertical spacing
-            horizontal_spacing=0.01,  # Reduce horizontal spacing between columns
-            row_heights=[2.0] * (num_cities_per_col * 2),
-        )
-
-        # Plot left column (first half of cities)
-        for i, city in enumerate(cities_ordered[:num_cities_per_col]):
-            city = wrapper_class.process_city_string(city, df_mapping)
-
-            # Row for speed (Day and Night)
-            row = 2 * i + 1
-            if day_avg_speed[i] is not None and night_avg_speed[i] is not None:
-                value = (day_avg_speed[i] + night_avg_speed[i])/2
-                fig.add_trace(go.Bar(
-                    x=[day_avg_speed[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during day", marker=dict(color=bar_colour_1), text=[''],
-                    textposition='auto', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=1)
-                fig.add_trace(go.Bar(
-                    x=[night_avg_speed[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during night",
-                    marker=dict(color=bar_colour_2),
-                    text=[''], textposition='auto', showlegend=False), row=row, col=1)
-
-            elif day_avg_speed[i] is not None:  # Only day data available
-                value = (day_avg_speed[i])/2
-                fig.add_trace(go.Bar(
-                    x=[day_avg_speed[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during day", marker=dict(color=bar_colour_1), text=[''],
-                    textposition='auto', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=1)
-
-            elif night_avg_speed[i] is not None:  # Only night data available
-                value = (night_avg_speed[i])/2
-                fig.add_trace(go.Bar(
-                    x=[night_avg_speed[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during night",
-                    marker=dict(color=bar_colour_2), text=[''],
-                    textposition='auto', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=1)
-
-            # Row for time (Day and Night)
-            row = 2 * i + 2
-            if day_time_dict[i] is not None and night_time_dict[i] is not None:
-                value = (day_time_dict[i] + night_time_dict[i])/2
-                fig.add_trace(go.Bar(
-                    x=[day_time_dict[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during day", marker=dict(color=bar_colour_3),
-                    text=[''], textposition='auto', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=1)
-                fig.add_trace(go.Bar(
-                    x=[night_time_dict[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during night", marker=dict(color=bar_colour_4), text=[''],
-                    textposition='auto', showlegend=False), row=row, col=1)
-
-            elif day_time_dict[i] is not None:  # Only day time data available
-                value = (day_time_dict[i])/2
-                fig.add_trace(go.Bar(
-                    x=[day_time_dict[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during day", marker=dict(color=bar_colour_3),
-                    text=[''], textposition='auto', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=1)
-
-            elif night_time_dict[i] is not None:  # Only night time data available
-                value = (night_time_dict[i])/2
-                fig.add_trace(go.Bar(
-                    x=[night_time_dict[i]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during night", marker=dict(color=bar_colour_4),
-                    text=[''], textposition='auto', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=1)
-
-        # Similarly for the right column
-        for i, city in enumerate(cities_ordered[num_cities_per_col:]):
-            city = wrapper_class.process_city_string(city, df_mapping)
-
-            row = 2 * i + 1
-            idx = num_cities_per_col + i
-            if day_avg_speed[idx] is not None and night_avg_speed[idx] is not None:
-                value = (day_avg_speed[idx] + night_avg_speed[idx])/2
-                fig.add_trace(go.Bar(
-                    x=[day_avg_speed[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during day", marker=dict(color=bar_colour_1), text=[''],
-                    textposition='inside', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=2)
-                fig.add_trace(go.Bar(
-                    x=[night_avg_speed[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during night", marker=dict(color=bar_colour_2),
-                    text=[''], textposition='inside', showlegend=False), row=row, col=2)
-
-            elif day_avg_speed[idx] is not None:
-                value = (day_avg_speed[idx])/2
-                fig.add_trace(go.Bar(
-                    x=[day_avg_speed[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during day", marker=dict(color=bar_colour_1), text=[''],
-                    textposition='inside', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=2)
-
-            elif night_avg_speed[idx] is not None:
-                value = (night_avg_speed[idx])/2
-                fig.add_trace(go.Bar(
-                    x=[night_avg_speed[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} speed during night", marker=dict(color=bar_colour_2),
-                    text=[''], textposition='inside', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=2)
-
-            row = 2 * i + 2
-            if day_time_dict[idx] is not None and night_time_dict[idx] is not None:
-                value = (day_time_dict[idx] + night_time_dict[idx])/2
-                fig.add_trace(go.Bar(
-                    x=[day_time_dict[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during day", marker=dict(color=bar_colour_3),
-                    text=[''], textposition='inside', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=2)
-                fig.add_trace(go.Bar(
-                    x=[night_time_dict[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during night", marker=dict(color=bar_colour_4), text=[''],
-                    textposition='inside', showlegend=False), row=row, col=2)
-
-            elif day_time_dict[idx] is not None:  # Only day time data available
-                value = (day_time_dict[idx])/2
-                fig.add_trace(go.Bar(
-                    x=[day_time_dict[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during day", marker=dict(color=bar_colour_3),
-                    text=[''], textposition='inside', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=2)
-
-            elif night_time_dict[idx] is not None:  # Only night time data available
-                value = (night_time_dict[idx])/2
-                fig.add_trace(go.Bar(
-                    x=[night_time_dict[idx]], y=[f'{city} {value:.2f}'], orientation='h',
-                    name=f"{city} time during night", marker=dict(color=bar_colour_4),
-                    text=[''], textposition='inside', insidetextanchor='start', showlegend=False,
-                    textfont=dict(size=28, color='white')), row=row, col=2)
-
-        # Calculate the maximum value across all data to use as x-axis range
-        max_value_time = max([
-            (day_time_dict[i] if day_time_dict[i] is not None else 0) +
-            (night_time_dict[i] if night_time_dict[i] is not None else 0)
-            for i in range(len(cities_ordered))
-        ]) if cities_ordered else 0
-
-        # Identify the last row for each column where the last city is plotted
-        last_row_left_column = num_cities_per_col * 2  # The last row in the left column
-        last_row_right_column = (len(cities) - num_cities_per_col) * 2  # The last row in the right column
-        first_row_left_column = 1  # The first row in the left column
-        first_row_right_column = 1  # The first row in the right column
-
-        # Update the loop for updating x-axes based on max values for speed and time
-        for i in range(1, num_cities_per_col * 2 + 1):  # Loop through all rows in both columns
-            # Update x-axis for the left column (top for speed, bottom for time)
-            if i % 2 == 1:  # Odd rows (representing speed)
-                fig.update_xaxes(
-                    range=[0, max_value_time], row=i, col=1,
-                    showticklabels=(i == first_row_left_column),
-                    side='top', showgrid=False
-                )
-            else:  # Even rows (representing time)
-                fig.update_xaxes(
-                    range=[0, max_value_time], row=i, col=1,
-                    showticklabels=(i == last_row_left_column),
-                    side='bottom', showgrid=False
-                )
-
-            # Update x-axis for the right column (top for speed, bottom for time)
-            if i % 2 == 1:  # Odd rows (representing speed)
-                fig.update_xaxes(
-                    range=[0, max_value_time], row=i, col=2,  # Use speed max value for top axis
-                    showticklabels=(i == first_row_right_column),
-                    side='top', showgrid=False
-                )
-            else:  # Even rows (representing time)
-                fig.update_xaxes(
-                    range=[0, max_value_time], row=i, col=2,  # Use time max value for bottom axis
-                    showticklabels=(i == last_row_right_column),
-                    side='bottom', showgrid=False
-                )
-
-        # Set the x-axis labels (title_text) only for the last row and the first row
-        fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
-            ticks='outside',
-            ticklen=10,
-            tickwidth=2,
-            tickcolor='black',
-            row=1,
-            col=1
-        )
-        fig.update_xaxes(
-            title=dict(text="Mean speed of crossing (in m/s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
-            ticks='outside',
-            ticklen=10,
-            tickwidth=2,
-            tickcolor='black',
-            row=1,
-            col=2
-        )
-        fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
-            ticks='outside',
-            ticklen=10,
-            tickwidth=2,
-            tickcolor='black',
-            row=num_cities_per_col * 2,
-            col=1
-        )
-
-        fig.update_xaxes(
-            title=dict(text="Mean time to start crossing (in s)", font=dict(size=font_size_captions)),
-            tickfont=dict(size=font_size_captions),
-            ticks='outside',
-            ticklen=10,
-            tickwidth=2,
-            tickcolor='black',
-            row=num_cities_per_col * 2,
-            col=2
-        )
-
-        # Update both y-axes (for left and right columns) to hide the tick labels
-        fig.update_yaxes(showticklabels=False)
-
-        # Ensure no gridlines are shown on x-axes and y-axes
-        fig.update_xaxes(showgrid=False)
-        fig.update_yaxes(showgrid=False)
-
-        # Update layout to hide the main legend and adjust margins
-        fig.update_layout(
-            plot_bgcolor='white', paper_bgcolor='white', barmode='stack',
-            height=TALL_FIG_HEIGHT*2, width=4960, showlegend=False,  # Hide the default legend
-            margin=dict(t=150, b=150), bargap=0, bargroupgap=0
-        )
-
-        # Set the x-axis range to cover the values you want in x_grid_values
-        x_grid_values = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]
-
-        for x in x_grid_values:
-            fig.add_shape(
-                type="line",
-                x0=x, y0=0, x1=x, y1=1,  # Set the position of the gridlines
-                xref='x', yref='paper',  # Ensure gridlines span the whole chart (yref='paper' spans full height)
-                line=dict(color="darkgray", width=1),  # Customize the appearance of the gridlines
-                layer="above"  # Draw the gridlines above the bars
-            )
-
-        # Manually add gridlines using `shapes` for the right column (x-axis 'x2')
-        for x in x_grid_values:
-            fig.add_shape(
-                type="line",
-                x0=x, y0=0, x1=x, y1=1,  # Set the position of the gridlines
-                xref='x2', yref='paper',  # Apply to right column (x-axis 'x2')
-                line=dict(color="darkgray", width=1),  # Customize the appearance of the gridlines
-                layer="above"  # Draw the gridlines above the bars
-            )
-
-        # Define the legend items
-        legend_items = [
-            {"name": "Crossing speed during daytime", "color": bar_colour_1},
-            {"name": "Crossing speed during night time", "color": bar_colour_2},
-            {"name": "Crossing decision time during daytime", "color": bar_colour_3},
-            {"name": "Crossing decision time during night time", "color": bar_colour_4},
-        ]
-
-        # Add the vertical legends at the top and bottom
-        self.add_vertical_legend_annotations(fig, legend_items, x_position=legend_x, y_start=legend_y,
-                                             spacing=legend_spacing, font_size=font_size_captions)
-
-        # Add a box around the first column (left side)
-        fig.add_shape(
-            type="rect", xref="paper", yref="paper",
-            x0=0, y0=1, x1=0.495, y1=0.0,
-            line=dict(color="black", width=2)  # Black border for the box
-        )
-
-        # Add a box around the second column (right side)
-        fig.add_shape(
-            type="rect", xref="paper", yref="paper",
-            x0=0.505, y0=1, x1=1, y1=0.0,
-            line=dict(color="black", width=2)  # Black border for the box
-        )
-
-        # Create an ordered list of unique countries based on the cities in final_dict
-        country_city_map = {}
-        for city, info in final_dict.items():
-            country = info['iso']
-            if country not in country_city_map:
-                country_city_map[country] = []
-            country_city_map[country].append(city)
-
-        # Split cities into left and right columns
-        left_column_cities = cities_ordered[:num_cities_per_col]
-        right_column_cities = cities_ordered[num_cities_per_col:]
-
-        # Adjust x positioning for the left and right columns
-        x_position_left = 0.0  # Position for the left column
-        x_position_right = 1.0  # Position for the right column
-        font_size = 15  # Font size for visibility
-
-        # Initialise variables for dynamic y positioning for both columns
-        current_row_left = 1  # Start from the first row for the left column
-        current_row_right = 1  # Start from the first row for the right column
-        y_position_map_left = {}  # Store y positions for each country (left column)
-        y_position_map_right = {}  # Store y positions for each country (right column)
-
-        # Calculate the y positions dynamically for the left column
-        for city in left_column_cities:
-            country = final_dict[city]['iso']
-
-            if country not in y_position_map_left:  # Add the country label once per country
-                y_position_map_left[country] = 1 - (current_row_left - 1) / ((len(left_column_cities)-0.56) * 2)
-
-            current_row_left += 2  # Increment the row for each city (speed and time take two rows)
-
-        # Calculate the y positions dynamically for the right column
-        for city in right_column_cities:
-            country = final_dict[city]['iso']
-
-            if country not in y_position_map_right:  # Add the country label once per country
-                y_position_map_right[country] = 1 - (current_row_right - 1) / ((len(right_column_cities)-0.56) * 2)
-
-            current_row_right += 2  # Increment the row for each city (speed and time take two rows)
-
-        # Add annotations for country names dynamically for the left column
-        for country, y_position in y_position_map_left.items():
-            iso2 = wrapper_class.iso3_to_iso2(country)
-            country = country + wrapper_class.iso2_to_flag(iso2)
-            fig.add_annotation(
-                x=x_position_left,  # Left column x position
-                y=y_position,  # Calculated y position based on the city order
-                xref="paper", yref="paper",
-                text=country,  # Country name
-                showarrow=False,
-                font=dict(size=font_size, color="black"),
-                xanchor='right',
-                align='right',
-                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
-                # bordercolor="black",  # Border for visibility
-            )
-
-        # Add annotations for country names dynamically for the right column
-        for country, y_position in y_position_map_right.items():
-            iso2 = wrapper_class.iso3_to_iso2(country)
-            country = country + wrapper_class.iso2_to_flag(iso2)
-            fig.add_annotation(
-                x=x_position_right,  # Right column x position
-                y=y_position,  # Calculated y position based on the city order
-                xref="paper", yref="paper",
-                text=country,  # Country name
-                showarrow=False,
-                font=dict(size=font_size, color="black"),
-                xanchor='left',
-                align='left',
-                bgcolor='rgba(255,255,255,0.8)',  # Background color for visibility
-                # bordercolor="black",  # Border for visibility
-            )
-
-        fig.update_yaxes(
-            tickfont=dict(size=14, color="black"),
-            showticklabels=True,  # Ensure city names are visible
-            ticklabelposition='inside',  # Move the tick labels inside the bars
-        )
-
-        fig.update_xaxes(
-            tickangle=0,  # No rotation or small rotation for the x-axis
-        )
-
-        # update font family
-        fig.update_layout(font=dict(family=common.get_configs('font_family')))
-
-        # Final adjustments and display
-        fig.update_layout(margin=dict(l=80, r=80, t=x_axis_title_height, b=x_axis_title_height))
-
-        self.save_plotly_figure(fig,
-                                "consolidated",
-                                height=TALL_FIG_HEIGHT*2,
-                                width=4960,
-                                scale=SCALE,
-                                save_final=True,
-                                save_eps=False,
-                                save_png=False)
 
     def mapbox_map(self, df, density_col=None, density_radius=30, hover_data=None, file_name="mapbox_map",
                    save_final=True):
@@ -1753,117 +527,215 @@ class Plots():
         # Display the plot
         fig.show()
 
-    def map_world(self, df, *, color, title=None, projection="natural earth", hover_name="country", hover_data=None,
-                  show_colorbar=False, colorbar_title=None, colorbar_kwargs=None, color_scale="YlOrRd",
-                  show_cities=False, df_cities=None, city_marker_size=3, show_images=False, image_items=None,
-                  denmark_greenland=False, save_file=False, save_final=False, file_basename="map",
-                  filter_zero_nan=True, country_name_map=None):
+    def map_world(self, df, color="continent", *, title=None, title_colorbar=None, projection="natural earth",
+                  df_mapping=None, show_images=False, show_cities=True, hover_data=None, save_file=False,
+                  save_final=False, name_file=None, show_colorbar=False, colorbar_title=None, color_scale="YlOrRd",
+                  filter_zero=True):
         """
-        Unified world choropleth with optional cities and annotations.
+        Unified world choropleth with optional city markers and screenshot overlays.
 
         Args:
-            df (pd.DataFrame): Must include 'country' and the column referenced by `color`.
-            color (str): Column in df for choropleth coloring.
+            df (pd.DataFrame): Must include a 'country' column and the `color` column.
+            color (str): Column to color by (numeric or categorical).
             title (str|None): Optional figure title.
-            projection (str): Plotly geo projection (e.g., 'natural earth').
-            hover_name (str): Column used for hover name (defaults to 'country').
-            hover_data (list|dict|None): Extra hover fields.
-            show_colorbar (bool): Whether to show a color bar.
-            colorbar_title (str|None): Title for color bar (defaults to `color`).
-            colorbar_kwargs (dict|None): Extra layout props for the color bar (merged with sensible defaults).
-            color_scale (str|list): Plotly color scale.
-            show_cities (bool): Add city markers from `df_cities`.
-            df_cities (pd.DataFrame|None): Needs columns 'lat' and 'lon'; optional 'city','country'.
-            city_marker_size (int|float): Marker size for cities.
-            show_images (bool): Add overlay images/arrows/labels from `image_items`.
-            image_items (list[dict]|None): Same schema you used before.
-            denmark_greenland (bool): If True, duplicate Denmark’s value for Greenland.
-            save_file (bool): If True, save HTML (and optionally final image) via your helper.
-            save_final (bool): Passed to your `save_plotly_figure`.
-            file_basename (str): Base filename without extension.
-            filter_zero_nan (bool): Filter rows where `color` is 0 or NaN (your old map() behavior).
-            country_name_map (dict|None): Extra name normalization; default includes {'Türkiye': 'Turkey'}.
+            title_colorbar (str|None): Optional title for the *layout* coloraxis_colorbar (legacy).
+            projection (str): Plotly geo projection name (e.g., "natural earth").
+            df_mapping (pd.DataFrame|None): Optional mapping dataframe with columns ['city','country','lat','lon'].
+            show_images (bool): Add predefined screenshots + annotations.
+            show_cities (bool): Plot city markers from `df_mapping`.
+            hover_data (list|None): Extra columns to show on hover.
+            save_file (bool): Save via `self.save_plotly_figure(...)` instead of `fig.show()`.
+            save_final (bool): Forwarded to `self.save_plotly_figure`.
+            name_file (str|None): File name base when saving. Defaults to f"map_{color}".
+            show_colorbar (bool): Whether to render a (horizontal) color bar.
+            colorbar_title (str|None): Custom colorbar title; defaults to `color` if None.
+            color_scale (str|list): Plotly color scale for continuous data.
+            filter_zero (bool): If True, drops rows where `color` is 0 or NaN (matches original `map`).
         """
 
-        # --- prep ---
+        # Work on a copy
         df = df.copy()
-        if country_name_map is None:
-            country_name_map = {"Türkiye": "Turkey"}
+
+        # ---- HANDLE COUNTRY NAME MISMATCHES ----
+        country_name_map = {"Türkiye": "Turkey"}
         df["country"] = df["country"].replace(country_name_map)
+        # ----------------------------------------
 
-        # Optional Greenland-from-Denmark duplication
-        if denmark_greenland and "country" in df and color in df:
-            denmark_vals = df.loc[df["country"] == "Denmark", color].values
-            if len(denmark_vals) > 0:
-                # build row with same columns
-                greenland_row = {col: (None if col not in ("country", color) else
-                                       ("Greenland" if col == "country" else denmark_vals[0]))
-                                 for col in df.columns}
-                df = pd.concat([df, pd.DataFrame([greenland_row])], ignore_index=True)
-
-        # Optional filter like old map()
-        if filter_zero_nan:
+        # Optional filtering (no-op for categoricals; strings != 0 evaluates True)
+        if filter_zero and color in df.columns:
             df = df[df[color].fillna(0) != 0].copy()
 
-        # Default colorbar title
-        if colorbar_title is None:
-            colorbar_title = color
-
-        # --- figure ---
+        # Build choropleth
         fig = px.choropleth(
             df,
             locations="country",
             locationmode="country names",
             color=color,
-            hover_name=hover_name,
+            hover_name="country",
             hover_data=hover_data,
             projection=projection,
             color_continuous_scale=color_scale,
-            title=title,
         )
 
-        # Fonts from your config
+        # Title + font
+        layout_font = dict(
+            family=common.get_configs("font_family"),
+            size=common.get_configs("font_size"),
+        )
+        fig.update_layout(font=layout_font)
+        if title:
+            fig.update_layout(title={"text": title, "x": 0.5, "xanchor": "center"})
+
+        # Legacy coloraxis_colorbar block from `map` (kept for completeness)
         fig.update_layout(
-            font=dict(
-                family=common.get_configs('font_family'),
-                size=common.get_configs('font_size'),
+            coloraxis_colorbar=dict(
+                x=0,               # far left
+                xanchor="left",
+                y=0.45,            # vertically centered
+                len=0.7,           # adjust the length of the color bar
+                thickness=20,      # width
+                title=title_colorbar,
             )
         )
 
-        # --- optional cities ---
-        if show_cities and df_cities is not None and {"lat", "lon"}.issubset(df_cities.columns):
-            fig.add_trace(go.Scattergeo(
-                lon=df_cities["lon"],
-                lat=df_cities["lat"],
-                text=df_cities.get("city", None),
-                mode="markers",
-                hoverinfo="skip",
-                marker=dict(size=city_marker_size, color="black", opacity=0.7, symbol="circle"),
-                name="cities",
-            ))
+        # Determine colorbar title default
+        if colorbar_title is None:
+            colorbar_title = color
 
-        # --- optional image overlays/arrows/labels (your schema preserved) ---
-        if show_images and image_items:
-            # base path reused from your code
-            path_screenshots = os.path.join(common.root_dir, "readme")
+        # Show/hide horizontal colorbar (from `map_political`)
+        fig.update_coloraxes(
+            showscale=show_colorbar,
+            colorbar=dict(
+                title=colorbar_title,
+                title_side="right",
+                orientation="h",
+                x=0.5,
+                y=0.06 if not show_images else 0.035,  # keep clear of overlays if any
+                xanchor="center",
+                yanchor="bottom",
+                len=0.55 if show_images else 0.5,
+                thickness=10,
+                bgcolor="rgba(255,255,255,0.85)",
+                tickfont=dict(size=max(common.get_configs("font_size") - 5, 8)),
+            ) if show_colorbar else {}
+        )
 
-            # images and labels
-            for item in image_items:
-                if "file" in item:
-                    fig.add_layout_image(dict(
-                        source=os.path.join(path_screenshots, item["file"]),
+        # --- Optional layers: cities and screenshots (from `map_political`) ---
+        if show_cities and isinstance(df_mapping, pd.DataFrame):
+            if {"lat", "lon"}.issubset(df_mapping.columns):
+                fig.add_trace(
+                    go.Scattergeo(
+                        lon=df_mapping["lon"],
+                        lat=df_mapping["lat"],
+                        text=df_mapping.get("city", None),
+                        mode="markers",
+                        hoverinfo="skip",
+                        marker=dict(size=3, color="black", opacity=0.7, symbol="circle"),
+                        name="cities",
+                    )
+                )
+
+        if show_images:
+            # Predefined overlay pack
+            city_images = [
+                {
+                    "city": "Tokyo",
+                    "country": "Japan",
+                    "file": "tokyo.png",
+                    "x": 0.933, "y": 0.58,
+                    "approx_lon": 165.2, "approx_lat": 7.2,
+                    "label": "Tokyo, Japan",
+                    "x_label": 0.982, "y_label": 0.641,
+                    "video": "oDejyTLYUTE",
+                    "x_video": 0.933-0.0025, "y_video": 0.58-0.059
+                },
+                {
+                    "city": "Nairobi",
+                    "country": "Kenya",
+                    "file": "nairobi.png",
+                    "x": 0.72, "y": 0.38,
+                    "approx_lon": 70.2, "approx_lat": -20.0,
+                    "label": "Nairobi, Kenya",
+                    "x_label": 0.7695, "y_label": 0.38+0.062,
+                    "video": "VNLqnwoJqmM",
+                    "x_video": 0.72+0.00129, "y_video": 0.38-0.069,
+                },
+                {
+                    "city": "Los Angeles",
+                    "country": "United States",
+                    "file": "los_angeles.png",
+                    "x": 0.12, "y": 0.5,
+                    "approx_lon": -121.7, "approx_lat": 0.0,
+                    "label": "Los Angeles, CA, USA",
+                    "x_label": 0.0705, "y_label": 0.5+0.062,
+                    "video": "4uhMg5na888",
+                    "x_video": 0.12+0.006, "y_video": 0.5-0.06,
+                },
+                {
+                    "city": "Paris",
+                    "country": "France",
+                    "file": "paris.png",
+                    "x": 0.3915, "y": 0.68,
+                    "approx_lon": -30.6, "approx_lat": 30.4,
+                    "label": "Paris, France",
+                    "x_label": 0.366, "y_label": 0.68+0.072,
+                    "video": "ZTmjk8mSCq8",
+                    "x_video": 0.3915+0.0256, "y_video": 0.68-0.06,
+                },
+                {
+                    "city": "Rio de Janeiro",
+                    "country": "Brazil",
+                    "file": "rio_de_janeiro.png",
+                    "x": 0.47, "y": 0.2,
+                    "approx_lon": -1.8, "approx_lat": -60.2,
+                    "label": "Rio de Janeiro, Brazil",
+                    "x_label": 0.4815, "y_label": 0.2+0.05,
+                    "video": "q83bl_GcsCo",
+                    "x_video": 0.47-0.029, "y_video": 0.2-0.069,
+                },
+                {
+                    "city": "Melbourne",
+                    "country": "Australia",
+                    "file": "melbourne.png",
+                    "x": 0.74, "y": 0.22,
+                    "approx_lon": 90.0, "approx_lat": -52.0,
+                    "label": "Melbourne, Australia",
+                    "x_label": 0.7893, "y_label": 0.22+0.05,
+                    "video": "gQ-9mmnfJjE",
+                    "x_video": 0.733, "y_video": 0.22-0.069,
+                }
+            ]
+
+            path_screenshots = os.path.join(common.root_dir, "screenshots")
+
+            def _img(path):
+                try:
+                    return Image.open(path)
+                except FileNotFoundError:
+                    # optional: log or skip gracefully
+                    return None
+
+            # Image tiles + labels
+            for item in city_images:
+                img_path = os.path.join(path_screenshots, item["file"])
+                img = _img(img_path)
+                if img is None:
+                    continue  # skip missing files
+
+                fig.add_layout_image(
+                    dict(
+                        source=img,
                         xref="paper", yref="paper",
-                        x=item.get("x", 0.5), y=item.get("y", 0.5),
-                        sizex=item.get("sizex", 0.1), sizey=item.get("sizey", 0.1),
-                        xanchor=item.get("xanchor", "center"),
-                        yanchor=item.get("yanchor", "middle"),
-                        layer=item.get("layer", "above"),
-                    ))
+                        x=item["x"], y=item["y"],
+                        sizex=0.1, sizey=0.1,
+                        xanchor="center", yanchor="middle",
+                        layer="above",
+                    )
+                )
                 if "label" in item:
                     fig.add_annotation(
                         text=item["label"],
-                        x=item.get("x_label", item.get("x", 0.5)),
-                        y=item.get("y_label", item.get("y", 0.5) + 0.1),
+                        x=item["x_label"], y=item["y_label"],
                         xref="paper", yref="paper",
                         showarrow=False,
                         font=dict(size=12, color="black"),
@@ -1872,78 +744,95 @@ class Plots():
                         borderwidth=1,
                     )
 
-            # lines to actual city coords (if df_cities available)
-            if df_cities is not None and {"lat", "lon", "city", "country"}.issubset(df_cities.columns):
-                for item in image_items:
-                    if "city" in item and "country" in item and \
-                       "approx_lon" in item and "approx_lat" in item:
-                        row = df_cities[
-                            (df_cities["city"].str.lower() == item["city"].lower()) &
-                            (df_cities["country"].str.lower() == item["country"].lower())
-                        ]
-                        if not row.empty:
-                            fig.add_trace(go.Scattergeo(
+            # Arrows from image to actual city coords (if df_mapping present)
+            if isinstance(df_mapping, pd.DataFrame) and {"city", "country", "lat", "lon"}.issubset(df_mapping.columns):
+                for item in city_images:
+                    row = df_mapping[
+                        (df_mapping["city"].str.lower() == item["city"].lower()) &
+                        (df_mapping["country"].str.lower() == item["country"].lower())
+                    ]
+                    if not row.empty:
+                        fig.add_trace(
+                            go.Scattergeo(
                                 lon=[item["approx_lon"], row["lon"].values[0]],
                                 lat=[item["approx_lat"], row["lat"].values[0]],
                                 mode="lines",
                                 line=dict(width=2, color="black"),
                                 showlegend=False,
                                 geo="geo",
-                                hoverinfo="skip"
-                            ))
-                    # optional small “video code” tag
-                    if "video" in item:
-                        fig.add_annotation(dict(
-                            text=item["video"],
-                            x=item.get("x_video", item.get("x", 0.5)),
-                            y=item.get("y_video", item.get("y", 0.5) - 0.1),
-                            xref="paper", yref="paper",
-                            showarrow=False,
-                            font=dict(size=10, color="black"),
-                            align="center",
-                            bgcolor="rgba(255,255,255,0.7)",
-                            bordercolor="black",
-                            borderwidth=1,
-                        ))
+                                hoverinfo="skip",
+                            )
+                        )
+                        # Video label near image
+                        fig.add_annotation(
+                            dict(
+                                text=item["video"],
+                                x=item["x_video"], y=item["y_video"],
+                                xref="paper", yref="paper",
+                                showarrow=False,
+                                font=dict(size=10, color="black"),
+                                align="center",
+                                bgcolor="rgba(255,255,255,0.7)",
+                                bordercolor="black",
+                                borderwidth=1,
+                            )
+                        )
 
-        # --- colorbar handling (merged defaults + overrides) ---
-        base_colorbar = dict(
-            title=colorbar_title,
-            orientation="h",
-            x=0.5,
-            y=0.06,
-            xanchor="center",
-            yanchor="bottom",
-            len=0.5,
-            thickness=10,
-            bgcolor="rgba(255,255,255,0.7)",
-            tickfont=dict(size=max(common.get_configs('font_size') - 5, 8)),
-        )
-        if colorbar_kwargs:
-            # shallow merge, keys in colorbar_kwargs win
-            base_colorbar.update(colorbar_kwargs)
+            # YOLO example tile + labels
+            yolo_img = _img(os.path.join(path_screenshots, "new_york_yolo.png"))
+            if yolo_img is not None:
+                fig.add_layout_image(
+                    dict(
+                        source=yolo_img,
+                        xref="paper", yref="paper",
+                        x=0.2, y=0.25,
+                        sizex=0.2, sizey=0.2,
+                        xanchor="center", yanchor="middle",
+                        layer="above",
+                    )
+                )
+                fig.add_annotation(
+                    dict(
+                        text="Example of YOLO output (New York, NY, USA)",
+                        x=0.101, y=0.361,
+                        xref="paper", yref="paper",
+                        showarrow=False,
+                        font=dict(size=12, color="black"),
+                        align="center",
+                        bgcolor="rgba(255,255,255,0.7)",
+                        bordercolor="black",
+                        borderwidth=1,
+                    )
+                )
+                fig.add_annotation(
+                    dict(
+                        text="Wyg213IZDI",
+                        x=0.258, y=0.131,
+                        xref="paper", yref="paper",
+                        showarrow=False,
+                        font=dict(size=10, color="black"),
+                        align="center",
+                        bgcolor="rgba(255,255,255,0.7)",
+                        bordercolor="black",
+                        borderwidth=1,
+                    )
+                )
 
-        fig.update_coloraxes(
-            showscale=show_colorbar,
-            colorbar=(base_colorbar if show_colorbar else {})
-        )
-
-        # --- layout ---
+        # Final layout tweaks
         fig.update_layout(
             margin=dict(l=0, r=0, t=0, b=0),
             showlegend=False,
         )
 
-        # --- save/show ---
+        # Save or show
         if save_file:
-            # tiny padding for saved version
+            # Add a bit of margin for exported HTML/PNG
             fig.update_layout(margin=dict(l=10, r=10, t=10, b=10))
-            # save via your utility
-            self.save_plotly_figure(fig, file_basename, save_final=save_final)
+            if not name_file:
+                name_file = f"map_{color}"
+            self.save_plotly_figure(fig, name_file, save_final=save_final)
         else:
             fig.show()
-
-        return fig
 
     def scatter(self, df, x, y, extension=None, color=None, symbol=None, size=None, text=None, trendline=None,
                 hover_data=None, marker_size=None, pretty_text=False, marginal_x='violin', marginal_y='violin',
@@ -3305,423 +2194,6 @@ class Plots():
         fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=x_axis_title_height))
         self.save_plotly_figure(fig, "consolidated", height=TALL_FIG_HEIGHT*2, width=4960, scale=SCALE,
                                 save_final=True, save_eps=False)
-
-    def correlation_matrix(self, df_mapping, ped_cross_city, person_city, bicycle_city, car_city,
-                           motorcycle_city, bus_city, truck_city, cross_evnt_city, vehicle_city, cellphone_city,
-                           trf_sign_city, speed_values, time_values, avg_time, avg_speed):
-        """
-        Compute and visualise correlation matrices for various city-level traffic and demographic data.
-
-        This method:
-        - Loads precomputed statistical data from a pickled file.
-        - Aggregates metrics like speed, time, vehicle/pedestrian counts, and socioeconomic indicators.
-        - Constructs structured dictionaries for day (condition 0) and night (condition 1) conditions.
-        - Computes Spearman correlation matrices for:
-            - Daytime data
-            - Nighttime data
-            - Averaged across both conditions
-            - Per continent basis
-        - Generates and saves Plotly heatmaps for all computed correlation matrices.
-
-        Args:
-            df_mapping (pd.DataFrame): A mapping DataFrame containing metadata for each city-state combination,
-                                       including country, continent, GDP, literacy rate, etc.
-
-        Raises:
-            ValueError: If essential data (e.g., average speed or time) is missing.
-        """
-        logger.info("Plotting correlation matrices.")
-        final_dict = {}
-
-        # Check if both 'speed' and 'time' are valid dictionaries
-        if avg_speed is None or avg_time is None:
-            raise ValueError("Either 'speed' or 'time' returned None, please check the input data or calculations.")
-
-        # Remove the ones where there is data missing for a specific country and condition
-        common_keys = avg_speed.keys() & avg_time.keys()
-
-        # Retain only the key-value pairs where the key is present in both dictionaries
-        avg_speed = {key: avg_speed[key] for key in common_keys}
-        avg_time = {key: avg_time[key] for key in common_keys}
-
-        # Now populate the final_dict with city-wise data
-        for city_condition, speed in avg_speed.items():
-            city, lat, long, condition = city_condition.split('_')
-
-            # Get the country from the previously stored city_country_map
-            country = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "country")
-            iso_code = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "iso3")
-            continent = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "continent")
-            population_country = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "population_country")  # noqa: E501
-            gdp_city = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "gmp")
-            traffic_mortality = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "traffic_mortality")  # noqa: E501
-            literacy_rate = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "literacy_rate")
-            gini = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "gini")
-            traffic_index = values_class.get_value(df_mapping, "city", city, "lat", float(lat), "traffic_index")
-
-            if country or iso_code is not None:
-
-                # Initialise the city's dictionary if not already present
-                if f'{city}_{lat}_{long}' not in final_dict:
-                    final_dict[f'{city}_{lat}_{long}'] = {
-                        "avg_speed_0": None, "avg_speed_1": None, "avg_time_0": None, "avg_time_1": None,
-                        "speed_val_0": None, "speed_val_1": None, "time_val_0": None, "time_val_1": None,
-                        "ped_cross_city_0": 0, "ped_cross_city_1": 0,
-                        "person_city_0": 0, "person_city_1": 0, "bicycle_city_0": 0,
-                        "bicycle_city_1": 0, "car_city_0": 0, "car_city_1": 0,
-                        "motorcycle_city_0": 0, "motorcycle_city_1": 0, "bus_city_0": 0,
-                        "bus_city_1": 0, "truck_city_0": 0, "truck_city_1": 0,
-                        "cross_evnt_city_0": 0, "cross_evnt_city_1": 0, "vehicle_city_0": 0,
-                        "vehicle_city_1": 0, "cellphone_city_0": 0, "cellphone_city_1": 0,
-                        "trf_sign_city_0": 0, "trf_sign_city_1": 0,
-                    }
-
-                # Populate the corresponding speed and time based on the condition
-                final_dict[f'{city}_{lat}_{long}'][f"avg_speed_{condition}"] = speed
-                if f'{city}_{lat}_{long}_{condition}' in avg_time:
-                    final_dict[f'{city}_{lat}_{long}'][f"avg_time_{condition}"] = avg_time.get(
-                        f'{city}_{lat}_{long}_{condition}', None)
-                    final_dict[f'{city}_{lat}_{long}'][f"time_val_{condition}"] = time_values.get(
-                        f'{city}_{lat}_{long}_{condition}', None)
-                    final_dict[f'{city}_{lat}_{long}'][f"speed_val_{condition}"] = speed_values.get(
-                        f'{city}_{lat}_{long}_{condition}', None)
-                    final_dict[f'{city}_{lat}_{long}'][f"time_val_{condition}"] = time_values.get(
-                        f'{city}_{lat}_{long}_{condition}', None)
-                    final_dict[f'{city}_{lat}_{long}'][f"ped_cross_city_{condition}"] = ped_cross_city.get(
-                        f'{city}_{lat}_{long}_{condition}', None)
-
-                    avg_person_city = tools_class.compute_avg_variable_city(person_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"person_city_{condition}"] = avg_person_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    avg_bicycle_city = tools_class.compute_avg_variable_city(bicycle_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"bicycle_city_{condition}"] = avg_bicycle_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    avg_car_city = tools_class.compute_avg_variable_city(car_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"car_city_{condition}"] = avg_car_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    avg_motorcycle_city = tools_class.compute_avg_variable_city(motorcycle_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"motorcycle_city_{condition}"] = avg_motorcycle_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    avg_bus_city = tools_class.compute_avg_variable_city(bus_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"bus_city_{condition}"] = avg_bus_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    avg_truck_city = tools_class.compute_avg_variable_city(truck_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"truck_city_{condition}"] = avg_truck_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    final_dict[f'{city}_{lat}_{long}'][f"cross_evnt_city_{condition}"] = cross_evnt_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    avg_vehicle_city = tools_class.compute_avg_variable_city(vehicle_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"vehicle_city_{condition}"] = avg_vehicle_city.get(
-                        f'{city}_{lat}_{long}_{condition}', None)
-
-                    avg_cellphone_city = tools_class.compute_avg_variable_city(cellphone_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"cellphone_city_{condition}"] = avg_cellphone_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    avg_trf_sign_city = tools_class.compute_avg_variable_city(trf_sign_city)
-                    final_dict[f'{city}_{lat}_{long}'][f"trf_sign_city_{condition}"] = avg_trf_sign_city.get(
-                        f'{city}_{lat}_{long}_{condition}', 0)
-
-                    final_dict[f'{city}_{lat}_{long}'][f"traffic_mortality_{condition}"] = traffic_mortality
-                    final_dict[f'{city}_{lat}_{long}'][f"literacy_rate_{condition}"] = literacy_rate
-                    final_dict[f'{city}_{lat}_{long}'][f"gini_{condition}"] = gini
-                    final_dict[f'{city}_{lat}_{long}'][f"traffic_index_{condition}"] = traffic_index
-                    final_dict[f'{city}_{lat}_{long}'][f"continent_{condition}"] = continent
-                    if gdp_city is not None:
-                        final_dict[f'{city}_{lat}_{long}'][f"gmp_{condition}"] = gdp_city/population_country
-
-        # Initialise an empty list to store the rows for the DataFrame
-        data_day, data_night = [], []
-
-        # Loop over each city and gather relevant values for condition 0
-        for city in final_dict:
-            # Initialise a dictionary for the row
-            row_day, row_night = {}, {}
-
-            # Add data for condition 0 (ignore 'speed_val' and 'time_val')
-            for condition in ['0']:  # Only include condition 0
-                for key, value in final_dict[city].items():
-                    if condition in key and 'speed_val' not in key and 'time_val' not in key and 'continent' not in key:  # noqa:E501
-                        row_day[key] = value
-
-            # Append the row to the data list
-            data_day.append(row_day)
-
-            for condition in ['1']:  # Only include condition 1
-                for key, value in final_dict[city].items():
-                    if condition in key and 'speed_val' not in key and 'time_val' not in key and 'continent' not in key:  # noqa:E501
-                        row_night[key] = value
-
-            # Append the row to the data list
-            data_night.append(row_night)
-
-        # Convert the list of rows into a Pandas DataFrame
-        df_day = pd.DataFrame(data_day)
-        df_night = pd.DataFrame(data_night)
-
-        # Calculate the correlation matrix
-        corr_matrix_day = df_day.corr(method='spearman')
-        corr_matrix_night = df_night.corr(method='spearman')
-
-        # Rename the variables in the correlation matrix
-        rename_dict_1 = {
-            'avg_speed_0': 'Speed of', 'avg_speed_1': 'Crossing speed',
-            'avg_time_0': 'Crossing initiation time', 'avg_time_1': 'Crossing initiation time',
-            'ped_cross_city_0': 'Crossing', 'ped_cross_city_1': 'Crossing',
-            'person_city_0': 'Detected persons', 'person_city_1': 'Detected persons',
-            'bicycle_city_0': 'Detected bicycles', 'bicycle_city_1': 'Detected bicycles',
-            'car_city_0': 'Detected cars', 'car_city_1': 'Detected cars',
-            'motorcycle_city_0': 'Detected motorcycles', 'motorcycle_city_1': 'Detected motorcycles',
-            'bus_city_0': 'Detected buses', 'bus_city_1': 'Detected buses',
-            'truck_city_0': 'Detected trucks', 'truck_city_1': 'Detected trucks',
-            'cross_evnt_city_0': 'Crossings without traffic lights',
-            'cross_evnt_city_1': 'Crossings without traffic lights',
-            'vehicle_city_0': 'Detected motor vehicles',
-            'vehicle_city_1': 'Detected motor vehicles',
-            'cellphone_city_0': 'Detected cellphones', 'cellphone_city_1': 'Detected cellphones',
-            'trf_sign_city_0': 'Detected traffic signs', 'trf_sign_city_1': 'Detected traffic signs',
-            'gmp_0': 'GMP', 'gmp_1': 'GMP',
-            'traffic_mortality_0': 'Traffic mortality', 'traffic_mortality_1': 'Traffic mortality',
-            'literacy_rate_0': 'Literacy rate', 'literacy_rate_1': 'Literacy rate',
-            'gini_0': 'Gini coefficient', 'gini_1': 'Gini coefficient', 'traffic_index_0': 'Traffic index',
-            'traffic_index_1': 'Traffic index'
-            }
-
-        corr_matrix_day = corr_matrix_day.rename(columns=rename_dict_1, index=rename_dict_1)
-        corr_matrix_night = corr_matrix_night.rename(columns=rename_dict_1, index=rename_dict_1)
-
-        # Generate the heatmap using Plotly
-        fig = px.imshow(corr_matrix_day, text_auto=".2f",  # Display correlation values on the heatmap # type: ignore
-                        color_continuous_scale='RdBu',  # Color scale
-                        aspect="auto")  # Automatically adjust aspect ratio
-        fig.update_layout(coloraxis_showscale=False)
-
-        # update font family
-        fig.update_layout(font=dict(family=common.get_configs('font_family')))
-
-        self.save_plotly_figure(fig, "correlation_matrix_heatmap_day", save_final=True)
-
-        # Generate the heatmap using Plotly
-        fig = px.imshow(corr_matrix_night, text_auto=".2f",  # Display correlation values on heatmap  # type: ignore
-                        color_continuous_scale='RdBu',  # Color scale
-                        aspect="auto",  # Automatically adjust aspect ratio
-                        # title="Correlation Matrix Heatmap in night"  # Title of the heatmap
-                        )
-        fig.update_layout(coloraxis_showscale=False)
-
-        # update font family
-        fig.update_layout(font=dict(family=common.get_configs('font_family')))
-
-        # use value from config file
-        fig.update_layout(font=dict(size=common.get_configs('font_size')))
-
-        self.save_plotly_figure(fig, "correlation_matrix_heatmap_night", save_final=True)
-
-        # Initialise a list to store rows of data (one row per city)
-        data_rows = []
-
-        # Assuming `conditions` is a list of conditions working with
-        conditions = ['0', '1']  # Modify this list to include all condition (e.g., '0', '1', etc.)
-
-        # Iterate over each city and condition
-        for city in final_dict:
-            # Initialise a dictionary to store the values for the current row
-            row_data = {}
-
-            # For each condition
-            for condition in conditions:
-                # For each variable (exclude avg_speed and avg_time)
-                for var in ['ped_cross_city', 'person_city', 'bicycle_city', 'car_city', 'motorcycle_city', 'bus_city',
-                            'truck_city', 'cross_evnt_city', 'vehicle_city', 'cellphone_city', 'trf_sign_city',
-                            'gmp', 'traffic_mortality', 'literacy_rate', 'gini', 'traffic_index']:
-                    # Populate each variable in the row_data dictionary
-                    row_data[f"{var}_{condition}"] = final_dict[city].get(f"{var}_{condition}", 0)
-
-                # Calculate average of speed_val and time_val (assumed to be arrays)
-                speed_vals = final_dict[city].get(f"speed_val_{condition}", [])
-                time_vals = final_dict[city].get(f"time_val_{condition}", [])
-
-                if speed_vals:  # Avoid division by zero or empty dict
-                    all_speed_values = [val for inner_dict in speed_vals.values() for val in inner_dict.values()]
-                    if all_speed_values:  # Check to avoid computing mean on empty list
-                        row_data[f"avg_speed_val_{condition}"] = np.mean(all_speed_values)
-                    else:
-                        row_data[f"avg_speed_val_{condition}"] = np.nan
-                else:
-                    row_data[f"avg_speed_val_{condition}"] = np.nan  # Handle empty or missing dict
-
-                if time_vals:
-                    all_time_values = [val for inner_dict in time_vals.values() for val in inner_dict.values()]
-                    if all_time_values:
-                        row_data[f"avg_time_val_{condition}"] = np.mean(all_time_values)
-                    else:
-                        row_data[f"avg_time_val_{condition}"] = np.nan
-                else:
-                    row_data[f"avg_time_val_{condition}"] = np.nan  # Handle empty or missing dict
-
-            # Append the row data for the current city
-            data_rows.append(row_data)
-
-        # Convert the data into a pandas DataFrame
-        df = pd.DataFrame(data_rows)
-
-        # Create a new DataFrame to average the columns across conditions
-        agg_df = pd.DataFrame()
-
-        # Loop through the columns in the original DataFrame
-        for col in df.columns:
-            # Extract the feature name (without condition part)
-            feature_name = "_".join(col.split("_")[:-1])
-            condition = col.split("_")[-1]
-
-            # Create a new column by averaging values across conditions for the same feature
-            if feature_name not in agg_df.columns:
-                # Select the columns for this feature across all conditions
-                condition_cols = [c for c in df.columns if feature_name in c]
-                agg_df[feature_name] = df[condition_cols].mean(axis=1)
-
-        # Compute the correlation matrix on the aggregated DataFrame
-        corr_matrix_avg = agg_df.corr(method='spearman')
-
-        # Rename the variables in the correlation matrix (example: renaming keys)
-        rename_dict_2 = {
-            'avg_speed_val': 'Crossing speed', 'avg_time_val': 'Crossing initiation time',
-            'ped_cross_city': 'Crossing', 'person_city': 'Detected persons',
-            'bicycle_city': 'Detected bicycles', 'car_city': 'Detected cars',
-            'motorcycle_city': 'Detected motorcycles', 'bus_city': 'Detected buses',
-            'truck_city': 'Detected trucks', 'cross_evnt_city': 'Crossings without traffic light',
-            'vehicle_city': 'Detected all motor vehicles', 'cellphone_city': 'Detected cellphones',
-            'trf_sign_city': 'Detected traffic signs', 'gmp_city': 'GMP',
-            'traffic_mortality_city': 'Traffic mortality', 'literacy_rate_city': 'Literacy rate',
-            'gini': 'Gini coefficient', 'traffic_index': 'Traffic Index'
-            }
-
-        corr_matrix_avg = corr_matrix_avg.rename(columns=rename_dict_2, index=rename_dict_2)
-
-        # Generate the heatmap using Plotly
-        fig = px.imshow(corr_matrix_avg, text_auto=".2f",  # Display correlation values on heatmap  # type: ignore
-                        color_continuous_scale='RdBu',  # Color scale
-                        aspect="auto",  # Automatically adjust aspect ratio
-                        # title="Correlation matrix heatmap averaged" # Title of the heatmap
-                        )
-        fig.update_layout(coloraxis_showscale=False)
-
-        # update font family
-        fig.update_layout(font=dict(family=common.get_configs('font_family')))
-
-        # use value from config file
-        fig.update_layout(font=dict(size=common.get_configs('font_size')))
-
-        self.save_plotly_figure(fig, "correlation_matrix_heatmap_averaged", save_final=True)
-
-        # Continent Wise
-
-        # Initialise a list to store rows of data (one row per city)
-        data_rows = []
-
-        # Assuming `conditions` is a list of conditions working with
-        conditions = ['0', '1']  # Modify this list to include all conditions (e.g., '0', '1', etc.)
-        unique_continents = df_mapping['continent'].unique()
-
-        # Iterate over each city and condition
-        for city in final_dict:
-            # Initialise a dictionary to store the values for the current row
-            row_data = {}
-
-            # For each condition
-            for condition in conditions:
-                # For each variable (exclude avg_speed and avg_time)
-                for var in ['ped_cross_city', 'person_city', 'bicycle_city', 'car_city', 'motorcycle_city', 'bus_city',
-                            'truck_city', 'cross_evnt_city', 'vehicle_city', 'cellphone_city', 'trf_sign_city',
-                            'gmp', 'traffic_mortality', 'literacy_rate', 'continent', 'gini', 'traffic_index']:
-                    # Populate each variable in the row_data dictionary
-                    row_data[f"{var}_{condition}"] = final_dict[city].get(f"{var}_{condition}", 0)
-
-                # Calculate average of speed_val and time_val (assumed to be arrays)
-                speed_vals = final_dict[city].get(f"speed_val_{condition}", [])
-                time_vals = final_dict[city].get(f"time_val_{condition}", [])
-
-                if speed_vals:
-                    all_speed_values = [val for inner_dict in speed_vals.values() for val in inner_dict.values()]
-                    row_data[f"avg_speed_val_{condition}"] = np.mean(all_speed_values) if all_speed_values else np.nan
-                else:
-                    row_data[f"avg_speed_val_{condition}"] = np.nan
-
-                # Handle avg_time_val
-                if time_vals:
-                    all_time_values = [val for inner_dict in time_vals.values() for val in inner_dict.values()]
-                    row_data[f"avg_time_val_{condition}"] = np.mean(all_time_values) if all_time_values else np.nan
-                else:
-                    row_data[f"avg_time_val_{condition}"] = np.nan
-
-            # Append the row data for the current city
-            data_rows.append(row_data)
-
-        # Convert the data into a pandas DataFrame
-        df = pd.DataFrame(data_rows)
-
-        for continents in unique_continents:
-            filtered_df = df[(df['continent_0'] == continents) | (df['continent_1'] == continents)]
-            # Create a new DataFrame to average the columns across conditions
-            agg_df = pd.DataFrame()
-
-            # Loop through the columns in the original DataFrame
-            for col in filtered_df.columns:
-                # Extract the feature name (without condition part)
-                feature_name = "_".join(col.split("_")[:-1])
-                condition = col.split("_")[-1]
-
-                # Skip columns named "continent_0" or "continent_1"
-                if "continent" in feature_name:
-                    continue
-
-                # Create a new column by averaging values across conditions for the same feature
-                if feature_name not in agg_df.columns:
-                    # Select the columns for this feature across all conditions
-                    condition_cols = [c for c in filtered_df.columns if feature_name in c]
-                    agg_df[feature_name] = filtered_df[condition_cols].mean(axis=1)
-
-            # Compute the correlation matrix on the aggregated DataFrame
-            corr_matrix_avg = agg_df.corr(method='spearman')
-
-            # Rename the variables in the correlation matrix (example: renaming keys)
-            rename_dict_3 = {
-                'avg_speed_val': 'Crossing speed', 'avg_time_val': 'Crossing initiation time',
-                'ped_cross_city': 'Crossing', 'person_city': 'Detected persons',
-                'bicycle_city': 'Detected bicycles', 'car_city': 'Detected cars',
-                'motorcycle_city': 'Detected motorcycles', 'bus_city': 'Detected buses',
-                'truck_city': 'Detected trucks', 'cross_evnt_city': 'Crossings without traffic light',
-                'vehicle_city': 'Detected all motor vehicles', 'cellphone_city': 'Detected cellphones',
-                'trf_sign_city': 'Detected traffic signs', 'gmp': 'GMP',
-                'traffic_mortality': 'Traffic mortality', 'literacy_rate': 'Literacy rate', 'gini': 'Gini coefficient',
-                'traffic_index': 'Traffic Index'
-                }
-
-            corr_matrix_avg = corr_matrix_avg.rename(columns=rename_dict_3, index=rename_dict_3)
-
-            # Generate the heatmap using Plotly
-            fig = px.imshow(corr_matrix_avg, text_auto=".2f",  # Display correlation values on heatmap  # type: ignore
-                            color_continuous_scale='RdBu',  # Color scale
-                            aspect="auto",  # Automatically adjust aspect ratio
-                            # title=f"Correlation matrix heatmap {continents}"  # Title of the heatmap
-                            )
-
-            fig.update_layout(coloraxis_showscale=False)
-
-            # update font family
-            fig.update_layout(font=dict(family=common.get_configs('font_family')))
-
-            # use value from config file
-            fig.update_layout(font=dict(size=common.get_configs('font_size')))
-
-            self.save_plotly_figure(fig, f"correlation_matrix_heatmap_{continents}", save_final=True)
 
     def correlation_matrix_country(self, df_mapping, df_countries, ped_cross_city, person_city, bicycle_city, car_city,
                                    motorcycle_city, bus_city, truck_city, cross_evnt_city, vehicle_city,
