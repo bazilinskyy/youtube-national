@@ -219,7 +219,7 @@ Footage with traffic lights over footage without traffic lights, both normalised
 
 ### Correlation matrices
 [![Correlation matrix based on average speed and time to start cross](figures/correlation_matrix_heatmap_averaged.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_averaged.html)
-Correlation matrix.
+Correlation matrix of average values of day and night.
 
 [![Correlation matrix at daytime](figures/correlation_matrix_heatmap_day.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_day.html)
 Correlation matrix at daytime.
@@ -245,12 +245,7 @@ Correlation matrix for North America.
 [![Correlation matrix for South America](figures/correlation_matrix_heatmap_South%20America.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_South%20America.html)
 Correlation matrix for South America.
 
-### Analysis of pedestrian crossing road with and without traffic lights (jaywalking)
-[![Road crossings with traffic signals](figures/crossings_with_traffic_equipment_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossings_with_traffic_equipment_avg.html)
-Road crossings with traffic signals (normalised over time and number of detected pedestrians).
-
-[![Road crossings without traffic signals](figures/crossings_without_traffic_equipment_avg.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossings_without_traffic_equipment_avg.html)
-Road crossings without traffic signals (normalised over time and number of detected pedestrians).
+### Analysis of pedestrian crossing road without traffic lights (jaywalking)
 
 [![Road crossings with and without traffic signals](figures/scatter_with_trf_light_norm-without_trf_light_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_with_trf_light_norm-without_trf_light_norm.html)
 Road crossings with and without traffic signals (normalised over time and number of detected pedestrians).

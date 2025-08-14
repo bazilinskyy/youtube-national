@@ -2447,6 +2447,7 @@ if __name__ == "__main__":
     # Speed of crossing vs Crossing initiation time
     df = df_countries[df_countries["speed_crossing_day_night_country_avg"] != 0].copy()
     df = df[df["time_crossing_day_night_country_avg"] != 0]
+
     plots_class.scatter(df=df,
                         x="speed_crossing_day_night_country_avg",
                         y="time_crossing_day_night_country_avg",
@@ -2786,6 +2787,7 @@ if __name__ == "__main__":
         colorbar_title="",          # keep your empty title behavior
         filter_zero=True,           # preserves old map() filtering
         save_file=True,
+        save_final=True,
         name_file="map_speed_crossing",
     )
 
@@ -2800,6 +2802,7 @@ if __name__ == "__main__":
         colorbar_title="",
         filter_zero=True,
         save_file=True,
+        save_final=True,
         name_file="map_crossing_time",
     )
 
