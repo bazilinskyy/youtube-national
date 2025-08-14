@@ -2178,7 +2178,7 @@ if __name__ == "__main__":
         show_colorbar=True,
         colorbar_title="Footage (log)",
         save_file=True,
-        save_final=False,
+        save_final=True,
         name_file="map_screenshots_total_time",
     )
 

@@ -94,20 +94,8 @@ Configuration of the project needs to be defined in `config`. Please use the `de
 
 ## Description and analysis of dataset
 ### Description of dataset
-[![Locations of cities with footage in dataset](figures/map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map.html)
+[![Locations of cities with footage in dataset](figures/raw_map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/raw_map.html)
 The 233 countries with dashcam footage included in analysis on the political map (coloured by continent). Black dots show the cities included.
-
-[![Total time of footage over number of detected pedestrians](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person.html)
-Total time of footage over number of detected pedestrians.
-
-[![Total time of footage over number of detected pedestrians normalised](figures/scatter_total_time-person_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person_norm.html)
-Total time of footage over number of detected pedestrians normalised over amount of footage.
-
-[![Total time of footage over number of detected bicycles](figures/scatter_total_time-bicycle.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-bicycle.html)
-Total time of footage over number of detected bicycles.
-
-[![Total time of footage over number of detected bicycles normalised](figures/scatter_total_time-bicycle_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-bicycle_norm.html)
-Total time of footage over number of detected bicycles normalised over amount of footage.
 
 [![Histogram of pedestrian crossing speeds](figures/hist_speed.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_speed.html)  
 Histogram of pedestrian crossing speeds (in m/s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
