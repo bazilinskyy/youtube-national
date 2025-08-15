@@ -71,9 +71,7 @@ uv sync --frozen
 **Step 6:**
 
 Activate the virtual environment
-```command line
-pip install -r requirements.txt
-```
+
 **macOS / Linux (bash/zsh):**
 ```bash
 source .venv/bin/activate
