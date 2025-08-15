@@ -144,6 +144,12 @@ Histogram of pedestrian crossing speeds (in m/s), computed **per individual pede
 [![Histogram of pedestrian crossing initiation time](figures/hist_time.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_time.html)  
 Histogram of pedestrian crossing initiation time (in s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
 
+[![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_combined_country_raw.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_combined_country_raw.html)
+Mean time to start crossing (in s, sorted by day).
+
+[![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_combined_country_raw.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_combined_country_raw.html)
+Mean speed of crossing (in m/s, sorted by day).
+
 
 ### Dataset after filtering
 The dataset undergoes a filtering process to ensure quality and sufficient coverage before being used in analysis. The following thresholds are applied:
@@ -163,8 +169,10 @@ Histogram of pedestrian crossing speeds (in m/s), computed **per individual pede
 Histogram of pedestrian crossing initiation time (in s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
 
 [![Location of the cities included in the dataset after filtering](figures/mapbox_map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/mapbox_map.html)
+Location of the cities included in the dataset after filtering.
 
 [![Total time of footage after filtering](figures/mapbox_map_time.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/mapbox_map_time.html)
+Total time of footage after filtering.
 
 ### Time to start crossing
 [![Map with mean time to start crossing (in s)](figures/map_crossing_time.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_crossing_time.html)
@@ -176,11 +184,14 @@ Mean time to start crossing (in s, sorted by average of day and night).
 [![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_combined_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_combined_country.html)
 Mean time to start crossing (in s, sorted by day).
 
-[![Mean time to start crossing at day (in s, sorted alphabetically)](figures/time_crossing_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical_day_country.html)  
-Mean time to start crossing at day (in s, sorted by values)
+[![Mean time to start crossing (in s, sorted alphabetically)](figures/time_crossing_alphabetical_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical_country.html)  
+Mean time to start crossing (in s, sorted alphabetically).
 
-[![Mean time to start crossing at night (in s, sorted alphabetically)](figures/time_crossing_avg_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg_night_country.html)  
-Mean time to start crossing at night (in s, sorted by values)
+[![Mean time to start crossing at day (in s, sorted by values)](figures/time_crossing_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical_day_country.html)  
+Mean time to start crossing at day (in s, sorted by values).
+
+[![Mean time to start crossing at night (in s, sorted by values)](figures/time_crossing_avg_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg_night_country.html)  
+Mean time to start crossing at night (in s, sorted by values).
 
 ### Speed of crossing
 [![Map with mean speed of crossing (in m/s)](figures/map_speed_crossing.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_speed_crossing.html)
@@ -192,11 +203,14 @@ Mean speed of crossing (in m/s, sorted by average of day and night).
 [![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_combined_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_combined_country.html)
 Mean speed of crossing (in m/s, sorted by day).
 
-[![Mean speed of crossing at day (in s, sorted alphabetically)](figures/crossing_speed_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_day_country.html)  
-Mean speed of crossing at day (in m/s, sorted by values)
+[![Mean speed of crossing (in m/s, sorted alphabetically)](figures/crossing_speed_alphabetical_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_country.html)
+Mean speed of crossing (in m/s, sorted alphabetically).
 
-[![Mean speed of crossing at night (in s, sorted alphabetically)](figures/crossing_speed_alphabetical_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_night_country.html)  
-Mean speed of crossing at night (in m/s, sorted by values)
+[![Mean speed of crossing at day (in m/s, sorted by values)](figures/crossing_speed_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_day_country.html)  
+Mean speed of crossing at day (in m/s, sorted by values).
+
+[![Mean speed of crossing at night (in m/s, sorted by values)](figures/crossing_speed_alphabetical_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_night_country.html)  
+Mean speed of crossing at night (in m/s, sorted by values).
 
 
 

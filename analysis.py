@@ -2262,7 +2262,7 @@ if __name__ == "__main__":
                                    annotation_x_position=[0.087, 0.175],
                                    annotation_y_position=[1.031, 1.031],
                                    font_size_captions=common.get_configs("font_size") + 28,
-                                   legend_x=0.95,
+                                   legend_x=0.92,
                                    legend_y=0.04,
                                    legend_spacing=0.02,
                                    top_margin=150,
@@ -2391,7 +2391,7 @@ if __name__ == "__main__":
                                    height=2400,
                                    width=2480)
 
-    Plotting stacked plot during day
+    # Plotting stacked plot during day
     plots_class.stack_plot_country(df_countries,
                                    order_by="average",
                                    metric="time",
