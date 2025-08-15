@@ -1148,26 +1148,28 @@ class Plots():
             if data_view == "day":
                 countries_ordered = sorted(
                     [
-                        country for country in final_dict.keys()
+                        country for country in final_dict
                         if (final_dict[country].get(f"{metric}_0") or 0) >= 0.005
                     ],
-                    key=lambda country: (final_dict[country].get("iso") or "")
+                    key=lambda country: final_dict[country].get("country") or country
                 )
+
             elif data_view == "night":
                 countries_ordered = sorted(
                     [
-                        country for country in final_dict.keys()
+                        country for country in final_dict
                         if (final_dict[country].get(f"{metric}_1") or 0) >= 0.005
                     ],
-                    key=lambda country: (final_dict[country].get("iso") or "")
+                    key=lambda country: final_dict[country].get("country") or country
                 )
+
             else:
                 countries_ordered = sorted(
                     [
-                        country for country in final_dict.keys()
+                        country for country in final_dict
                         if (((final_dict[country].get(f"{metric}_0") or 0) + (final_dict[country].get(f"{metric}_1") or 0)) / 2) >= 0.005  # noqa:E501
                     ],
-                    key=lambda country: (final_dict[country].get("iso") or "")
+                    key=lambda country: final_dict[country].get("country") or country
                 )
 
         elif order_by == "average":
