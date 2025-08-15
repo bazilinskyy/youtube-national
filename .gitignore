@@ -17,6 +17,7 @@ yolo11x.pt
 yolo11x-seg.pt
 
 # Python environment files
+.venv
 .vscode/
 .pytest_cache/
 __pycache__/
