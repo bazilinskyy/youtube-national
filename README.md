@@ -14,12 +14,13 @@ If you use the gans-traffic for academic work please cite the following paper:
 [![Python Version](https://img.shields.io/badge/python-3.9.19-blue.svg)](https://www.python.org/downloads/release/python-3919/)
 [![Package Manager: uv](https://img.shields.io/badge/package%20manager-uv-green)](https://docs.astral.sh/uv/)
 
-Tested with **Python 3.9.19** and the [`uv` package manager](https://docs.astral.sh/uv/).  
-Follow these steps to set up the project. To setup the environment run these two commands in a parent folder of the downloaded repository (replace `/` with `\` and possibly add `--user` if on Windows:
+Tested with **Python 3.9.19** and the [`uv`](https://docs.astral.sh/uv/) package manager.  
+Follow these steps to set up the project.
 
 **Step 1:**
 
-Install `uv`
+Install `uv`.
+
 `uv` is a fast Python package and environment manager. Install it using one of the following methods:
 
 **macOS / Linux (bash/zsh):**
