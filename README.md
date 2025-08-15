@@ -205,13 +205,13 @@ Mean time to start crossing (in s) over total population of the country.
 Mean time to start crossing (in s) over traffic-related mortality (per 100,000 people).
 
 [![Total footage time over bicycle count (normalised)](figures/scatter_total_time-bicycle_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-bicycle_norm.html)  
-Total footage time (in hours) over number of bicycles (normalised per population).
+Total footage time (in s) over number of bicycles (normalised per detected persons).
 
 [![Total footage time over pedestrian count (normalised)](figures/scatter_total_time-person_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person_norm.html)  
-Total footage time (in hours) over number of pedestrians (normalised per population).
+Total footage time (in s) over number of pedestrians (normalised per detected pedestrian).
 
 [![Total footage time over pedestrian count](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person.html)  
-Total footage time (in hours) over total number of pedestrians.
+Total footage time (in s) over total number of pedestrians.
 
 [![Footage with traffic light over footage without traffic light (normalised)](figures/scatter_with_trf_light_norm-without_trf_light_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_with_trf_light_norm-without_trf_light_norm.html)  
 Footage with traffic lights over footage without traffic lights, both normalised per population.
