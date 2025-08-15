@@ -1035,9 +1035,10 @@ class Plots():
         # Cycle through the positions for each element in the input list
         return [positions[i % len(positions)] for i in range(len(x))]
 
-    def stack_plot_country(self, df_mapping, order_by, metric, data_view, title_text, filename,
-                           legend_x=0.87, legend_y=0.04, font_size_captions=40, raw=False, legend_spacing=0.02,
-                           left_margin=10, right_margin=10, top_margin=0, bottom_margin=0, height=2400, width=2480):
+    def stack_plot_country(self, df_mapping, order_by, metric, data_view, title_text, filename, annotation_text=None,
+                           annotation_x_position=None, annotation_y_position=None, gridlines=None, legend_x=0.87,
+                           legend_y=0.04, font_size_captions=40, raw=False, legend_spacing=0.02, left_margin=10,
+                           right_margin=10, top_margin=0, bottom_margin=0, height=2400, width=2480):
         """
         Plots a stacked bar graph based on the provided data and configuration.
 
@@ -1511,11 +1512,14 @@ class Plots():
         )
 
         # Define gridline generation parameters
-        if metric == "speed":
-            start, step, count = 0.5, 0.5, 9
-        elif metric == "time":
-            start, step, count = 2, 2, 30
+        if gridlines is None:
+            if metric == "speed":
+                start, step, count = 0.5, 0.5, 9
+            elif metric == "time":
+                start, step, count = 2, 2, 30
 
+        else:
+            start, step, count = gridlines
         # Generate gridline positions
         x_grid_values = [start + i * step for i in range(count)]
 
@@ -1634,52 +1638,19 @@ class Plots():
                                       r=right_margin,
                                       t=top_margin,
                                       b=bottom_margin))
-        # Speed (main text)
-        # fig.add_annotation(
-        #     text="0.5",
-        #     xref="paper", yref="paper",
-        #     x=0.06, y=1.032,  # adjust these values to position the label above the plot
-        #     showarrow=False,
-        #     font=dict(
-        #         size=common.get_configs("font_size")+28,
-        #         family=common.get_configs("font_family")
-        #     )
-        # )
+        if annotation_text is not None and annotation_x_position is not None and annotation_y_position is not None:
 
-        # fig.add_annotation(
-        #     text="1",
-        #     xref="paper", yref="paper",
-        #     x=0.142, y=1.032,  # adjust these values to position the label above the plot
-        #     showarrow=False,
-        #     font=dict(
-        #         size=common.get_configs("font_size")+28,
-        #         family=common.get_configs("font_family")
-        #     )
-        # )
-
-        # Time (main text)
-        fig.add_annotation(
-            text="2",
-            xref="paper", yref="paper",
-            x=0.595, y=1.032,  # adjust these values to position the label above the plot
-            showarrow=False,
-            font=dict(
-                size=common.get_configs("font_size")+28,
-                family=common.get_configs("font_family")
-            )
-        )
-
-        # # Time (appendix)
-        # fig.add_annotation(
-        #     text="1",
-        #     xref="paper", yref="paper",
-        #     x=0.576, y=1.07,  # adjust these values to position the label above the plot
-        #     showarrow=False,
-        #     font=dict(
-        #         size=common.get_configs("font_size")+28,
-        #         family=common.get_configs("font_family")
-        #     )
-        # )
+            for text, x, y in zip(annotation_text, annotation_x_position, annotation_y_position):
+                fig.add_annotation(
+                    text=str(text),
+                    xref="paper", yref="paper",
+                    x=x, y=y,
+                    showarrow=False,
+                    font=dict(
+                        size=common.get_configs("font_size") + 28,
+                        family=common.get_configs("font_family")
+                    )
+                )
 
         self.save_plotly_figure(fig=fig,
                                 filename=filename,
