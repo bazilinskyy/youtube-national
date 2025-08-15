@@ -1280,10 +1280,19 @@ class Plots():
                 else:
                     value = (day_values[i] + night_values[i])
 
-                y_value = [
-                    f"{country} {value:.2f}±{all_sd[i]:.2f} "
-                    f"(D={day_values[i]:.2f}±{day_sd[i]:.2f}, "
-                    f"N={night_values[i]:.2f}±{night_sd[i]:.2f})"]
+                if data_view == "day":
+                    y_value = [
+                        f"{country} {day_values[i]:.2f}±{day_sd[i]:.2f}"]
+
+                elif data_view == "night":
+                    y_value = [
+                        f"{country} {night_values[i]:.2f}±{night_sd[i]:.2f}"]
+
+                else:
+                    y_value = [
+                        f"{country} {value:.2f}±{all_sd[i]:.2f} "
+                        f"(D={day_values[i]:.2f}±{day_sd[i]:.2f}, "
+                        f"N={night_values[i]:.2f}±{night_sd[i]:.2f})"]
 
                 fig.add_trace(go.Bar(
                     x=[day_values[i]],
@@ -1368,10 +1377,19 @@ class Plots():
                     value = (day_values[idx] + night_values[idx])
 
                 # Determine the y value
-                y_value = [
-                    f"{country} {value:.2f}±{all_sd[idx]:.2f} "
-                    f"(D={day_values[idx]:.2f}±{day_sd[idx]:.2f}, "
-                    f"N={night_values[idx]:.2f}±{night_sd[idx]:.2f})"]
+                if data_view == "day":
+                    y_value = [
+                        f"{country} {day_values[i]:.2f}±{day_sd[i]:.2f}"]
+
+                elif data_view == "night":
+                    y_value = [
+                        f"{country} {night_values[i]:.2f}±{night_sd[i]:.2f}"]
+
+                else:
+                    y_value = [
+                        f"{country} {value:.2f}±{all_sd[i]:.2f} "
+                        f"(D={day_values[i]:.2f}±{day_sd[i]:.2f}, "
+                        f"N={night_values[i]:.2f}±{night_sd[i]:.2f})"]
 
                 fig.add_trace(go.Bar(
                     x=[day_values[idx]],
