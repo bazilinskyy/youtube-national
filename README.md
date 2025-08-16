@@ -72,11 +72,11 @@ git clone https://github.com/bazilinskyy/youtube-national
 cd youtube-national
 ```
 
-**Step 5:** Ensure correct Python version. If you don’t already have Python 3.9.19 installed, let uv fetch it:
+**Step 5:** Ensure correct Python version. If you don’t already have Python 3.9.19 installed, let `uv` fetch it:
 ```command line
 uv python install 3.9.19
 ```
-The repo should contain a .python-version file so uv will automatically use this version.
+The repo should contain a .python-version file so `uv` will automatically use this version.
 
 **Step 6:** Create and sync the virtual environment. This will create **.venv** in the project folder and install dependencies exactly as locked in **uv.lock**:
 ```command line
