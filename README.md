@@ -285,133 +285,152 @@ Correlation matrix for South America.
 
 ### Fastest Crossings
 
-<p align="center">
-  <!-- First row: 4 images -->
-  <a href="https://youtu.be/VIDEO1">
-    <img src="screenshots/rnTPlWqduEg_650.1333333333333_frame_00013.jpg" width="22%"/>
-  </a><br/>
-  <sub>📍 Johannesburg(ZAF) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/rnTPlWqduEg</sub>
-  
-  <a href="https://youtu.be/VIDEO2">
-    <img src="screenshots/NjRjslNfzOg_507.76666666666665_frame_00022.jpg" width="22%"/>
-  </a><br/>
-  <sub>📍 Stavropol(RUS) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
-  
-  <a href="https://youtu.be/VIDEO3">
-    <img src="screenshots/Wc6_DYNNzqQ_844.9666666666667_frame_00050.jpg" width="22%"/>
-  </a><br/>
-  <sub>📍 Cebu City(PHL) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/Wc6_DYNNzqQ</sub>
-  
-  <a href="https://youtu.be/VIDEO4">
-    <img src="screenshots/0yuNX9oYOIM_1265.38_frame_00043.jpg" width="22%"/>
-  </a><br/>
-  <sub>📍 Aleppo(SYR) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/0yuNX9oYOIM</sub>
-</p>
-
-<p align="center">
-  <!-- Second row: 4 images -->
-  <a href="https://youtu.be/VIDEO5">
-    <img src="figures/pic5.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location E • ⚡ 4.8 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
-  
-  <a href="https://youtu.be/VIDEO6">
-    <img src="figures/pic6.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location F • ⚡ 4.7 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
-  
-  <a href="https://youtu.be/VIDEO7">
-    <img src="figures/pic7.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location G • ⚡ 4.6 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
-  
-  <a href="https://youtu.be/VIDEO8">
-    <img src="figures/pic8.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location H • ⚡ 4.5 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
-</p>
-
-<p align="center">
-  <!-- Third row: 2 images -->
-  <a href="https://youtu.be/VIDEO9">
-    <img src="figures/pic9.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location I • ⚡ 4.4 m/s • 🎥 ID: VIDEO9</sub>
-  
-  <a href="https://youtu.be/VIDEO10">
-    <img src="figures/pic10.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location J • ⚡ 4.3 m/s • 🎥 ID: VIDEO10</sub>
-</p>
-
-<p align="center"><i>Click an image to watch its fastest crossing video on YouTube</i></p>
----
-
-### Slowest Crossings (4-4-2 Formation)
-
-<p align="center">
-  <!-- First row: 4 images -->
-  <a href="https://youtu.be/rnTPlWqduEg">
-    <img src="figures/pic1.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Johannesburg (ZAF) • ⚡ 2.5 m/s • 🎥 https://youtu.be/rnTPlWqduEg</sub>
-  
-  <a href="https://youtu.be/VIDEO2">
-    <img src="figures/pic2.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location B • ⚡ 3.1 m/s • 🎥 https://youtu.be/VIDEO2</sub>
-  
-  <a href="https://youtu.be/VIDEO3">
-    <img src="figures/pic3.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location C • ⚡ 2.9 m/s • 🎥 https://youtu.be/VIDEO3</sub>
-  
-  <a href="https://youtu.be/VIDEO4">
-    <img src="figures/pic4.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location D • ⚡ 3.0 m/s • 🎥 https://youtu.be/VIDEO4</sub>
-</p>
-
-<p align="center">
-  <!-- Second row: 4 images -->
-  <a href="https://youtu.be/VIDEO5">
-    <img src="figures/pic5.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location E • ⚡ 3.4 m/s • 🎥 https://youtu.be/VIDEO5</sub>
-  
-  <a href="https://youtu.be/VIDEO6">
-    <img src="figures/pic6.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location F • ⚡ 3.2 m/s • 🎥 https://youtu.be/VIDEO6</sub>
-  
-  <a href="https://youtu.be/VIDEO7">
-    <img src="figures/pic7.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location G • ⚡ 2.8 m/s • 🎥 https://youtu.be/VIDEO7</sub>
-  
-  <a href="https://youtu.be/VIDEO8">
-    <img src="figures/pic8.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location H • ⚡ 3.3 m/s • 🎥 https://youtu.be/VIDEO8</sub>
-</p>
-
-<p align="center">
-  <!-- Third row: 2 images -->
-  <a href="https://youtu.be/VIDEO9">
-    <img src="figures/pic9.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location I • ⚡ 2.7 m/s • 🎥 https://youtu.be/VIDEO9</sub>
-  
-  <a href="https://youtu.be/VIDEO10">
-    <img src="figures/pic10.png" width="22%"/>
-  </a><br/>
-  <sub>📍 Location J • ⚡ 2.6 m/s • 🎥 https://youtu.be/VIDEO10</sub>
-</p>
-
-<p align="center"><i>Click any image or link to watch its fastest crossing video on YouTube</i></p>
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://youtu.be/rnTPlWqduEg">
+        <img src="screenshots/rnTPlWqduEg_650.1333333333333_frame_00013.jpg" width="220px"/>
+      </a><br/>
+      📍 Johannesburg (ZAF)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/rnTPlWqduEg">https://youtu.be/rnTPlWqduEg</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/NjRjslNfzOg">
+        <img src="screenshots/NjRjslNfzOg_507.76666666666665_frame_00022.jpg" width="220px"/>
+      </a><br/>
+      📍 Stavropol (RUS)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/NjRjslNfzOg">https://youtu.be/NjRjslNfzOg</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/Wc6_DYNNzqQ">
+        <img src="screenshots/Wc6_DYNNzqQ_844.9666666666667_frame_00050.jpg" width="220px"/>
+      </a><br/>
+      📍 Cebu City (PHL)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/Wc6_DYNNzqQ">https://youtu.be/Wc6_DYNNzqQ</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/0yuNX9oYOIM">
+        <img src="screenshots/0yuNX9oYOIM_1265.38_frame_00043.jpg" width="220px"/>
+      </a><br/>
+      📍 Aleppo (SYR)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/0yuNX9oYOIM">https://youtu.be/0yuNX9oYOIM</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://youtu.be/U_pkdB8nr6g">
+        <img src="screenshots/U_pkdB8nr6g_1123.0_frame_00029.jpg" width="220px"/>
+      </a><br/>
+      📍 Tallinn (EST)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/U_pkdB8nr6g">https://youtu.be/U_pkdB8nr6g</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/4YnczQOdsTQ">
+        <img src="screenshots/4YnczQOdsTQ_1397.3333333333333_frame_00038.jpg" width="220px"/>
+      </a><br/>
+      📍 Den Haag (NLD)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/4YnczQOdsTQ">https://youtu.be/4YnczQOdsTQ</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/SYq9zkwVSkM">
+        <img src="screenshots/SYq9zkwVSkM_635.7_frame_00036.jpg" width="220px"/>
+      </a><br/>
+      📍 Kathmandu (NPL)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/SYq9zkwVSkM">https://youtu.be/SYq9zkwVSkM</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/ALA09uSzD7E">
+        <img src="screenshots/ALA09uSzD7E_3075.0333333333333_frame_00011.jpg" width="220px"/>
+      </a><br/>
+      📍 Istanbul (TUR)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/ALA09uSzD7E">https://youtu.be/ALA09uSzD7E</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <a href="https://youtu.be/0GMt9cZ8g_E">
+        <img src="screenshots/0GMt9cZ8g_E_5439.45_frame_00053.jpg" width="220px"/>
+      </a><br/>
+      📍 Stockholm (SWE)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/0GMt9cZ8g_E">https://youtu.be/0GMt9cZ8g_E</a>
+    </td>
+    <td align="center" colspan="2">
+      <a href="https://youtu.be/DKyPhYq5nTg">
+        <img src="screenshots/DKyPhYq5nTg_334.06666666666666_frame_00027.jpg" width="220px"/>
+      </a><br/>
+      📍 Accra (GHA)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/DKyPhYq5nTg">https://youtu.be/DKyPhYq5nTg</a>
+    </td>
+  </tr>
+</table>
 
 ---
+
+### Slowest Crossings
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://youtu.be/STbVEZMJdC0">
+        <img src="screenshots/STbVEZMJdC0_99.13333333333334_frame_00284.jpg" width="220px"/>
+      </a><br/>
+      📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/STbVEZMJdC0">https://youtu.be/STbVEZMJdC0</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/ITBPp9q2I9w">
+        <img src="screenshots/ITBPp9q2I9w_800.5333333333333_frame_00004.jpg" width="220px"/>
+      </a><br/>
+      📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/ITBPp9q2I9w">https://youtu.be/ITBPp9q2I9w</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/lrdL1IAtBok">
+        <img src="screenshots/lrdL1IAtBok_747.4333333333333_frame_00040.jpg" width="220px"/>
+      </a><br/>
+      📍 Kathmandu (NPL)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/lrdL1IAtBok">https://youtu.be/lrdL1IAtBok</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/P00zkZ3_yYY">
+        <img src="screenshots/P00zkZ3_yYY_1388.6666666666667_frame_00071.jpg" width="220px"/>
+      </a><br/>
+      📍 Brussels (BEL)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/P00zkZ3_yYY">https://youtu.be/P00zkZ3_yYY</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://youtu.be/y1OCipyZefA">
+        <img src="screenshots/y1OCipyZefA_1228.6_frame_00220.jpg" width="220px"/>
+      </a><br/>
+      📍 London (GBR)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/y1OCipyZefA">https://youtu.be/y1OCipyZefA</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/vO17QNa8HBQ">
+        <img src="screenshots/vO17QNa8HBQ_1159.5_frame_00128.jpg" width="220px"/>
+      </a><br/>
+      📍 Damascus (SYR)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/vO17QNa8HBQ">https://youtu.be/vO17QNa8HBQ</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/2lAmKDS6U_Q">
+        <img src="screenshots/2lAmKDS6U_Q_1571.2833333333333_frame_00029.jpg" width="220px"/>
+      </a><br/>
+      📍 Monterrey (MEX)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/2lAmKDS6U_Q">https://youtu.be/2lAmKDS6U_Q</a>
+    </td>
+    <td align="center">
+      <a href="https://youtu.be/RfqTtYd0PbE">
+        <img src="screenshots/RfqTtYd0PbE_1172.5333333333333_frame_00008.jpg" width="220px"/>
+      </a><br/>
+      📍 Belem (BRA)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/RfqTtYd0PbE">https://youtu.be/RfqTtYd0PbE</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <a href="https://youtu.be/IhQ6vMRmYoM">
+        <img src="screenshots/IhQ6vMRmYoM_409.3333333333333_frame_00036.jpg" width="220px"/>
+      </a><br/>
+      📍 Montreal (CAN)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/IhQ6vMRmYoM">https://youtu.be/IhQ6vMRmYoM</a>
+    </td>
+    <td align="center" colspan="2">
+      <a href="https://youtu.be/htYvrZuSxGs">
+        <img src="screenshots/htYvrZuSxGs_862.1666666666666_frame_00120.jpg" width="220px"/>
+      </a><br/>
+      📍 Wellington (USA)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/htYvrZuSxGs">https://youtu.be/htYvrZuSxGs</a>
+    </td>
+  </tr>
+</table>
+
+---
+
 💡 **Note:** If any YouTube link is broken, a backup copy of the video is available in the [`readme/`](readme/) folder.
+
 
 ### Analysis of pedestrian crossing road without traffic lights (jaywalking)
 
