@@ -34,29 +34,56 @@ irm https://astral.sh/uv/install.ps1 | iex
 pip install uv
 ```
 
-**Step 2:** After installing, verify:
+## Step 2: Fix permissions (if needed)
+
+Sometimes `uv` needs to create a folder under `~/.local/share/uv/python` (macOS/Linux) or `%LOCALAPPDATA%\uv\python` (Windows).  
+If this folder was created by another tool (e.g. `sudo`), you may see an error like:
+```lua
+error: failed to create directory ... Permission denied (os error 13)
+```
+
+To fix it, ensure you own the directory:
+
+### macOS / Linux
+```bash
+mkdir -p ~/.local/share/uv
+chown -R "$(id -un)":"$(id -gn)" ~/.local/share/uv
+chmod -R u+rwX ~/.local/share/uv
+```
+
+### Windows
+```powershell
+# Create directory if it doesn't exist
+New-Item -ItemType Directory -Force "$env:LOCALAPPDATA\uv"
+
+# Ensure you (the current user) own it
+# (usually not needed, but if permissions are broken)
+icacls "$env:LOCALAPPDATA\uv" /grant "$($env:UserName):(OI)(CI)F"
+```
+
+**Step 3:** After installing, verify:
 ```bash
 uv --version
 ```
 
-**Step 3:** Clone the repository:
+**Step 4:** Clone the repository:
 ```command line
 git clone https://github.com/bazilinskyy/youtube-national
 cd youtube-national
 ```
 
-**Step 4:** Ensure correct Python version. If you don’t already have Python 3.9.19 installed, let uv fetch it:
+**Step 5:** Ensure correct Python version. If you don’t already have Python 3.9.19 installed, let uv fetch it:
 ```command line
 uv python install 3.9.19
 ```
 The repo should contain a .python-version file so uv will automatically use this version.
 
-**Step 5:** Create and sync the virtual environment. This will create **.venv** in the project folder and install dependencies exactly as locked in **uv.lock**:
+**Step 6:** Create and sync the virtual environment. This will create **.venv** in the project folder and install dependencies exactly as locked in **uv.lock**:
 ```command line
 uv sync --frozen
 ```
 
-**Step 6:** Activate the virtual environment:
+**Step 7:** Activate the virtual environment:
 
 **macOS / Linux (bash/zsh):**
 ```bash
@@ -73,10 +100,10 @@ source .venv/bin/activate
 .\.venv\Scripts\activate.bat
 ```
 
-**Step 7:** Ensure that dataset are present. Place required datasets (including **mapping.csv**) into the **data/** directory:
+**Step 8:** Ensure that dataset are present. Place required datasets (including **mapping.csv**) into the **data/** directory:
 
 
-**Step 8:** Run the code:
+**Step 9:** Run the code:
 ```command line
 python3 analysis.py
 ```
