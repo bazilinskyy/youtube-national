@@ -34,7 +34,7 @@ irm https://astral.sh/uv/install.ps1 | iex
 pip install uv
 ```
 
-**Step 2:** Fix permissions (if needed):
+**Step 2:** Fix permissions (if needed):t
 
 Sometimes `uv` needs to create a folder under `~/.local/share/uv/python` (macOS/Linux) or `%LOCALAPPDATA%\uv\python` (Windows).  
 If this folder was created by another tool (e.g. `sudo`), you may see an error like:
@@ -310,7 +310,7 @@ Correlation matrix for North America.
 [![Correlation matrix for South America](figures/correlation_matrix_heatmap_South%20America.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_South%20America.html)
 Correlation matrix for South America.
 
-### Fastest Crossings
+### Fastest crossings
 
 <table>
   <tr>
@@ -383,7 +383,7 @@ Correlation matrix for South America.
 
 ---
 
-### Slowest Crossings
+### Slowest crossings
 
 <table>
   <tr>
