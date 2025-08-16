@@ -283,6 +283,136 @@ Correlation matrix for North America.
 [![Correlation matrix for South America](figures/correlation_matrix_heatmap_South%20America.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_South%20America.html)
 Correlation matrix for South America.
 
+### Fastest Crossings
+
+<p align="center">
+  <!-- First row: 4 images -->
+  <a href="https://youtu.be/VIDEO1">
+    <img src="screenshots/rnTPlWqduEg_650.1333333333333_frame_00013.jpg" width="22%"/>
+  </a><br/>
+  <sub>📍 Johannesburg(ZAF) • ⚡ 2.5 m/s • 🎥 ID: https://youtu.be/rnTPlWqduEg</sub>
+  
+  <a href="https://youtu.be/VIDEO2">
+    <img src="figures/pic2.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location B • ⚡ 5.2 m/s • 🎥 ID: VIDEO2</sub>
+  
+  <a href="https://youtu.be/VIDEO3">
+    <img src="figures/pic3.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location C • ⚡ 5.0 m/s • 🎥 ID: VIDEO3</sub>
+  
+  <a href="https://youtu.be/VIDEO4">
+    <img src="figures/pic4.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location D • ⚡ 4.9 m/s • 🎥 ID: VIDEO4</sub>
+</p>
+
+<p align="center">
+  <!-- Second row: 4 images -->
+  <a href="https://youtu.be/VIDEO5">
+    <img src="figures/pic5.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location E • ⚡ 4.8 m/s • 🎥 ID: VIDEO5</sub>
+  
+  <a href="https://youtu.be/VIDEO6">
+    <img src="figures/pic6.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location F • ⚡ 4.7 m/s • 🎥 ID: VIDEO6</sub>
+  
+  <a href="https://youtu.be/VIDEO7">
+    <img src="figures/pic7.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location G • ⚡ 4.6 m/s • 🎥 ID: VIDEO7</sub>
+  
+  <a href="https://youtu.be/VIDEO8">
+    <img src="figures/pic8.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location H • ⚡ 4.5 m/s • 🎥 ID: VIDEO8</sub>
+</p>
+
+<p align="center">
+  <!-- Third row: 2 images -->
+  <a href="https://youtu.be/VIDEO9">
+    <img src="figures/pic9.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location I • ⚡ 4.4 m/s • 🎥 ID: VIDEO9</sub>
+  
+  <a href="https://youtu.be/VIDEO10">
+    <img src="figures/pic10.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location J • ⚡ 4.3 m/s • 🎥 ID: VIDEO10</sub>
+</p>
+
+<p align="center"><i>Click an image to watch its fastest crossing video on YouTube</i></p>
+---
+
+### Slowest Crossings (4-4-2 Formation)
+
+<p align="center">
+  <!-- First row: 4 images -->
+  <a href="https://youtu.be/rnTPlWqduEg">
+    <img src="figures/pic1.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Johannesburg (ZAF) • ⚡ 2.5 m/s • 🎥 https://youtu.be/rnTPlWqduEg</sub>
+  
+  <a href="https://youtu.be/VIDEO2">
+    <img src="figures/pic2.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location B • ⚡ 3.1 m/s • 🎥 https://youtu.be/VIDEO2</sub>
+  
+  <a href="https://youtu.be/VIDEO3">
+    <img src="figures/pic3.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location C • ⚡ 2.9 m/s • 🎥 https://youtu.be/VIDEO3</sub>
+  
+  <a href="https://youtu.be/VIDEO4">
+    <img src="figures/pic4.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location D • ⚡ 3.0 m/s • 🎥 https://youtu.be/VIDEO4</sub>
+</p>
+
+<p align="center">
+  <!-- Second row: 4 images -->
+  <a href="https://youtu.be/VIDEO5">
+    <img src="figures/pic5.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location E • ⚡ 3.4 m/s • 🎥 https://youtu.be/VIDEO5</sub>
+  
+  <a href="https://youtu.be/VIDEO6">
+    <img src="figures/pic6.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location F • ⚡ 3.2 m/s • 🎥 https://youtu.be/VIDEO6</sub>
+  
+  <a href="https://youtu.be/VIDEO7">
+    <img src="figures/pic7.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location G • ⚡ 2.8 m/s • 🎥 https://youtu.be/VIDEO7</sub>
+  
+  <a href="https://youtu.be/VIDEO8">
+    <img src="figures/pic8.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location H • ⚡ 3.3 m/s • 🎥 https://youtu.be/VIDEO8</sub>
+</p>
+
+<p align="center">
+  <!-- Third row: 2 images -->
+  <a href="https://youtu.be/VIDEO9">
+    <img src="figures/pic9.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location I • ⚡ 2.7 m/s • 🎥 https://youtu.be/VIDEO9</sub>
+  
+  <a href="https://youtu.be/VIDEO10">
+    <img src="figures/pic10.png" width="22%"/>
+  </a><br/>
+  <sub>📍 Location J • ⚡ 2.6 m/s • 🎥 https://youtu.be/VIDEO10</sub>
+</p>
+
+<p align="center"><i>Click any image or link to watch its fastest crossing video on YouTube</i></p>
+
+---
+💡 **Note:** If any YouTube link is broken, a backup copy of the video is available in the [`readme/`](readme/) folder.
+
 ### Analysis of pedestrian crossing road without traffic lights (jaywalking)
 
 [![Road crossings with and without traffic signals](figures/scatter_with_trf_light_norm-without_trf_light_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_with_trf_light_norm-without_trf_light_norm.html)
