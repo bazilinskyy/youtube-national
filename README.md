@@ -429,7 +429,7 @@ Correlation matrix for South America.
 
 ---
 
-💡 **Note:** If any YouTube link is broken, a backup copy of the video is available in the [`readme/`](readme/) folder.
+💡 **Note:** If any YouTube link is broken, a backup copy of the video is available in the [`screenshots/tracked_frames`](screenshots/tracked_frames) folder.
 
 
 ### Analysis of pedestrian crossing road without traffic lights (jaywalking)
