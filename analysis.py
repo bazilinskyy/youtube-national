@@ -65,7 +65,7 @@ class Analysis():
     def __init__(self) -> None:
         pass
 
-    def filter_csv_files(self, file, df_mapping):
+    def filter_csv_files(self, file, df_mapping, folder_path):
         """
         Filters and processes CSV files based on predefined criteria.
 
@@ -739,7 +739,7 @@ class Analysis():
                         if os.path.exists(subfolder_path):
                             existing_subfolders.append(subfolder)
 
-                    # If none of the subfolders exist, print/log once
+                    # If none of the subfolders exist
                     if not existing_subfolders:
                         logger.warning(f"None of the subfolders ('bbox', 'seg') exist in {folder_path}.")
                         continue
@@ -916,8 +916,8 @@ class Analysis():
         # No match found
         return None
 
-    def get_duration_segment(self, var_dict, df_mapping, name=None,
-                             num=common.get_configs('min_max_videos'), duration=None):
+    def get_duration_segment(self, var_dict, df_mapping, name=None, num=common.get_configs('min_max_videos'),
+                             duration=None):
         """
         Extract and save video segments based on the fastest tracked objects in provided data.
 
@@ -936,6 +936,8 @@ class Analysis():
             None. Video clips are saved to disk in 'saved_snaps/original' and 'saved_snaps/tracked'.
         """
         data = self.find_min_max_video(var_dict, num=num)
+        print(data)
+
         if num == 0:
             return data
 
@@ -943,10 +945,11 @@ class Analysis():
         for segment_type in ['max', 'min']:
             if segment_type in data:
                 for city_data in data[segment_type].values():
-                    for video_start_time, inner_value in city_data.items():
+                    for video_start_time_fps, inner_value in city_data.items():
                         # Extract base video name and its offset
-                        video_name, start_offset = video_start_time.rsplit('_', 1)
+                        video_name, start_offset, fps = video_start_time_fps.rsplit('_', 2)
                         start_offset = int(start_offset)
+                        fps = int(fps)
 
                         for unique_id, _ in inner_value.items():
                             try:
@@ -954,13 +957,12 @@ class Analysis():
                                 existing_folder = next((
                                     path for path in video_paths if os.path.exists(
                                         os.path.join(path, f"{video_name}.mp4"))), None)
-
                                 if not existing_folder:
                                     raise FileNotFoundError(f"Video file '{video_name}.mp4' not found in any of the specified paths.")  # noqa:E501
 
                                 base_video_path = os.path.join(existing_folder, f"{video_name}.mp4")
 
-                                df = None  # Initialize before the loops
+                                df = None  # Initialise before the loops
 
                                 for folder_path in common.get_configs('data'):
                                     for subfolder in ["bbox", "seg"]:
@@ -968,7 +970,7 @@ class Analysis():
                                         if not os.path.exists(subfolder_path):
                                             continue
                                         for file in os.listdir(subfolder_path):
-                                            if video_start_time in file and file.endswith('.csv'):
+                                            if video_start_time_fps in file and file.endswith('.csv'):
                                                 file_path = os.path.join(subfolder_path, file)
                                                 df = pd.read_csv(file_path)
                                                 break  # Found the file, break from subfolder loop
@@ -976,7 +978,6 @@ class Analysis():
                                             break  # Break from folder_path loop if found
                                     if df is not None:
                                         break
-
                                 if df is None:
                                     return None, None  # Could not find any matching CSV
 
@@ -990,12 +991,10 @@ class Analysis():
                                 last_frame = filtered_df['frame-count'].max()
 
                                 # Look up the frame rate (fps) using the video_start_time
-                                result = values_class.find_values_with_video_id(df_mapping, video_start_time)
+                                result = values_class.find_values_with_video_id(df_mapping, video_start_time_fps)
 
                                 # Check if the result is None (i.e., no matching data was found)
                                 if result is not None:
-                                    # Unpack the result since it's not None
-                                    fps = result[17]
 
                                     first_time = first_frame / fps
                                     last_time = last_frame / fps
@@ -1080,7 +1079,8 @@ class Analysis():
         # Return None if no matching video_id and start_time were found
         return None
 
-    def find_min_max_video(self, var_dict, num=2):
+    def find_min_max_video(self, var_dict, num=2, min_value=common.get_configs("min_speed_limit"),
+                           max_value=common.get_configs("max_speed_limit")):
         """
         Find the top and bottom N videos based on speed values from a nested dictionary structure.
 
@@ -1113,9 +1113,11 @@ class Analysis():
                 for unique_id, speed in unique_dict.items():
                     all_speeds.append((speed, city_lat_long_cond, video_id, unique_id))
 
+        valid_speeds = [x for x in all_speeds if min_value <= x[0] <= max_value]
+
         # Use heapq to efficiently get the top and bottom N entries based on speed
-        top_n = heapq.nlargest(num, all_speeds, key=lambda x: x[0])
-        bottom_n = heapq.nsmallest(num, all_speeds, key=lambda x: x[0])
+        top_n = heapq.nlargest(num, valid_speeds, key=lambda x: x[0])
+        bottom_n = heapq.nsmallest(num, valid_speeds, key=lambda x: x[0])
 
         # Helper function to rebuild the nested structure from a list of tuples
         def format_result(entries):
@@ -1495,7 +1497,7 @@ if __name__ == "__main__":
 
                 for file_name in tqdm(os.listdir(subfolder_path), desc=f"Processing files in {subfolder_path}"):
                     filtered: Optional[str] = analysis_class.filter_csv_files(
-                        file=file_name, df_mapping=df_mapping
+                        file=file_name, df_mapping=df_mapping, folder_path=subfolder_path
                     )
                     if filtered is None:
                         continue
@@ -1575,21 +1577,26 @@ if __name__ == "__main__":
                     # --- Update df_mapping for the given video_city_id ---
                     for class_name in coco_classes:
                         df_mapping.loc[df_mapping["id"] == video_city_id, class_name] += counters[class_name]  # type: ignore  # noqa: E501
+
                     # Add duration of segment
                     time_video = analysis_class.get_duration(df_mapping, video_id, int(start_index))
                     df_mapping.loc[df_mapping["id"] == video_city_id, "total_time"] += time_video  # type: ignore
+
                     # Add total crossing detected
                     df_mapping.loc[df_mapping["id"] == video_city_id, "total_crossing_detect"] += len(ids)  # type: ignore  # noqa: E501
+
                     # Aggregated values
                     speed_value = algorithms_class.calculate_speed_of_crossing(df_mapping,
                                                                                df,
                                                                                {filename_no_ext: temp_data})
+
                     if speed_value is not None:
                         for outer_key, inner_dict in speed_value.items():
                             if outer_key not in all_speed:
                                 all_speed[outer_key] = inner_dict
                             else:
                                 all_speed[outer_key].update(inner_dict)
+
                     time_value = algorithms_class.time_to_start_cross(df_mapping,
                                                                       df,
                                                                       {filename_no_ext: temp_data})
@@ -2070,6 +2077,9 @@ if __name__ == "__main__":
                             max_threshold=common.get_configs("max_speed_limit"),
                             df_mapping=df_mapping,
                             save_file=True)
+
+    min_max_speed = analysis_class.get_duration_segment(all_speed, df_mapping, name="speed", duration=None)
+    min_max_time = analysis_class.get_duration_segment(all_time, df_mapping, name="time", duration=None)
 
     # ------------All values----------------- #
     plots_class.hist(data_index=22,
