@@ -19,9 +19,7 @@ Follow these steps to set up the project.
 
 **Step 1:**
 
-Install `uv`.
-
-`uv` is a fast Python package and environment manager. Install it using one of the following methods:
+Install `uv`. `uv` is a fast Python package and environment manager. Install it using one of the following methods:
 
 **macOS / Linux (bash/zsh):**
 ```bash
