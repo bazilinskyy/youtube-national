@@ -290,22 +290,22 @@ Correlation matrix for South America.
   <a href="https://youtu.be/VIDEO1">
     <img src="screenshots/rnTPlWqduEg_650.1333333333333_frame_00013.jpg" width="22%"/>
   </a><br/>
-  <sub>📍 Johannesburg(ZAF) • ⚡ 2.5 m/s • 🎥 ID: https://youtu.be/rnTPlWqduEg</sub>
+  <sub>📍 Johannesburg(ZAF) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/rnTPlWqduEg</sub>
   
   <a href="https://youtu.be/VIDEO2">
-    <img src="figures/pic2.png" width="22%"/>
+    <img src="screenshots/NjRjslNfzOg_507.76666666666665_frame_00022.jpg" width="22%"/>
   </a><br/>
-  <sub>📍 Location B • ⚡ 5.2 m/s • 🎥 ID: VIDEO2</sub>
+  <sub>📍 Stavropol(RUS) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
   
   <a href="https://youtu.be/VIDEO3">
-    <img src="figures/pic3.png" width="22%"/>
+    <img src="screenshots/Wc6_DYNNzqQ_844.9666666666667_frame_00050.jpg" width="22%"/>
   </a><br/>
-  <sub>📍 Location C • ⚡ 5.0 m/s • 🎥 ID: VIDEO3</sub>
+  <sub>📍 Cebu City(PHL) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/Wc6_DYNNzqQ</sub>
   
   <a href="https://youtu.be/VIDEO4">
-    <img src="figures/pic4.png" width="22%"/>
+    <img src="screenshots/0yuNX9oYOIM_1265.38_frame_00043.jpg" width="22%"/>
   </a><br/>
-  <sub>📍 Location D • ⚡ 4.9 m/s • 🎥 ID: VIDEO4</sub>
+  <sub>📍 Aleppo(SYR) • ⚡ 2.50 m/s • 🎥 ID: https://youtu.be/0yuNX9oYOIM</sub>
 </p>
 
 <p align="center">
@@ -313,22 +313,22 @@ Correlation matrix for South America.
   <a href="https://youtu.be/VIDEO5">
     <img src="figures/pic5.png" width="22%"/>
   </a><br/>
-  <sub>📍 Location E • ⚡ 4.8 m/s • 🎥 ID: VIDEO5</sub>
+  <sub>📍 Location E • ⚡ 4.8 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
   
   <a href="https://youtu.be/VIDEO6">
     <img src="figures/pic6.png" width="22%"/>
   </a><br/>
-  <sub>📍 Location F • ⚡ 4.7 m/s • 🎥 ID: VIDEO6</sub>
+  <sub>📍 Location F • ⚡ 4.7 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
   
   <a href="https://youtu.be/VIDEO7">
     <img src="figures/pic7.png" width="22%"/>
   </a><br/>
-  <sub>📍 Location G • ⚡ 4.6 m/s • 🎥 ID: VIDEO7</sub>
+  <sub>📍 Location G • ⚡ 4.6 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
   
   <a href="https://youtu.be/VIDEO8">
     <img src="figures/pic8.png" width="22%"/>
   </a><br/>
-  <sub>📍 Location H • ⚡ 4.5 m/s • 🎥 ID: VIDEO8</sub>
+  <sub>📍 Location H • ⚡ 4.5 m/s • 🎥 ID: https://youtu.be/NjRjslNfzOg</sub>
 </p>
 
 <p align="center">
