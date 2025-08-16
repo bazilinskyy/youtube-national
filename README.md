@@ -34,7 +34,7 @@ irm https://astral.sh/uv/install.ps1 | iex
 pip install uv
 ```
 
-## Step 2: Fix permissions (if needed)
+**Step 2:** Fix permissions (if needed):
 
 Sometimes `uv` needs to create a folder under `~/.local/share/uv/python` (macOS/Linux) or `%LOCALAPPDATA%\uv\python` (Windows).  
 If this folder was created by another tool (e.g. `sudo`), you may see an error like:
