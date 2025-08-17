@@ -827,7 +827,7 @@ class Analysis():
             ]
 
         # Columns to merge as lists
-        merge_columns = ['videos', 'time_of_day', 'start_time', 'end_time', 'vehicle_type', 'fps_list']
+        merge_columns = ['videos', 'time_of_day', 'start_time', 'end_time', 'vehicle_type']
 
         sum_columns = [
             'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat',
@@ -2182,7 +2182,7 @@ if __name__ == "__main__":
         df=df_countries_raw,
         color="log_total_time",
         show_cities=True,
-        df_mapping=df_mapping,       # fixed from df to df_mapping
+        df_mapping=df_mapping,
         show_images=True,
         hover_data=hover_data,
         show_colorbar=True,

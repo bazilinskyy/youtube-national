@@ -1386,12 +1386,6 @@ class Plots():
                         f"{country} {night_values[idx]:.2f}±{night_sd[idx]:.2f}"]
 
                 else:
-                    # print("value:", value)
-                    # print("all_sd:", all_sd[i])
-                    # print("day_values:", day_values[i])
-                    # print("day_sd:", day_sd[i])
-                    # print("night_values:", night_values[i])
-                    # print("night_sd:", night_sd[i])
                     y_value = [
                         f"{country} {value:.2f}±{all_sd[idx]:.2f}"
                         f"(D={day_values[idx]:.2f}±{day_sd[idx]:.2f},"
