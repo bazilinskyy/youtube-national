@@ -310,159 +310,32 @@ Correlation matrix for North America.
 [![Correlation matrix for South America](figures/correlation_matrix_heatmap_South%20America.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_South%20America.html)
 Correlation matrix for South America.
 
+## Edge cases in analysed data
+TODO
+
 ### Fastest crossings
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://youtu.be/rnTPlWqduEg">
-        <img src="screenshots/rnTPlWqduEg_650.1333333333333_frame_00013.jpg" width="220px"/>
-      </a><br/>
-      📍 Johannesburg (ZAF)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/rnTPlWqduEg">https://youtu.be/rnTPlWqduEg</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/NjRjslNfzOg">
-        <img src="screenshots/NjRjslNfzOg_507.76666666666665_frame_00022.jpg" width="220px"/>
-      </a><br/>
-      📍 Stavropol (RUS)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/NjRjslNfzOg">https://youtu.be/NjRjslNfzOg</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/Wc6_DYNNzqQ">
-        <img src="screenshots/Wc6_DYNNzqQ_844.9666666666667_frame_00050.jpg" width="220px"/>
-      </a><br/>
-      📍 Cebu City (PHL)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/Wc6_DYNNzqQ">https://youtu.be/Wc6_DYNNzqQ</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/0yuNX9oYOIM">
-        <img src="screenshots/0yuNX9oYOIM_1265.38_frame_00043.jpg" width="220px"/>
-      </a><br/>
-      📍 Aleppo (SYR)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/0yuNX9oYOIM">https://youtu.be/0yuNX9oYOIM</a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://youtu.be/U_pkdB8nr6g">
-        <img src="screenshots/U_pkdB8nr6g_1123.0_frame_00029.jpg" width="220px"/>
-      </a><br/>
-      📍 Tallinn (EST)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/U_pkdB8nr6g">https://youtu.be/U_pkdB8nr6g</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/4YnczQOdsTQ">
-        <img src="screenshots/4YnczQOdsTQ_1397.3333333333333_frame_00038.jpg" width="220px"/>
-      </a><br/>
-      📍 Den Haag (NLD)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/4YnczQOdsTQ">https://youtu.be/4YnczQOdsTQ</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/SYq9zkwVSkM">
-        <img src="screenshots/SYq9zkwVSkM_635.7_frame_00036.jpg" width="220px"/>
-      </a><br/>
-      📍 Kathmandu (NPL)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/SYq9zkwVSkM">https://youtu.be/SYq9zkwVSkM</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/ALA09uSzD7E">
-        <img src="screenshots/ALA09uSzD7E_3075.0333333333333_frame_00011.jpg" width="220px"/>
-      </a><br/>
-      📍 Istanbul (TUR)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/ALA09uSzD7E">https://youtu.be/ALA09uSzD7E</a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" colspan="2">
-      <a href="https://youtu.be/0GMt9cZ8g_E">
-        <img src="screenshots/0GMt9cZ8g_E_5439.45_frame_00053.jpg" width="220px"/>
-      </a><br/>
-      📍 Stockholm (SWE)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/0GMt9cZ8g_E">https://youtu.be/0GMt9cZ8g_E</a>
-    </td>
-    <td align="center" colspan="2">
-      <a href="https://youtu.be/DKyPhYq5nTg">
-        <img src="screenshots/DKyPhYq5nTg_334.06666666666666_frame_00027.jpg" width="220px"/>
-      </a><br/>
-      📍 Accra (GHA)<br/>⚡ 2.50 m/s<br/>🎥 <a href="https://youtu.be/DKyPhYq5nTg">https://youtu.be/DKyPhYq5nTg</a>
-    </td>
-  </tr>
-</table>
+| | | |
+|---|---|---|
+| [![Johannesburg](readme/min_max/rnTPlWqduEg_650.1333333333333_frame_00013.jpg)](readme/min_max/rnTPlWqduEg_650.1333333333333.mp4)<br/>📍 Johannesburg (ZAF)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/rnTPlWqduEg_650.1333333333333.mp4) | [![Stavropol](readme/min_max/NjRjslNfzOg_507.76666666666665_frame_00022.jpg)](readme/min_max/NjRjslNfzOg_507.76666666666665.mp4)<br/>📍 Stavropol (RUS)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/NjRjslNfzOg_507.76666666666665.mp4) | [![Cebu City](readme/min_max/Wc6_DYNNzqQ_844.9666666666667_frame_00050.jpg)](readme/min_max/Wc6_DYNNzqQ_844.9666666666667.mp4)<br/>📍 Cebu City (PHL)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/Wc6_DYNNzqQ_844.9666666666667.mp4) |
+| [![Aleppo](readme/min_max/0yuNX9oYOIM_1265.38_frame_00043.jpg)](readme/min_max/0yuNX9oYOIM_1265.38.mp4)<br/>📍 Aleppo (SYR)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/0yuNX9oYOIM_1265.38.mp4) | [![Tallinn](readme/min_max/U_pkdB8nr6g_1123.0_frame_00029.jpg)](readme/min_max/U_pkdB8nr6g_1123.0.mp4)<br/>📍 Tallinn (EST)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/U_pkdB8nr6g_1123.0.mp4) | [![Den Haag](readme/min_max/4YnczQOdsTQ_1397.3333333333333_frame_00038.jpg)](readme/min_max/4YnczQOdsTQ_1397.3333333333333.mp4)<br/>📍 Den Haag (NLD)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/4YnczQOdsTQ_1397.3333333333333.mp4) |
+| [![Kathmandu](readme/min_max/SYq9zkwVSkM_635.7_frame_00036.jpg)](readme/min_max/SYq9zkwVSkM_635.7.mp4)<br/>📍 Kathmandu (NPL)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/SYq9zkwVSkM_635.7.mp4) | [![Istanbul](readme/min_max/ALA09uSzD7E_3075.0333333333333_frame_00011.jpg)](readme/min_max/ALA09uSzD7E_3075.0333333333333.mp4)<br/>📍 Istanbul (TUR)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/ALA09uSzD7E_3075.0333333333333.mp4) | [![Stockholm](readme/min_max/0GMt9cZ8g_E_5439.45_frame_00053.jpg)](readme/min_max/0GMt9cZ8g_E_5439.45.mp4)<br/>📍 Stockholm (SWE)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/0GMt9cZ8g_E_5439.45.mp4) |
+| [![Accra](readme/min_max/DKyPhYq5nTg_334.06666666666666_frame_00027.jpg)](readme/min_max/DKyPhYq5nTg_334.06666666666666.mp4)<br/>📍 Accra (GHA)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/DKyPhYq5nTg_334.06666666666666.mp4) | | |
 
 ---
 
 ### Slowest crossings
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://youtu.be/STbVEZMJdC0">
-        <img src="screenshots/STbVEZMJdC0_99.13333333333334_frame_00284.jpg" width="220px"/>
-      </a><br/>
-      📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/STbVEZMJdC0">https://youtu.be/STbVEZMJdC0</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/ITBPp9q2I9w">
-        <img src="screenshots/ITBPp9q2I9w_800.5333333333333_frame_00004.jpg" width="220px"/>
-      </a><br/>
-      📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/ITBPp9q2I9w">https://youtu.be/ITBPp9q2I9w</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/lrdL1IAtBok">
-        <img src="screenshots/lrdL1IAtBok_747.4333333333333_frame_00040.jpg" width="220px"/>
-      </a><br/>
-      📍 Kathmandu (NPL)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/lrdL1IAtBok">https://youtu.be/lrdL1IAtBok</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/P00zkZ3_yYY">
-        <img src="screenshots/P00zkZ3_yYY_1388.6666666666667_frame_00071.jpg" width="220px"/>
-      </a><br/>
-      📍 Brussels (BEL)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/P00zkZ3_yYY">https://youtu.be/P00zkZ3_yYY</a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://youtu.be/y1OCipyZefA">
-        <img src="screenshots/y1OCipyZefA_1228.6_frame_00220.jpg" width="220px"/>
-      </a><br/>
-      📍 London (GBR)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/y1OCipyZefA">https://youtu.be/y1OCipyZefA</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/vO17QNa8HBQ">
-        <img src="screenshots/vO17QNa8HBQ_1159.5_frame_00128.jpg" width="220px"/>
-      </a><br/>
-      📍 Damascus (SYR)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/vO17QNa8HBQ">https://youtu.be/vO17QNa8HBQ</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/2lAmKDS6U_Q">
-        <img src="screenshots/2lAmKDS6U_Q_1571.2833333333333_frame_00029.jpg" width="220px"/>
-      </a><br/>
-      📍 Monterrey (MEX)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/2lAmKDS6U_Q">https://youtu.be/2lAmKDS6U_Q</a>
-    </td>
-    <td align="center">
-      <a href="https://youtu.be/RfqTtYd0PbE">
-        <img src="screenshots/RfqTtYd0PbE_1172.5333333333333_frame_00008.jpg" width="220px"/>
-      </a><br/>
-      📍 Belem (BRA)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/RfqTtYd0PbE">https://youtu.be/RfqTtYd0PbE</a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" colspan="2">
-      <a href="https://youtu.be/IhQ6vMRmYoM">
-        <img src="screenshots/IhQ6vMRmYoM_409.3333333333333_frame_00036.jpg" width="220px"/>
-      </a><br/>
-      📍 Montreal (CAN)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/IhQ6vMRmYoM">https://youtu.be/IhQ6vMRmYoM</a>
-    </td>
-    <td align="center" colspan="2">
-      <a href="https://youtu.be/htYvrZuSxGs">
-        <img src="screenshots/htYvrZuSxGs_862.1666666666666_frame_00120.jpg" width="220px"/>
-      </a><br/>
-      📍 Wellington (USA)<br/>⚡ 0.50 m/s<br/>🎥 <a href="https://youtu.be/htYvrZuSxGs">https://youtu.be/htYvrZuSxGs</a>
-    </td>
-  </tr>
-</table>
+| | | |
+|---|---|---|
+| [![Toronto](readme/min_max/STbVEZMJdC0_99.13333333333334_frame_00284.jpg)](readme/min_max/STbVEZMJdC0_99.13333333333334.mp4)<br/>📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/STbVEZMJdC0_99.13333333333334.mp4) | [![Toronto](readme/min_max/ITBPp9q2I9w_800.5333333333333_frame_00004.jpg)](readme/min_max/ITBPp9q2I9w_800.5333333333333.mp4)<br/>📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/ITBPp9q2I9w_800.5333333333333.mp4) | [![Kathmandu](readme/min_max/lrdL1IAtBok_747.4333333333333_frame_00040.jpg)](readme/min_max/lrdL1IAtBok_747.4333333333333.mp4)<br/>📍 Kathmandu (NPL)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/lrdL1IAtBok_747.4333333333333.mp4) |
+| [![Brussels](readme/min_max/P00zkZ3_yYY_1388.6666666666667_frame_00071.jpg)](readme/min_max/P00zkZ3_yYY_1388.6666666666667.mp4)<br/>📍 Brussels (BEL)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/P00zkZ3_yYY_1388.6666666666667.mp4) | [![London](readme/min_max/y1OCipyZefA_1228.6_frame_00220.jpg)](readme/min_max/y1OCipyZefA_1228.6.mp4)<br/>📍 London (GBR)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/y1OCipyZefA_1228.6.mp4) | [![Damascus](readme/min_max/vO17QNa8HBQ_1159.5_frame_00128.jpg)](readme/min_max/vO17QNa8HBQ_1159.5.mp4)<br/>📍 Damascus (SYR)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/vO17QNa8HBQ_1159.5.mp4) |
+| [![Monterrey](readme/min_max/2lAmKDS6U_Q_1571.2833333333333_frame_00029.jpg)](readme/min_max/2lAmKDS6U_Q_1571.2833333333333.mp4)<br/>📍 Monterrey (MEX)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/2lAmKDS6U_Q_1571.2833333333333.mp4) | [![Belem](readme/min_max/RfqTtYd0PbE_1172.5333333333333_frame_00008.jpg)](readme/min_max/RfqTtYd0PbE_1172.5333333333333.mp4)<br/>📍 Belem (BRA)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/RfqTtYd0PbE_1172.5333333333333.mp4) | [![Montreal](readme/min_max/IhQ6vMRmYoM_409.3333333333333_frame_00036.jpg)](readme/min_max/IhQ6vMRmYoM_409.3333333333333.mp4)<br/>📍 Montreal (CAN)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/IhQ6vMRmYoM_409.3333333333333.mp4) |
+| [![Wellington](readme/min_max/htYvrZuSxGs_862.1666666666666_frame_00120.jpg)](readme/min_max/htYvrZuSxGs_862.1666666666666.mp4)<br/>📍 Wellington (USA)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/htYvrZuSxGs_862.1666666666666.mp4) | | |
 
 ---
 
-💡 **Note:** If any YouTube link is broken, a backup copy of the video is available in the [`screenshots/tracked_frames`](screenshots/tracked_frames) folder.
-
-
-### Analysis of pedestrian crossing road without traffic lights (jaywalking)
-
-[![Road crossings with and without traffic signals](figures/scatter_with_trf_light_norm-without_trf_light_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_with_trf_light_norm-without_trf_light_norm.html)
-Road crossings with and without traffic signals (normalised over time and number of detected pedestrians).
+💡 **Note:** If any YouTube link is broken, a backup copy of the video is available in the [`readme/min_max`](readme/min_max) folder.
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
