@@ -839,7 +839,8 @@ class Analysis():
             'sandwich', 'orange', 'broccoli', 'carrot', 'hot_dog', 'pizza', 'donut', 'cake', 'chair',
             'couch', 'potted_plant', 'bed', 'dining_table', 'toilet', 'tv', 'laptop', 'mouse',
             'remote', 'keyboard', 'cellphone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator',
-            'book', 'clock', 'vase', 'scissors', 'teddy_bear', 'hair_drier', 'toothbrush', 'total_time', 'total_videos'
+            'book', 'clock', 'vase', 'scissors', 'teddy_bear', 'hair_drier', 'toothbrush', 'total_time',
+            'total_videos'
         ]
 
         # Only keep columns that exist in df
@@ -936,7 +937,6 @@ class Analysis():
             None. Video clips are saved to disk in 'saved_snaps/original' and 'saved_snaps/tracked'.
         """
         data = self.find_min_max_video(var_dict, num=num)
-        print(data)
 
         if num == 0:
             return data
@@ -1347,16 +1347,6 @@ if __name__ == "__main__":
         # Store the mapping file
         df_mapping = pd.read_csv(common.get_configs("mapping"))
 
-        # Produce map with all data
-        df = df_mapping.copy()  # copy df to manipulate for output
-        df['state'] = df['state'].fillna('NA')  # Set state to NA
-
-        # Sort by continent and city, both in ascending order
-        df = df.sort_values(by=["continent", "city"], ascending=[True, True])
-
-        # Count of videos
-        df['video_count'] = df['videos'].apply(lambda x: len(x.strip('[]').split(',')) if pd.notna(x) else 0)
-
         # Total amount of seconds in segments
         def flatten(lst):
             """Flattens nested lists like [[1, 2], [3, 4]] -> [1, 2, 3, 4]"""
@@ -1371,7 +1361,19 @@ if __name__ == "__main__":
                 logger.error(f"Error in row {row['id']}: {e}")
                 return 0
 
-        df['total_time'] = df.apply(compute_total_time, axis=1)
+        df_mapping['total_time'] = df_mapping.apply(compute_total_time, axis=1)
+
+        # Produce map with all data
+        df = df_mapping.copy()  # copy df to manipulate for output
+        df['state'] = df['state'].fillna('NA')  # Set state to NA
+
+        # Sort by continent and city, both in ascending order
+        df = df.sort_values(by=["continent", "city"], ascending=[True, True])
+
+        # Count of videos
+        df['video_count'] = df['videos'].apply(lambda x: len(x.strip('[]').split(',')) if pd.notna(x) else 0)
+
+        # df['total_time'] = df.apply(compute_total_time, axis=1)
 
         # Data to avoid showing on hover in scatter plots
         columns_remove = ['videos', 'time_of_day', 'start_time', 'end_time', 'upload_date', 'vehicle_type', 'channel']
@@ -1429,7 +1431,6 @@ if __name__ == "__main__":
             'sink': 0, 'refrigerator': 0, 'book': 0, 'clock': 0, 'vase': 0, 'scissors': 0, 'teddy_bear': 0,
             'hair_drier': 0, 'toothbrush': 0,
 
-            'total_time': 0,
             'total_crossing_detect': 0,
 
             # City-level columns
