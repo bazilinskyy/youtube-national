@@ -143,7 +143,7 @@ Configuration of the project needs to be defined in `config`. Please use the `de
 - **`sleep_sec`**: Amount of seconds of pause between going over the mapping files.
 
 ## Description and analysis of dataset
-Refer to https://github.com/Shaadalam9/pedestrians-in-youtube for a description of the selection criteria for the underlying CROWD dataset.
+Refer to https://github.com/Shaadalam9/pedestrians-in-youtube for a description of the selection criteria for videos in the underlying CROWD dataset.
 
 [![Locations of cities with footage in dataset](figures/map_screenshots_total_time.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_screenshots_total_time.html)
 A political world map colored by continent, showing **233 countries** included in the analysis. The shading represents the total duration of dashcam footage from each country, adjusted with a logarithmic scale so that countries with very large or very small totals are both visible. Black dots indicate the cities from which footage was collected.
@@ -159,7 +159,6 @@ Mean time to start crossing (in s, sorted by day).
 
 [![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_combined_country_raw.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_combined_country_raw.html)
 Mean speed of crossing (in m/s, sorted by day).
-
 
 ### Dataset after filtering
 The dataset undergoes a filtering process to ensure quality and sufficient coverage before being used in analysis. The following thresholds are applied:
