@@ -314,8 +314,18 @@ Correlation matrix for South America.
 TODO
 
 ### Fastest crossings
-
-| <img width=33%/> | <img width=33%/>| <img width=33%/>|
+<style>
+table th:first-of-type {
+    width: 33%;
+}
+table th:nth-of-type(2) {
+    width: 33%;
+}
+table th:nth-of-type(3) {
+    width: 33%;
+}
+</style>
+| | | |
 | [![Johannesburg](readme/min_max/rnTPlWqduEg_650.1333333333333_frame_00013.jpg)](readme/min_max/rnTPlWqduEg_650.1333333333333.mp4)<br/>📍 Johannesburg (ZAF)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/rnTPlWqduEg_650.1333333333333.mp4) | [![Stavropol](readme/min_max/NjRjslNfzOg_507.76666666666665_frame_00022.jpg)](readme/min_max/NjRjslNfzOg_507.76666666666665.mp4)<br/>📍 Stavropol (RUS)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/NjRjslNfzOg_507.76666666666665.mp4) | [![Cebu City](readme/min_max/Wc6_DYNNzqQ_844.9666666666667_frame_00050.jpg)](readme/min_max/Wc6_DYNNzqQ_844.9666666666667.mp4)<br/>📍 Cebu City (PHL)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/Wc6_DYNNzqQ_844.9666666666667.mp4) |
 | [![Aleppo](readme/min_max/0yuNX9oYOIM_1265.38_frame_00043.jpg)](readme/min_max/0yuNX9oYOIM_1265.38.mp4)<br/>📍 Aleppo (SYR)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/0yuNX9oYOIM_1265.38.mp4) | [![Tallinn](readme/min_max/U_pkdB8nr6g_1123.0_frame_00029.jpg)](readme/min_max/U_pkdB8nr6g_1123.0.mp4)<br/>📍 Tallinn (EST)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/U_pkdB8nr6g_1123.0.mp4) | [![Den Haag](readme/min_max/4YnczQOdsTQ_1397.3333333333333_frame_00038.jpg)](readme/min_max/4YnczQOdsTQ_1397.3333333333333.mp4)<br/>📍 Den Haag (NLD)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/4YnczQOdsTQ_1397.3333333333333.mp4) |
 | [![Kathmandu](readme/min_max/SYq9zkwVSkM_635.7_frame_00036.jpg)](readme/min_max/SYq9zkwVSkM_635.7.mp4)<br/>📍 Kathmandu (NPL)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/SYq9zkwVSkM_635.7.mp4) | [![Istanbul](readme/min_max/ALA09uSzD7E_3075.0333333333333_frame_00011.jpg)](readme/min_max/ALA09uSzD7E_3075.0333333333333.mp4)<br/>📍 Istanbul (TUR)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/ALA09uSzD7E_3075.0333333333333.mp4) | [![Stockholm](readme/min_max/0GMt9cZ8g_E_5439.45_frame_00053.jpg)](readme/min_max/0GMt9cZ8g_E_5439.45.mp4)<br/>📍 Stockholm (SWE)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/0GMt9cZ8g_E_5439.45.mp4) |
@@ -324,7 +334,6 @@ TODO
 ---
 
 ### Slowest crossings
-
 | | | |
 | [![Toronto](readme/min_max/STbVEZMJdC0_99.13333333333334_frame_00284.jpg)](readme/min_max/STbVEZMJdC0_99.13333333333334.mp4)<br/>📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/STbVEZMJdC0_99.13333333333334.mp4) | [![Toronto](readme/min_max/ITBPp9q2I9w_800.5333333333333_frame_00004.jpg)](readme/min_max/ITBPp9q2I9w_800.5333333333333.mp4)<br/>📍 Toronto (CAN)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/ITBPp9q2I9w_800.5333333333333.mp4) | [![Kathmandu](readme/min_max/lrdL1IAtBok_747.4333333333333_frame_00040.jpg)](readme/min_max/lrdL1IAtBok_747.4333333333333.mp4)<br/>📍 Kathmandu (NPL)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/lrdL1IAtBok_747.4333333333333.mp4) |
 | [![Brussels](readme/min_max/P00zkZ3_yYY_1388.6666666666667_frame_00071.jpg)](readme/min_max/P00zkZ3_yYY_1388.6666666666667.mp4)<br/>📍 Brussels (BEL)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/P00zkZ3_yYY_1388.6666666666667.mp4) | [![London](readme/min_max/y1OCipyZefA_1228.6_frame_00220.jpg)](readme/min_max/y1OCipyZefA_1228.6.mp4)<br/>📍 London (GBR)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/y1OCipyZefA_1228.6.mp4) | [![Damascus](readme/min_max/vO17QNa8HBQ_1159.5_frame_00128.jpg)](readme/min_max/vO17QNa8HBQ_1159.5.mp4)<br/>📍 Damascus (SYR)<br/>⚡ 0.50 m/s<br/>🎥 [mp4](readme/min_max/vO17QNa8HBQ_1159.5.mp4) |
