@@ -164,13 +164,8 @@ Mean speed of crossing (in m/s, sorted by day).
 ### Dataset after filtering
 The dataset undergoes a filtering process to ensure quality and sufficient coverage before being used in analysis. The following thresholds are applied:
 
-- **`footage_threshold`: `1800`**  
-  A city is included **only** if it has more than **1800 seconds** (30 minutes) of recorded footage.  
-  This ensures each city has a substantial amount of data for reliable insights.
-
-- **`min_crossing_detect`: `100`**  
-  A country is included **only** if at least **100 pedestrian crossings** are detected within its boundaries.  
-  This ensures that pedestrian-related statistics are meaningful at the country level.
+- **`footage_threshold = 1800`. A city is included **only** if it has more than **1800 seconds** (30 minutes) of recorded footage. This ensures each city has a substantial amount of data for reliable insights.
+- **`min_crossing_detect = 100`**. A country is included **only** if at least **100 pedestrian crossings** are detected within its boundaries. This ensures that pedestrian-related statistics are meaningful at the country level.
 
 [![Histogram of pedestrian crossing speeds](figures/hist_speed_filtered.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_speed_filtered.html)  
 Histogram of pedestrian crossing speeds (in m/s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
