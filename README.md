@@ -1,6 +1,5 @@
 ## Overview
-
-Pedestrian crossing behaviour varies globally. This study analyses dashcam footage from the CROWD dataset, covering 233 countries and territories, to examine crossing initiation time, crossing speed, and contextual variables, including detected vehicles, traffic mortality, GDP, and Gini coefficient. Qatar had the longest mean crossing initiation time (6.44s), while China exhibited the fastest crossing speed (1.69m/s). On average, worldwide, pedestrians exhibited a crossing initiation time of 3.18s and crossing speed 1.20m/s. Crossing speed and crossing initiation time are negatively correlated (r = -0.18), indicating slower crossings after longer hesitation. Crossing speed is negatively correlated with Gini coefficient (r = -0.19) and positively correlated with traffic mortality (r = 0.18). Similar crossing times in countries with different infrastructures, such as Bangladesh (3.42s) and the Netherlands (3.40s), underscore the complex interaction between infrastructure and behavioural adaptation. These findings emphasise the importance of culturally aware road design and the development of adaptive interfaces for vehicles.
+Pedestrian crossing behaviour varies globally. This study analyses dashcam footage from the CROWD dataset, covering 233 countries and territories, to examine crossing initiation time, crossing speed, and contextual variables, including detected vehicles, traffic mortality, GDP, and Gini coefficient. Qatar had the longest mean crossing initiation time (6.44 s), while China exhibited the fastest crossing speed (1.69 m/s). On average, worldwide, pedestrians exhibited a crossing initiation time of 3.18 s and crossing speed 1.20 m/s. Crossing speed and crossing initiation time are negatively correlated (r = -0.18), indicating slower crossings after longer hesitation. Crossing speed is negatively correlated with Gini coefficient (r = -0.19) and positively correlated with traffic mortality (r = 0.18). Similar crossing times in countries with different infrastructures, such as Bangladesh (3.42 s) and the Netherlands (3.40 s), underscore the complex interaction between infrastructure and behavioural adaptation. These findings emphasise the importance of culturally aware road design and the development of adaptive interfaces for vehicles.
 
 ## Usage of the code
 The code is open-source and free to use. It is aimed for, but not limited to, academic research. We welcome forking of this repository, pull requests, and any contributions in the spirit of open science and open-source code 😍😄 For inquiries about collaboration, you may contact Md Shadab Alam (md_shadab_alam@outlook.com) or Pavlo Bazilinskyy (pavlo.bazilinskyy@gmail.com).
@@ -144,6 +143,8 @@ Configuration of the project needs to be defined in `config`. Please use the `de
 - **`sleep_sec`**: Amount of seconds of pause between going over the mapping files.
 
 ## Description and analysis of dataset
+Refer to https://github.com/Shaadalam9/pedestrians-in-youtube for a description of the selection criteria for the underlying CROWD dataset.
+
 [![Locations of cities with footage in dataset](figures/map_screenshots_total_time.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_screenshots_total_time.html)
 A political world map colored by continent, showing **233 countries** included in the analysis. The shading represents the total duration of dashcam footage from each country, adjusted with a logarithmic scale so that countries with very large or very small totals are both visible. Black dots indicate the cities from which footage was collected.
 
@@ -221,8 +222,6 @@ Mean speed of crossing at day (in m/s, sorted by values).
 [![Mean speed of crossing at night (in m/s, sorted by values)](figures/crossing_speed_alphabetical_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_night_country.html)  
 Mean speed of crossing at night (in m/s, sorted by values).
 
-
-
 ### Relationship between computed and statistical metrics
 [![Mean speed of crossing during daytime over mean time to start crossing](figures/scatter_speed_crossing_day_country-time_crossing_day_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_country-time_crossing_day_country.html)  
 Mean speed of crossing (in m/s) during daytime over mean time to start crossing (in s).
@@ -280,7 +279,6 @@ Total footage time (in s) over total number of pedestrians.
 
 [![Footage with traffic light over footage without traffic light (normalised)](figures/scatter_with_trf_light_norm-without_trf_light_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_with_trf_light_norm-without_trf_light_norm.html)  
 Footage with traffic lights over footage without traffic lights, both normalised per population.
-
 
 ### Correlation matrices
 [![Correlation matrix based on average speed and time to start cross](figures/correlation_matrix_heatmap_averaged.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_averaged.html)
