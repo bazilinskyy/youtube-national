@@ -315,18 +315,6 @@ TODO
 
 ### Fastest crossings
 
-<style>
-table th:first-of-type {
-    width: 33%;
-}
-table th:nth-of-type(2) {
-    width: 33%;
-}
-table th:nth-of-type(3) {
-    width: 33%;
-}
-</style>
-
 | | | |
 | [![Johannesburg](readme/min_max/rnTPlWqduEg_650.1333333333333_frame_00013.jpg)](readme/min_max/rnTPlWqduEg_650.1333333333333.mp4)<br/>📍 Johannesburg (ZAF)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/rnTPlWqduEg_650.1333333333333.mp4) | [![Stavropol](readme/min_max/NjRjslNfzOg_507.76666666666665_frame_00022.jpg)](readme/min_max/NjRjslNfzOg_507.76666666666665.mp4)<br/>📍 Stavropol (RUS)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/NjRjslNfzOg_507.76666666666665.mp4) | [![Cebu City](readme/min_max/Wc6_DYNNzqQ_844.9666666666667_frame_00050.jpg)](readme/min_max/Wc6_DYNNzqQ_844.9666666666667.mp4)<br/>📍 Cebu City (PHL)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/Wc6_DYNNzqQ_844.9666666666667.mp4) |
 | [![Aleppo](readme/min_max/0yuNX9oYOIM_1265.38_frame_00043.jpg)](readme/min_max/0yuNX9oYOIM_1265.38.mp4)<br/>📍 Aleppo (SYR)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/0yuNX9oYOIM_1265.38.mp4) | [![Tallinn](readme/min_max/U_pkdB8nr6g_1123.0_frame_00029.jpg)](readme/min_max/U_pkdB8nr6g_1123.0.mp4)<br/>📍 Tallinn (EST)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/U_pkdB8nr6g_1123.0.mp4) | [![Den Haag](readme/min_max/4YnczQOdsTQ_1397.3333333333333_frame_00038.jpg)](readme/min_max/4YnczQOdsTQ_1397.3333333333333.mp4)<br/>📍 Den Haag (NLD)<br/>⚡ 2.50 m/s<br/>🎥 [mp4](readme/min_max/4YnczQOdsTQ_1397.3333333333333.mp4) |
