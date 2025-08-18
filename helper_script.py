@@ -13,7 +13,6 @@ import pandas as pd
 import world_bank_data as wb
 import yt_dlp
 import pycountry
-from pycountry_convert import country_name_to_country_alpha2, country_alpha2_to_continent_code
 from custom_logger import CustomLogger
 import common
 import ast
@@ -853,29 +852,6 @@ class Youtube_Helper:
         # Save the updated DataFrame back to the same CSV
         data.to_csv(self.mapping, index=False)
         logger.info("Mapping file updated successfully with country population.")
-
-    def get_continent_from_country(self, country):
-        """
-        Returns the continent based on the country name using pycountry_convert.
-        """
-        try:
-            # Convert country name to ISO Alpha-2 code
-            alpha2_code = country_name_to_country_alpha2(country)
-            # Convert ISO Alpha-2 code to continent code
-            continent_code = country_alpha2_to_continent_code(alpha2_code)
-            # Map continent codes to continent names
-            continent_map = {
-                "AF": "Africa",
-                "AS": "Asia",
-                "EU": "Europe",
-                "NA": "North America",
-                "SA": "South America",
-                "OC": "Oceania",
-                "AN": "Antarctica"
-            }
-            return continent_map.get(continent_code, "Unknown")
-        except KeyError:
-            return "Unknown"
 
     def get_upload_date(self, video_id):
         """

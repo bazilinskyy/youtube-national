@@ -7,7 +7,7 @@ The code is open-source and free to use. It is aimed for, but not limited to, ac
 ## Citation
 If you use the gans-traffic for academic work please cite the following paper:
 
-> Alam, M. S., Martens, M.H., & Bazilinskyy, P. (2025). Pedestrian Planet: What YouTube Driving from 231 Countries and Territories Teaches Us About the World. 17th International Conference on Automotive User Interfaces and Interactive Vehicular Applications. Brisbane, QLD, Australia. https://doi.org/10.1145/3744333.3747827
+> Alam, M. S., Martens, M.H., & Bazilinskyy, P. (2025). Pedestrian Planet: What YouTube Driving from 233 Countries and Territories Teaches Us About the World. 17th International Conference on Automotive User Interfaces and Interactive Vehicular Applications. Brisbane, QLD, Australia. https://doi.org/10.1145/3744333.3747827
 
 ## Getting started
 [![Python Version](https://img.shields.io/badge/python-3.9.19-blue.svg)](https://www.python.org/downloads/release/python-3919/)
@@ -109,38 +109,63 @@ python3 analysis.py
 
 ### Configuration of project
 Configuration of the project needs to be defined in `config`. Please use the `default.config` file for the required structure of the file. If no custom config file is provided, `default.config` is used. The config file has the following parameters:
-- **`data`**: Directory containing data (CSV output from YOLO).
+- **`data`**: Directories containing data (CSV output from YOLO).
 - **`videos`**: Directories containing the videos used to generate the data.
 - **`mapping`**: CSV file that contains mapping data for the cities referenced in the data.
-- **`prediction_mode`**: Configures YOLO for object detection.
+- **`machine_name`**: User-defined name for the machine; included in notification emails to help identify which machine the emails are coming from.
 - **`tracking_mode`**: Configures YOLO for object tracking.
+- **`segmentation_mode`**: Configures YOLO for object detection.
 - **`always_analyse`**: Always conduct analysis even when pickle files are present (good for testing).
 - **`display_frame_tracking`**: Displays the frame tracking during analysis.
+- **`display_frame_segmentation`**: Displays the frame segmentation during analysis.
 - **`save_annotated_img`**: Saves the annotated frames produced by YOLO.
+- **`save_tracked_img`**: Saves the tracked frames produced during YOLO analysis.
 - **`delete_labels`**: Deletes label files from YOLO output.
 - **`delete_frames`**: Deletes frames from YOLO output.
-- **`delete_youtube_video`**: Deletes saved YouTube videos.
+- **`delete_youtube_video`**: Deletes downloaded YouTube videos.
 - **`compress_youtube_video`**: Compresses YouTube videos (using the H.255 codec by default).
+- **`save_annotated_video`**: Saves the annotated video produced by YOLO.
 - **`delete_runs_files`**: Deletes files containing YOLO output after analysis.
-- **`monitor_temp`**: Monitors the temperature of the device running the analysis.
 - **`check_missing_mapping`**: Identifies all the missing csv files.
+- **`min_max_videos`**: Takes a value n and returns the n fastest and n slowest speed/time segments with tracked objects.
+- **`bbox_tracker`**: Specifies the bounding-box based tracker to be used.
+- **`seg_tracker`**: Specifies the segmentation-based tracker to be used.
 - **`client`**: Specifies the client type for downloading YouTube videos; accepted values are `"WEB"`, `"ANDROID"` or `"ios"`.
-- **`model`**: Specifies the YOLO model to use; supported/tested versions include `v8x` and `v11x`.
-- **`countries_analyse`**: Lists the countries to be analysed.
+- **`tracking_model`**: Specifies the YOLO model to use; supported/tested versions include `v8x` and `v11x`.
+- **`segment_model`**: Specifies the YOLO segmentation model to use; supported/tested version includes `yolo11x-seg`.
+- **`reanalyse_waiting_time`**:If set to True, the crossing initiation time will be reanalysed once the analysis is complete; new values are then taken from min_waiting_time and max_waiting_time.
+- **`min_waiting_time`**: Minimum crossing initiation time (in seconds); the lowest allowed value is 1s.
+- **`max_waiting_time`**: Maximum crossing initiation time (in seconds).
+- **`check_per_sec_time`**: Number of checks per second to verify whether a person remains in the same position as during the previous check.
+- **`boundary_left`**: Normalised position value (e.g., 0.4) representing the left boundary; if a person crosses this point, they are considered as crossing the road.
+- **`boundary_right`**: Normalised position value (e.g., 0.6) representing the right boundary; if a person crosses this point, they are considered as crossing the road.
+- **`use_geometry_correction`**: Applies geometric correction to prevent identity switches (ID swaps) when objects cross paths (e.g., overtaking).
+- **`population_threshold`**: Minimum population threshold for including a city in analysis.
+- **`footage_threshold`**: Minimum total footage of the city required for including a video in the analysis.
+- **`min_city_population_percentage`**:Minimum percentage of the population of the country required for the city to be included in the analysis.
+- **`min_crossing_detect`**: Minimum number of crossings detected in the country required for the country to be included in the analysis.
+- **`reanalyse_speed`**: If set to True, the speed at which the analysis is re-executed will be adjusted. The new speed values can be set within the min_speed_limit and max_speed_limit.
+- **`min_speed_limit`**: Minimum speed of the pedestrian while crossing during analysis.
+- **`max_speed_limit`**: Maximum speed of the pedestrian while crossing during analysis.
+- **`countries_analyse`**: Lists the countries to be analysed, specified using their ISO3 country codes.
+- **`vehicles_analyse`**: Specifies the list of vehicle types to analyse using the following values: 0 for car, 1 for bus, 2 for truck, 3 for two-wheeler, 4 for bicycle, 5 for automated car, 6 for automated bus, 7 for automated truck, 8 for automated two-wheeler, and 9 for electric scooter.
 - **`confidence`**: Sets the confidence threshold parameter for YOLO.
 - **`update_ISO_code`**: Updates the ISO code of the country in the mapping file during analysis.
 - **`update_pop_country`**: Updates the country’s population in the mapping file during analysis.
-- **`update_continent`**: Updates the continent information in the mapping file during analysis.
 - **`update_mortality_rate`**: Updates the mortality rate of the country in the mapping file during analysis.
 - **`update_gini_value`**: Updates the GINI value of the country in the mapping file during analysis.
 - **`update_upload_date`**: Updates the upload date of videos in the mapping file during analysis.
-- **`update_fps_list`**: Updates the FPS (frames per second) information for videos in the mapping file during analysis.
-- **`update_pytubefix`**: Updates the `pytubefix` library each time analysis starts.
+- **`update_package`**: Updates the `pytubefix` library each time analysis starts.
+- **`need_authentication`**: Enables authentication when required for downloading YouTube videos.
 - **`font_family`**: Specifies the font family to be used in outputs.
 - **`font_size`**: Specifies the font size to be used in outputs.
 - **`plotly_template`**: Defines the template for Plotly figures.
 - **`logger_level`**: Level of console output. Can be: debug, info, warning, error.
 - **`sleep_sec`**: Amount of seconds of pause between going over the mapping files.
+- **`git_pull`**: Automatically pulls the latest updates from the Git repository before running analysis.
+- **`email_send`**: Enables or disables email notifications after the analysis. If enabled, an email is sent when the processing is completed or if an error occurs.
+- **`email_sender`**: Specifies the email address used as the sender for notifications.
+- **`email_recipients`**: A list of email addresses that will receive notifications about the analysis, including completion or error messages.
 
 ## Description and analysis of dataset
 Refer to https://github.com/Shaadalam9/pedestrians-in-youtube for a description of the selection criteria for videos in the underlying CROWD dataset.

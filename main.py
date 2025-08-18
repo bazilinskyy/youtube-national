@@ -97,14 +97,6 @@ if __name__ == "__main__":
             if config.update_pop_country:
                 helper.update_population_in_csv(mapping)
 
-            if config.update_continent:
-                # Update the continent column based on the country
-                mapping['continent'] = mapping['country'].apply(helper.get_continent_from_country)
-
-                # Save the updated CSV file
-                mapping.to_csv(config.mapping, index=False)
-                logger.info("Mapping file updated successfully with continents.")
-
             if config.update_mortality_rate:
                 helper.fill_traffic_mortality(mapping)
 
