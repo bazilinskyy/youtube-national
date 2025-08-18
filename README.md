@@ -190,6 +190,11 @@ The dataset undergoes a filtering process to ensure quality and sufficient cover
 
 - **`footage_threshold = 1800`**. A city is included **only** if it has more than **1800 seconds** (30 minutes) of recorded footage. This ensures each city has a substantial amount of data for reliable insights.
 - **`min_crossing_detect = 100`**. A country is included **only** if at least **100 pedestrian crossings** are detected within its boundaries. This ensures that pedestrian-related statistics are meaningful at the country level.
+- **`vehicles_analyse = [0]`** → Only cars are analysed (`0 = car`).  
+- **`min_speed_limit = 0.5`, `max_speed_limit = 2.5`** → Only crossings with pedestrian speeds within this range are considered.  
+- **`boundary_left = 0.45`, `boundary_right = 0.55`** → Crossing is counted when a person moves across these normalized frame-width positions (0 = far left, 1 = far right).  
+- **`reanalyse_waiting_time = false`, `min_waiting_time = 1`, `max_waiting_time = 150`** → Reanalysis of crossing initiation time is disabled; waiting-time values are ignored (note: effective minimum waiting time is **1s**).  
+- **`check_per_sec_time = 3`** → Performs 3 checks per second to verify if a person remains in the same position as the previous check.  
 
 [![Histogram of pedestrian crossing speeds](figures/hist_speed_filtered.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_speed_filtered.html)  
 Histogram of pedestrian crossing speeds (in m/s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
@@ -328,7 +333,7 @@ Correlation matrix for North America.
 Correlation matrix for South America.
 
 ## Edge cases in analysed data
-TODO
+The analysis surfaced several edge cases that complicate detection and measurement. Some “fastest” crossings are inflated by camera rotation or vehicle turning, which can make nearby pedestrians appear to traverse the frame as if crossing the roadway, while some “slowest” cases involve people pushing carts or approaching the ego vehicle before stepping off, stretching initiation times and lowering apparent speeds. To curb false positives, we filtered out rider-like trajectories (bicycle/motorcycle) and frame-motion artifacts, but occasional misclassification remains—e.g., cyclists or motorcyclists labeled as “person” when trajectories overlap. Measurement noise also arises from converting pixels to meters using national average human height and from perspective effects; thus we exclude implausible speeds (<0.5 or >2.5 m/s) and initiation times (<1 or >150 s) and verify “static” status using a ±0.1 · mean-height margin at sub-second checks. Finally, because the base detector does not recognize road boundaries or subtle cues (e.g., posture/gestures), some complex scenes remain error-prone; future improvements (lane detection, pose estimation, stronger multi-object tracking) are likely to reduce these edge cases.
 
 ### Fastest crossings
 <table>
