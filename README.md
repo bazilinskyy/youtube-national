@@ -360,7 +360,7 @@ TODO
   </tr>
   <tr>
     <td>
-      <a href="readme/min_max/0yuNX9oYOIM_1265.38.mp4">
+      <a href="https://youtu.be/RJe7V6ZJQjQ">
         <img src="readme/min_max/0yuNX9oYOIM_1265.38_frame_00043.jpg" width="250">
       </a><br/>
       📍 Aleppo (SYR)<br/>
@@ -376,7 +376,7 @@ TODO
       🎥 <a href="readme/min_max/U_pkdB8nr6g_1123.0.mp4">Event</a>, <a href="https://www.youtube.com/watch?v=nTPlWqduEg">YouTube video</a> 
     </td>
     <td>
-      <a href="readme/min_max/4YnczQOdsTQ_1397.3333333333333.mp4">
+      <a href="https://youtu.be/NYa91CaHK0w">
         <img src="readme/min_max/4YnczQOdsTQ_1397.3333333333333_frame_00038.jpg" width="250">
       </a><br/>
       📍 Den Haag (NLD)<br/>
@@ -394,7 +394,7 @@ TODO
       🎥 <a href="readme/min_max/SYq9zkwVSkM_635.7.mp4">Event</a>, <a href="https://www.youtube.com/watch?v=nTPlWqduEg">YouTube video</a> 
     </td>
     <td>
-      <a href="readme/min_max/ALA09uSzD7E_3075.0333333333333.mp4">
+      <a href="https://youtu.be/1lkrndY4S4M">
         <img src="readme/min_max/ALA09uSzD7E_3075.0333333333333_frame_00011.jpg" width="250">
       </a><br/>
       📍 Istanbul (TUR)<br/>
@@ -402,7 +402,7 @@ TODO
       🎥 <a href="readme/min_max/ALA09uSzD7E_3075.0333333333333.mp4">Event</a>, <a href="https://www.youtube.com/watch?v=nTPlWqduEg">YouTube video</a> 
     </td>
     <td>
-      <a href="readme/min_max/0GMt9cZ8g_E_5439.45.mp4">
+      <a href="https://youtu.be/VCczV6dpQ0k">
         <img src="readme/min_max/0GMt9cZ8g_E_5439.45_frame_00053.jpg" width="250">
       </a><br/>
       📍 Stockholm (SWE)<br/>
@@ -412,7 +412,7 @@ TODO
   </tr>
   <tr>
     <td>
-      <a href="readme/min_max/DKyPhYq5nTg_334.06666666666666.mp4">
+      <a href="https://youtu.be/0FPSgKPRMdQ">
         <img src="readme/min_max/DKyPhYq5nTg_334.06666666666666_frame_00027.jpg" width="250">
       </a><br/>
       📍 Accra (GHA)<br/>
@@ -436,7 +436,7 @@ TODO
       🎥 <a href="readme/min_max/STbVEZMJdC0_99.13333333333334.mp4">Event</a>, <a href="https://www.youtube.com/watch?v=STbVEZMJdC0">YouTube video</a> 
     </td>
     <td>
-      <a href="readme/min_max/ITBPp9q2I9w_800.5333333333333.mp4">
+      <a href="https://youtu.be/kAJyLm8i630">
         <img src="readme/min_max/ITBPp9q2I9w_800.5333333333333_frame_00004.jpg" width="250">
       </a><br/>
       📍 Toronto (CAN)<br/>
@@ -444,7 +444,7 @@ TODO
       🎥 <a href="readme/min_max/ITBPp9q2I9w_800.5333333333333.mp4">Event</a>, <a href="https://www.youtube.com/watch?v=ITBPp9q2I9w">YouTube video</a> 
     </td>
     <td>
-      <a href="readme/min_max/lrdL1IAtBok_747.4333333333333.mp4">
+      <a href="https://youtu.be/KSzaXkLyCjc">
         <img src="readme/min_max/lrdL1IAtBok_747.4333333333333_frame_00040.jpg" width="250">
       </a><br/>
       📍 Kathmandu (NPL)<br/>
@@ -480,7 +480,7 @@ TODO
   </tr>
   <tr>
     <td>
-      <a href="readme/min_max/2lAmKDS6U_Q_1571.2833333333333.mp4">
+      <a href="https://youtu.be/nymtrc96edw">
         <img src="readme/min_max/2lAmKDS6U_Q_1571.2833333333333_frame_00029.jpg" width="250">
       </a><br/>
       📍 Monterrey (MEX)<br/>
@@ -496,7 +496,7 @@ TODO
       🎥 <a href="readme/min_max/RfqTtYd0PbE_1172.5333333333333.mp4">Event</a>, <a href="https://www.youtube.com/watch?v=RfqTtYd0PbE">YouTube video</a> 
     </td>
     <td>
-      <a href="readme/min_max/IhQ6vMRmYoM_409.3333333333333.mp4">
+      <a href="https://youtu.be/2vghuWHQSdA">
         <img src="readme/min_max/IhQ6vMRmYoM_409.3333333333333_frame_00036.jpg" width="250">
       </a><br/>
       📍 Montreal (CAN)<br/>
@@ -506,7 +506,7 @@ TODO
   </tr>
   <tr>
     <td>
-      <a href="readme/min_max/htYvrZuSxGs_862.1666666666666.mp4">
+      <a href="https://youtu.be/gutZWO0RWmk">
         <img src="readme/min_max/htYvrZuSxGs_862.1666666666666_frame_00120.jpg" width="250">
       </a><br/>
       📍 Wellington (USA)<br/>

@@ -2062,72 +2062,72 @@ if __name__ == "__main__":
     df['state'] = df['state'].fillna('NA')  # Set state to NA
 
     # Maps with filtered data
-    plots_class.mapbox_map(df=df, hover_data=hover_data, file_name='mapbox_map')
+    # plots_class.mapbox_map(df=df, hover_data=hover_data, file_name='mapbox_map')
 
-    plots_class.mapbox_map(df=df,
-                           hover_data=hover_data,
-                           density_col='total_time',
-                           density_radius=10,
-                           file_name='mapbox_map_time')
+    # plots_class.mapbox_map(df=df,
+    #                        hover_data=hover_data,
+    #                        density_col='total_time',
+    #                        density_radius=10,
+    #                        file_name='mapbox_map_time')
 
-    plots_class.world_map(df_mapping=df)  # map with countries
+    # plots_class.world_map(df_mapping=df)  # map with countries
 
-    plots_class.violin_plot(data_index=22,
-                            name="speed",
-                            min_threshold=common.get_configs("min_speed_limit"),
-                            max_threshold=common.get_configs("max_speed_limit"),
-                            df_mapping=df_mapping,
-                            save_file=True)
+    # plots_class.violin_plot(data_index=22,
+    #                         name="speed",
+    #                         min_threshold=common.get_configs("min_speed_limit"),
+    #                         max_threshold=common.get_configs("max_speed_limit"),
+    #                         df_mapping=df_mapping,
+    #                         save_file=True)
 
-    min_max_speed = analysis_class.get_duration_segment(all_speed, df_mapping, name="speed", duration=None)
-    min_max_time = analysis_class.get_duration_segment(all_time, df_mapping, name="time", duration=None)
+    # min_max_speed = analysis_class.get_duration_segment(all_speed, df_mapping, name="speed", duration=None)
+    # min_max_time = analysis_class.get_duration_segment(all_time, df_mapping, name="time", duration=None)
 
-    # ------------All values----------------- #
-    plots_class.hist(data_index=22,
-                     name="speed",
-                     marginal="violin",
-                     nbins=100,
-                     raw=True,
-                     min_threshold=common.get_configs("min_speed_limit"),
-                     max_threshold=common.get_configs("max_speed_limit"),
-                     font_size=common.get_configs("font_size") + 4,
-                     fig_save_height=650,
-                     save_file=True)
+    # # ------------All values----------------- #
+    # plots_class.hist(data_index=22,
+    #                  name="speed",
+    #                  marginal="violin",
+    #                  nbins=100,
+    #                  raw=True,
+    #                  min_threshold=common.get_configs("min_speed_limit"),
+    #                  max_threshold=common.get_configs("max_speed_limit"),
+    #                  font_size=common.get_configs("font_size") + 4,
+    #                  fig_save_height=650,
+    #                  save_file=True)
 
-    plots_class.hist(data_index=39,
-                     name="time",
-                     marginal="violin",
-                     # nbins=100,
-                     raw=True,
-                     min_threshold=None,
-                     max_threshold=None,
-                     font_size=common.get_configs("font_size") + 4,
-                     fig_save_height=650,
-                     save_file=True)
+    # plots_class.hist(data_index=39,
+    #                  name="time",
+    #                  marginal="violin",
+    #                  # nbins=100,
+    #                  raw=True,
+    #                  min_threshold=None,
+    #                  max_threshold=None,
+    #                  font_size=common.get_configs("font_size") + 4,
+    #                  fig_save_height=650,
+    #                  save_file=True)
 
-    # ------------Filtered values----------------- #
-    plots_class.hist(data_index=38,
-                     name="speed_filtered",
-                     marginal="violin",
-                     nbins=100,
-                     raw=False,
-                     min_threshold=common.get_configs("min_speed_limit"),
-                     max_threshold=common.get_configs("max_speed_limit"),
-                     font_size=common.get_configs("font_size") + 4,
-                     fig_save_height=650,
-                     save_file=True)
+    # # ------------Filtered values----------------- #
+    # plots_class.hist(data_index=38,
+    #                  name="speed_filtered",
+    #                  marginal="violin",
+    #                  nbins=100,
+    #                  raw=False,
+    #                  min_threshold=common.get_configs("min_speed_limit"),
+    #                  max_threshold=common.get_configs("max_speed_limit"),
+    #                  font_size=common.get_configs("font_size") + 4,
+    #                  fig_save_height=650,
+    #                  save_file=True)
 
-    plots_class.hist(data_index=37,
-                     name="time_filtered",
-                     marginal="violin",
-                     # nbins=100,
-                     raw=False,
-                     min_threshold=None,
-                     max_threshold=None,
-                     font_size=common.get_configs("font_size") + 4,
-                     df_mapping=df_mapping,
-                     fig_save_height=650,
-                     save_file=True)
+    # plots_class.hist(data_index=37,
+    #                  name="time_filtered",
+    #                  marginal="violin",
+    #                  # nbins=100,
+    #                  raw=False,
+    #                  min_threshold=None,
+    #                  max_threshold=None,
+    #                  font_size=common.get_configs("font_size") + 4,
+    #                  df_mapping=df_mapping,
+    #                  fig_save_height=650,
+    #                  save_file=True)
 
     df_countries = analysis_class.aggregate_by_iso3(df_mapping)
     df_countries_raw = analysis_class.aggregate_by_iso3(df_mapping_raw)
@@ -2138,33 +2138,33 @@ if __name__ == "__main__":
     hover_data_raw = list(set(df_countries.columns) - set(columns_remove) - set(columns_remove_raw))
     df_countries.to_csv(os.path.join(common.output_dir, "mapping_countries.csv"))
 
-    # Map with images. currently works on a 13" MacBook air screen in chrome, as things are hardcoded...
-    plots_class.map_world(
-        df=df_countries_raw,
-        color="continent",           # same default as map_political
-        show_cities=True,
-        df_mapping=df_mapping,
-        show_images=True,
-        hover_data=hover_data_raw,
-        save_file=True,
-        save_final=False,
-        name_file="raw_map",
-    )
+    # # Map with images. currently works on a 13" MacBook air screen in chrome, as things are hardcoded...
+    # plots_class.map_world(
+    #     df=df_countries_raw,
+    #     color="continent",           # same default as map_political
+    #     show_cities=True,
+    #     df_mapping=df_mapping,
+    #     show_images=True,
+    #     hover_data=hover_data_raw,
+    #     save_file=True,
+    #     save_final=False,
+    #     name_file="raw_map",
+    # )
 
-    # Map with screenshots and countries colours by continent
-    plots_class.map_world(
-        df=df_countries,
-        color="continent",
-        show_cities=True,
-        df_mapping=df_mapping,
-        show_images=True,
-        hover_data=hover_data,
-        save_file=False,
-        save_final=False,
-        name_file="map_screenshots",
-        show_colorbar=True,
-        colorbar_title="Continent",
-    )
+    # # Map with screenshots and countries colours by continent
+    # plots_class.map_world(
+    #     df=df_countries,
+    #     color="continent",
+    #     show_cities=True,
+    #     df_mapping=df_mapping,
+    #     show_images=True,
+    #     hover_data=hover_data,
+    #     save_file=False,
+    #     save_final=False,
+    #     name_file="map_screenshots",
+    #     show_colorbar=True,
+    #     colorbar_title="Continent",
+    # )
 
     # Map with screenshots and countries colours by amount of footage
     hover_data = list(set(df_countries_raw.columns) - set(columns_remove))
@@ -2179,19 +2179,19 @@ if __name__ == "__main__":
     # Sort by continent and city, both in ascending order
     df = df.sort_values(by=["continent", "city"], ascending=[True, True])
 
-    plots_class.map_world(
-        df=df_countries_raw,
-        color="log_total_time",
-        show_cities=True,
-        df_mapping=df_mapping,
-        show_images=True,
-        hover_data=hover_data,
-        show_colorbar=True,
-        colorbar_title="Footage (log)",
-        save_file=True,
-        save_final=True,
-        name_file="map_screenshots_total_time",
-    )
+    # plots_class.map_world(
+    #     df=df_countries_raw,
+    #     color="log_total_time",
+    #     show_cities=True,
+    #     df_mapping=df_mapping,
+    #     show_images=True,
+    #     hover_data=hover_data,
+    #     show_colorbar=True,
+    #     colorbar_title="Footage (log)",
+    #     save_file=True,
+    #     save_final=True,
+    #     name_file="map_screenshots_total_time",
+    # )
 
     df_countries_raw.drop(['speed_crossing_day_country', 'speed_crossing_night_country',
                            'speed_crossing_day_night_country_avg',
@@ -2267,7 +2267,7 @@ if __name__ == "__main__":
                                    order_by="average",
                                    metric="time",
                                    data_view="combined",
-                                   title_text="Crossing initiation time (s)",
+                                   title_text="Mean crossing initiation time (s)",
                                    filename="time_crossing_avg_country",
                                    annotation_text=[2, 4],
                                    annotation_x_position=[0.087, 0.175],
@@ -2303,9 +2303,6 @@ if __name__ == "__main__":
                                    data_view="combined",
                                    title_text="Mean crossing initiation time (in s)",
                                    filename="time_crossing_combined_country",
-                                   annotation_text=[2],
-                                   annotation_x_position=[0.596],
-                                   annotation_y_position=[1.031],
                                    font_size_captions=common.get_configs("font_size") + 28,
                                    legend_x=0.92,
                                    legend_y=0.04,
@@ -2320,9 +2317,9 @@ if __name__ == "__main__":
                                    data_view="combined",
                                    title_text="Mean speed of crossing (in m/s)",
                                    filename="crossing_speed_combined_country_raw",
-                                   annotation_text=[0.5, 0.5, 1, 1.5],
-                                   annotation_x_position=[0.061, 0.569, 0.635, 0.715],
-                                   annotation_y_position=[1.0155, 1.0155, 1.0155, 1.0155],
+                                   annotation_text=[0.5, 0.5],
+                                   annotation_x_position=[0.061, 0.569],
+                                   annotation_y_position=[1.0155, 1.0155],
                                    font_size_captions=common.get_configs("font_size") + 28,
                                    raw=True,
                                    legend_x=0.92,
@@ -2336,7 +2333,7 @@ if __name__ == "__main__":
                                    order_by="condition",
                                    metric="time",
                                    data_view="combined",
-                                   title_text="Crossing initiation time (s)",
+                                   title_text="Mean crossing initiation time (s)",
                                    filename="time_crossing_combined_country_raw",
                                    annotation_text=[5],
                                    annotation_x_position=[0.615],
@@ -2522,11 +2519,14 @@ if __name__ == "__main__":
                                    width=2480)
 
     plots_class.speed_and_time_to_start_cross_country(df_countries,
-                                                      x_axis_title_height=110,
-                                                      font_size_captions=common.get_configs("font_size") + 8,
-                                                      legend_x=0.87,
-                                                      legend_y=0.04,
-                                                      legend_spacing=0.01)
+                                                      legend_x=0.8,
+                                                      legend_y=0.05,
+                                                      legend_spacing=0.015,
+                                                      filename="consolidated",
+                                                      font_size_captions=common.get_configs("font_size") + 28,
+                                                      top_margin=150,
+                                                      height=10800,
+                                                      width=5880)
 
     plots_class.correlation_matrix_country(df_mapping, df_countries, pedestrian_cross_city, person_city,
                                            bicycle_city, car_city, motorcycle_city, bus_city, truck_city,
@@ -2544,7 +2544,7 @@ if __name__ == "__main__":
                         color="continent",
                         text="iso3",
                         xaxis_title='Mean speed of crossing (in m/s)',
-                        yaxis_title='Crossing initiation time (s)',
+                        yaxis_title='Mean crossing initiation time (s)',
                         pretty_text=False,
                         marker_size=10,
                         save_file=True,
@@ -2552,7 +2552,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2565,8 +2565,8 @@ if __name__ == "__main__":
                         y="time_crossing_day_country",
                         color="continent",
                         text="iso3",
-                        xaxis_title='Crossing speed during daytime (in m/s)',
-                        yaxis_title='Crossing initiation time during daytime (in s)',
+                        xaxis_title='Mean crossing speed during daytime (in m/s)',
+                        yaxis_title='Mean crossing initiation time during daytime (in s)',
                         pretty_text=False,
                         marker_size=10,
                         save_file=True,
@@ -2574,7 +2574,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2587,8 +2587,8 @@ if __name__ == "__main__":
                         y="time_crossing_night_country",
                         color="continent",
                         text="iso3",
-                        xaxis_title='Crossing speed during night time (in m/s)',
-                        yaxis_title='Crossing initiation time during night time (in s)',
+                        xaxis_title='mean crossing speed during night time (in m/s)',
+                        yaxis_title='Mean crossing initiation time during night time (in s)',
                         pretty_text=False,
                         marker_size=10,
                         save_file=True,
@@ -2596,7 +2596,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2609,7 +2609,7 @@ if __name__ == "__main__":
                         y="population_country",
                         color="continent",
                         text="iso3",
-                        xaxis_title='Crossing initiation time (s)',
+                        xaxis_title='Mean crossing initiation time (s)',
                         yaxis_title='Population of country',
                         pretty_text=False,
                         marker_size=10,
@@ -2618,7 +2618,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2640,7 +2640,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.05,
                         label_distance_factor=0.2,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2653,7 +2653,7 @@ if __name__ == "__main__":
                         y="traffic_mortality",
                         color="continent",
                         text="iso3",
-                        xaxis_title='Crossing initiation time (in s)',
+                        xaxis_title='mean crossing initiation time (in s)',
                         yaxis_title='National traffic mortality rate (per 100,000 of population)',
                         pretty_text=False,
                         marker_size=10,
@@ -2662,7 +2662,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2684,7 +2684,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.3,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2697,7 +2697,7 @@ if __name__ == "__main__":
                         y="literacy_rate",
                         color="continent",
                         text="iso3",
-                        xaxis_title='Crossing initiation time (in s)',
+                        xaxis_title='Mean crossing initiation time (in s)',
                         yaxis_title='Literacy rate',
                         pretty_text=False,
                         marker_size=10,
@@ -2728,7 +2728,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=0.01,
+                        legend_y=0.05,
                         label_distance_factor=0.4,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2741,7 +2741,7 @@ if __name__ == "__main__":
                         y="gini",
                         color="continent",
                         text="iso3",
-                        xaxis_title='Crossing initiation time (in s)',
+                        xaxis_title='Mean crossing initiation time (in s)',
                         yaxis_title='Gini coefficient',
                         pretty_text=False,
                         marker_size=10,
@@ -2750,7 +2750,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2772,7 +2772,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2786,7 +2786,7 @@ if __name__ == "__main__":
                         color="continent",
                         text="iso3",
                         # size="gmp",
-                        xaxis_title='Crossing initiation time (in s)',
+                        xaxis_title='Mean crossing initiation time (in s)',
                         yaxis_title='Median age (in years)',
                         pretty_text=False,
                         marker_size=10,
@@ -2795,7 +2795,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2817,7 +2817,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.4,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2830,7 +2830,7 @@ if __name__ == "__main__":
                         y="cellphone_normalised",
                         color="continent",
                         text="iso3",
-                        xaxis_title='Crossing initiation time (in s)',
+                        xaxis_title='Mean crossing initiation time (in s)',
                         yaxis_title='Mobile phones detected (normalised over time)',
                         pretty_text=False,
                         marker_size=10,
@@ -2839,7 +2839,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2861,7 +2861,7 @@ if __name__ == "__main__":
                         hover_name="country",
                         legend_title="",
                         legend_x=0.87,
-                        legend_y=1.0,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore
@@ -2915,8 +2915,8 @@ if __name__ == "__main__":
                         hover_data=hover_data,
                         hover_name="country",
                         legend_title="",
-                        legend_x=0.87,
-                        legend_y=1.0,
+                        legend_x=0.05,
+                        legend_y=0.95,
                         label_distance_factor=0.5,
                         marginal_x=None,  # type: ignore
                         marginal_y=None)  # type: ignore

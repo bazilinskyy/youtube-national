@@ -1680,8 +1680,9 @@ class Plots():
                                 save_eps=True,
                                 save_final=True)
 
-    def speed_and_time_to_start_cross_country(self, df_mapping, font_size_captions=40, x_axis_title_height=150,
-                                              legend_x=0.81, legend_y=0.98, legend_spacing=0.02):
+    def speed_and_time_to_start_cross_country(self, df_mapping, legend_x=0.81, legend_y=0.98, font_size_captions=40,
+                                              legend_spacing=0.02, filename=None, left_margin=10, right_margin=10,
+                                              top_margin=0, bottom_margin=0, height=4800, width=4960):
         logger.info("Plotting speed_and_time_to_start_cross")
         final_dict = {}
         with open(file_results, 'rb') as file:
@@ -2182,8 +2183,11 @@ class Plots():
         fig.update_layout(font=dict(family=common.get_configs('font_family')))
 
         # Final adjustments and display
-        fig.update_layout(margin=dict(l=10, r=10, t=x_axis_title_height, b=x_axis_title_height))
-        self.save_plotly_figure(fig, "consolidated", height=TALL_FIG_HEIGHT*2, width=4960, scale=SCALE,
+        fig.update_layout(margin=dict(l=left_margin,
+                                      r=right_margin,
+                                      t=top_margin,
+                                      b=bottom_margin))
+        self.save_plotly_figure(fig, filename, height=height, width=width, scale=SCALE,
                                 save_final=True, save_eps=False)
 
     def correlation_matrix_country(self, df_mapping, df_countries, ped_cross_city, person_city, bicycle_city, car_city,
