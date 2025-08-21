@@ -531,6 +531,15 @@ toml = [
 ]
 
 [[package]]
+name = "csvtomd"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/9d/59/ea3c8b102f9c72e5d276a169f7f343432213441c39a6eac7a8f444c66681/csvtomd-0.3.0.tar.gz", hash = "sha256:a1fbf1db86d4b7b62a75dc259807719b2301ed01db5d1d7d9bb49c4a8858778b", size = 6273, upload-time = "2017-06-11T02:26:23.579Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f9/5c/3fe97f0507909529120c2d521f50fe64ccf8b0c11b4e7dc487c326c08a9b/csvtomd-0.3.0-py3-none-any.whl", hash = "sha256:3ef90b54404dbe21c2b6e7b498f14664ef2360356ea9d7d644d32aff80bcd076", size = 10358, upload-time = "2017-06-11T02:26:21.743Z" },
+]
+
+[[package]]
 name = "cycler"
 version = "0.12.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2317,6 +2326,7 @@ name = "youtube-national"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "csvtomd" },
     { name = "ffmpeg-python" },
     { name = "flake8" },
     { name = "flask" },
@@ -2340,6 +2350,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "csvtomd", specifier = ">=0.3.0" },
     { name = "ffmpeg-python", specifier = "==0.2.0" },
     { name = "flake8", specifier = "==7.1.1" },
     { name = "flask", specifier = "==3.0.3" },
