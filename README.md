@@ -5,9 +5,9 @@ Pedestrian crossing behaviour varies globally. This study analyses dashcam foota
 The code is open-source and free to use. It is aimed for, but not limited to, academic research. We welcome forking of this repository, pull requests, and any contributions in the spirit of open science and open-source code 😍😄 For inquiries about collaboration, you may contact Md Shadab Alam (md_shadab_alam@outlook.com) or Pavlo Bazilinskyy (pavlo.bazilinskyy@gmail.com).
 
 ## Citation
-If you use the gans-traffic for academic work please cite the following paper:
+If you use the this project for academic work please cite the following paper:
 
-> Alam, M. S., Martens, M.H., & Bazilinskyy, P. (2025). Pedestrian Planet: What YouTube Driving from 233 Countries and Territories Teaches Us About the World. 17th International Conference on Automotive User Interfaces and Interactive Vehicular Applications. Brisbane, QLD, Australia. https://doi.org/10.1145/3744333.3747827
+> Alam, M. S., Martens, M. H., & Bazilinskyy, P. (2025). Pedestrian planet: What YouTube driving from 233 countries and territories teaches us about the world. 17th International Conference on Automotive User Interfaces and Interactive Vehicular Applications. Brisbane, QLD, Australia. https://doi.org/10.1145/3744333.3747827
 
 ## Getting started
 [![Python Version](https://img.shields.io/badge/python-3.9.19-blue.svg)](https://www.python.org/downloads/release/python-3919/)
@@ -33,7 +33,7 @@ irm https://astral.sh/uv/install.ps1 | iex
 pip install uv
 ```
 
-**Step 2:** Fix permissions (if needed):t
+**Step 2:** Fix permissions (if needed):
 
 Sometimes `uv` needs to create a folder under `~/.local/share/uv/python` (macOS/Linux) or `%LOCALAPPDATA%\uv\python` (Windows).  
 If this folder was created by another tool (e.g. `sudo`), you may see an error like:
@@ -134,7 +134,7 @@ Configuration of the project needs to be defined in `config`. Please use the `de
 - **`tracking_model`**: Specifies the YOLO model to use; supported/tested versions include `v8x` and `v11x`.
 - **`segment_model`**: Specifies the YOLO segmentation model to use; supported/tested version includes `yolo11x-seg`.
 - **`reanalyse_waiting_time`**:If set to True, the crossing initiation time will be reanalysed once the analysis is complete; new values are then taken from min_waiting_time and max_waiting_time.
-- **`min_waiting_time`**: Minimum crossing initiation time (in seconds); the lowest allowed value is 1s.
+- **`min_waiting_time`**: Minimum crossing initiation time (in seconds); the lowest allowed value is 1 s.
 - **`max_waiting_time`**: Maximum crossing initiation time (in seconds).
 - **`check_per_sec_time`**: Number of checks per second to verify whether a person remains in the same position as during the previous check.
 - **`boundary_left`**: Normalised position value (e.g., 0.4) representing the left boundary; if a person crosses this point, they are considered as crossing the road.
@@ -193,7 +193,7 @@ The dataset undergoes a filtering process to ensure quality and sufficient cover
 - **`vehicles_analyse = [0]`** → Only cars are analysed (`0 = car`).  
 - **`min_speed_limit = 0.5`, `max_speed_limit = 2.5`** → Only crossings with pedestrian speeds within this range are considered.  
 - **`boundary_left = 0.45`, `boundary_right = 0.55`** → Crossing is counted when a person moves across these normalized frame-width positions (0 = far left, 1 = far right).  
-- **`reanalyse_waiting_time = false`, `min_waiting_time = 1`, `max_waiting_time = 150`** → Reanalysis of crossing initiation time is disabled; waiting-time values are ignored (note: effective minimum waiting time is **1s**).  
+- **`reanalyse_waiting_time = false`, `min_waiting_time = 1`, `max_waiting_time = 150`** → Reanalysis of crossing initiation time is disabled; waiting-time values are ignored (note: effective minimum waiting time is **1 s**).  
 - **`check_per_sec_time = 3`** → Performs 3 checks per second to verify if a person remains in the same position as the previous check.  
 
 [![Histogram of pedestrian crossing speeds](figures/hist_speed_filtered.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_speed_filtered.html)  
