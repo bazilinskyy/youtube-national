@@ -694,7 +694,6 @@ class Analysis():
                 crossings_without_traffic_equipment_country,
                 total_duration_by_country)
 
-    # TODO: combine methods for looking at crossing events with/without traffic lights
     @staticmethod
     def crossing_event_wt_traffic_light(df_mapping, data):
         """Plots traffic mortality rate vs percentage of crossing events without traffic light.
