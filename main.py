@@ -36,7 +36,6 @@ if __name__ == "__main__":
             check_missing_mapping=common.get_configs("check_missing_mapping"),
             update_ISO_code=common.get_configs("update_ISO_code"),
             update_pop_country=common.get_configs("update_pop_country"),
-            update_continent=common.get_configs("update_continent"),
             update_mortality_rate=common.get_configs("update_mortality_rate"),
             update_gini_value=common.get_configs("update_gini_value"),
             update_upload_date=common.get_configs("update_upload_date"),
@@ -87,7 +86,7 @@ if __name__ == "__main__":
                     mapping["iso3"] = None  # Initialise the column if it doesn't exist
 
                 for index, row in mapping.iterrows():
-                    mapping.at[index, "iso3"] = helper.get_iso_alpha_3(row["country"], row["iso3"])
+                    mapping.at[index, "iso3"] = helper.get_iso_alpha_3(row["country"], row["iso3"])  # type: ignore
 
                 # Save the updated DataFrame back to the same CSV
                 mapping.to_csv(config.mapping, index=False)

@@ -272,7 +272,7 @@ class Youtube_Helper:
                 'skip_download': True,
                 'quiet': True,
             }
-            with yt_dlp.YoutubeDL(extract_opts) as ydl:
+            with yt_dlp.YoutubeDL(extract_opts) as ydl:  # type: ignore
                 info_dict = ydl.extract_info(youtube_url, download=False)
 
             available_formats = info_dict.get("formats", [])  # type: ignore
@@ -288,7 +288,7 @@ class Youtube_Helper:
 
                 # Check for a video-only stream (no audio).
                 video_only_found = any(
-                    fmt for fmt in available_formats
+                    fmt for fmt in available_formats  # type: ignore
                     if fmt.get("height") == res_height and fmt.get("acodec") == "none"
                 )
                 if video_only_found:
@@ -299,7 +299,7 @@ class Youtube_Helper:
 
                 # Otherwise, check for any stream at that resolution.
                 progressive_found = any(
-                    fmt for fmt in available_formats
+                    fmt for fmt in available_formats  # type: ignore
                     if fmt.get("height") == res_height
                 )
                 if progressive_found:
@@ -335,7 +335,7 @@ class Youtube_Helper:
             }
 
             logger.info(f"{vid}: download in {selected_resolution} started with yt_dlp.")
-            with yt_dlp.YoutubeDL(download_opts) as ydl:
+            with yt_dlp.YoutubeDL(download_opts) as ydl:  # type: ignore
                 ydl.download([youtube_url])
 
             # Final output file path (assuming the postprocessor outputs an MP4 file).
@@ -768,7 +768,7 @@ class Youtube_Helper:
             for vid_index, (vid, start_times_list) in enumerate(zip(video_ids, start_times)):
                 for start_time in start_times_list:
                     file_name = f'{vid}_{start_time}.csv'
-                    file_path = os.path.join(self.data, file_name)
+                    file_path = os.path.join(self.data, file_name)  # type: ignore
                     # Check if the file exists
                     if os.path.isfile(file_path):
                         pass
@@ -940,7 +940,7 @@ class Youtube_Helper:
             updated_df = updated_df.drop(columns=['traffic_mortality_new'])
 
             # Save the updated DataFrame back to the same CSV file
-            updated_df.to_csv(self.mapping, index=False)
+            updated_df.to_csv(self.mapping, index=False)  # type: ignore
             logger.info("Mapping file updated successfully with traffic mortality rate.")
 
         except Exception as e:
@@ -1001,7 +1001,7 @@ class Youtube_Helper:
             updated_df = updated_df.drop(columns=['gini_new'])
 
             # Save the updated DataFrame back to the same CSV file
-            updated_df.to_csv(self.mapping, index=False)
+            updated_df.to_csv(self.mapping, index=False)  # type: ignore
             logger.info("Mapping file updated successfully with GINI value.")
 
         except Exception as e:
