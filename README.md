@@ -166,6 +166,7 @@ Configuration of the project needs to be defined in `config`. Please use the `de
 - **`email_send`**: Enables or disables email notifications after the analysis. If enabled, an email is sent when the processing is completed or if an error occurs.
 - **`email_sender`**: Specifies the email address used as the sender for notifications.
 - **`email_recipients`**: A list of email addresses that will receive notifications about the analysis, including completion or error messages.
+- **`ftp_server`**: URL of the remote server (e.g., https://files.mobility-squad.com/) from where videos can be retrieved or uploaded for analysis and storage purposes.
 
 ## Description and analysis of dataset
 Refer to https://github.com/Shaadalam9/pedestrians-in-youtube for a description of the selection criteria for videos in the underlying CROWD dataset.

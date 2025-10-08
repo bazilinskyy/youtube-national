@@ -7,15 +7,16 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 import cv2
 from ultralytics import YOLO
 from collections import defaultdict
+from typing import Optional, Set, List, Any
 import shutil
 import numpy as np
 import pandas as pd
 import world_bank_data as wb
 import yt_dlp
 import pycountry
+from pycountry_convert import country_name_to_country_alpha2, country_alpha2_to_continent_code
 from custom_logger import CustomLogger
 import common
-import ast
 import torch
 import subprocess
 import sys
@@ -24,6 +25,10 @@ from tqdm import tqdm
 import datetime
 import json
 import yaml
+import pathlib
+import requests
+from urllib.parse import urljoin, urlparse
+from bs4 import BeautifulSoup
 
 
 logger = CustomLogger(__name__)  # use custom logger
@@ -73,9 +78,8 @@ class Youtube_Helper:
         self.bbox_tracker = common.get_configs("bbox_tracker")
         self.seg_tracker = common.get_configs("seg_tracker")
         self.resolution = None
-        self.video_title = video_title
         self.mapping = pd.read_csv(common.get_configs("mapping"))
-        self.confidence = common.get_configs("confidence")
+        self.confidence = common.get_configs("min_confidence")
         self.display_frame_tracking = common.get_configs("display_frame_tracking")
         self.display_frame_segmentation = common.get_configs("display_frame_segmentation")
         self.output_path = common.get_configs("videos")
@@ -185,6 +189,157 @@ class Youtube_Helper:
             logging.error(f"Failed to upgrade {package_name}: {e}")
             self.mark_as_upgraded(package_name)  # still log it to avoid retrying
 
+    def download_videos_from_ftp(self, filename: str, base_url: Optional[str] = None, out_dir: str = ".",
+                                 username: Optional[str] = None, password: Optional[str] = None,
+                                 token: Optional[str] = None, timeout: int = 20):
+
+        """Search for a video file in tue1/tue2/tue3 directories and download it.
+
+        This method crawls through the `/v/{alias}/browse` directories of the
+        provided `base_url` (with aliases "tue1", "tue2", "tue3") to locate
+        and download the specified video file. It returns the local path along
+        with metadata if the file is found and downloaded, otherwise returns None.
+
+        Args:
+            filename (str): Name of the file to search (without extension or with `.mp4`).
+            base_url (str, optional): Root URL of the file server (must end with a slash).
+            out_dir (str, optional): Local directory where the video should be saved.
+                Defaults to the current directory `"."`.
+            username (str, optional): Username for basic authentication.
+            password (str, optional): Password for basic authentication.
+            token (str | None, optional): API token to include as a query parameter
+                in every request. Defaults to None.
+            timeout (int, optional): Request timeout in seconds. Defaults to 20.
+
+        Returns:
+            tuple[str, str, str, float] | None:
+                - Local file path (str)
+                - Original filename (str)
+                - Resolution label (str, e.g., "1080p")
+                - Frames per second (float)
+                Returns None if the file is not found.
+
+        Raises:
+            requests.HTTPError: If an HTTP request fails with a status code error.
+        """
+
+        if base_url is None or base_url == "" or username == "" or password == "":
+            return None
+
+        base_url_str = base_url
+
+        # Ensure filename ends with .mp4
+        filename_with_ext = filename if filename.lower().endswith(".mp4") else f"{filename}.mp4"
+
+        # Ensure trailing slash
+        if not base_url_str.endswith("/"):
+            base_url_str += "/"
+
+        aliases: List[str] = ["tue1", "tue2", "tue3"]
+        visited: Set[str] = set()
+
+        # Build per-request params (avoid touching session.params)
+        req_params: Optional[dict] = {"token": token} if token else None
+
+        try:
+            with requests.Session() as session:
+                session.auth = (username, password) if (username and password) else None
+                session.headers.update({"User-Agent": "multi-fileserver-downloader/1.0"})
+
+                def fetch(url: str) -> Optional[requests.Response]:
+                    try:
+                        r = session.get(url, timeout=timeout, params=req_params)
+                        r.raise_for_status()
+                        return r
+                    except requests.RequestException:
+                        return None
+
+                def is_dir_link(a) -> bool:
+                    href = a.get("href") or ""
+                    return "/browse" in href and href.endswith("/")
+
+                def is_file_link(a) -> bool:
+                    href = a.get("href") or ""
+                    return "/files/" in href
+
+                def crawl(start_url: str) -> Optional[str]:
+                    stack: List[str] = [start_url]
+                    while stack:
+                        url = stack.pop()
+                        if url in visited:
+                            continue
+                        visited.add(url)
+
+                        resp = fetch(url)
+                        if resp is None:
+                            return None
+
+                        try:
+                            soup = BeautifulSoup(resp.text, "html.parser")
+                        except Exception:
+                            return None
+
+                        for a in soup.find_all("a"):
+                            href = a.get("href")
+                            if not href:
+                                continue
+                            full = urljoin(base_url_str, href)
+
+                            if is_file_link(a):
+                                anchor_text = (a.text or "").strip()
+                                if anchor_text == filename_with_ext:
+                                    return full
+
+                                parsed = urlparse(full)
+                                tail = pathlib.PurePosixPath(str(parsed.path)).name
+                                if tail == filename_with_ext and filename_with_ext.lower().endswith(".mp4"):
+                                    return full
+
+                            if is_dir_link(a):
+                                stack.append(full)
+
+                    return None
+
+                for alias in aliases:
+                    start = urljoin(base_url_str, f"v/{alias}/browse")
+                    found_url = crawl(start)
+                    if not found_url:
+                        continue
+
+                    try:
+                        os.makedirs(out_dir, exist_ok=True)
+                        local_path = os.path.join(out_dir, filename_with_ext)
+
+                        with session.get(found_url, stream=True, timeout=timeout, params=req_params) as r:
+                            r.raise_for_status()
+                            total = int(r.headers.get("content-length", 0))
+                            with open(local_path, "wb") as f, tqdm(
+                                total=total,
+                                unit="B",
+                                unit_scale=True,
+                                unit_divisor=1024,
+                                desc=f"Downloading via ftp: {filename_with_ext}",
+                            ) as bar:
+                                for chunk in r.iter_content(chunk_size=1024 * 1024):
+                                    if chunk:
+                                        f.write(chunk)
+                                        bar.update(len(chunk))
+                    except (requests.RequestException, OSError):
+                        return None
+
+                    try:
+                        fps = self.get_video_fps(local_path)
+                        resolution = Youtube_Helper.get_video_resolution_label(local_path)
+                    except Exception:
+                        return None
+
+                    return local_path, filename, resolution, fps
+
+                return None
+
+        except Exception:
+            return None
+
     def download_video_with_resolution(self, vid, resolutions=["720p", "480p", "360p", "144p"], output_path="."):
         """
         Downloads a YouTube video in one of the specified resolutions and returns video details.
@@ -244,7 +399,7 @@ class Youtube_Helper:
 
             # Construct the file path for the downloaded video.
             video_file_path = os.path.join(output_path, f"{vid}.mp4")
-            logger.info(f"{vid}: download in {selected_resolution} started with pytube.")
+            logger.info(f"{vid}: download in {selected_resolution} started with pytubefix.")
 
             # Download the video.
             selected_stream.download(output_path, filename=f"{vid}.mp4")
@@ -272,10 +427,10 @@ class Youtube_Helper:
                 'skip_download': True,
                 'quiet': True,
             }
-            with yt_dlp.YoutubeDL(extract_opts) as ydl:  # type: ignore
+            with yt_dlp.YoutubeDL(extract_opts) as ydl:  # pyright: ignore[reportArgumentType]
                 info_dict = ydl.extract_info(youtube_url, download=False)
 
-            available_formats = info_dict.get("formats", [])  # type: ignore
+            available_formats: list[dict[str, Any]] = info_dict.get("formats") or []
             selected_format_str = None
             selected_resolution = None
 
@@ -288,7 +443,7 @@ class Youtube_Helper:
 
                 # Check for a video-only stream (no audio).
                 video_only_found = any(
-                    fmt for fmt in available_formats  # type: ignore
+                    fmt for fmt in available_formats
                     if fmt.get("height") == res_height and fmt.get("acodec") == "none"
                 )
                 if video_only_found:
@@ -299,7 +454,7 @@ class Youtube_Helper:
 
                 # Otherwise, check for any stream at that resolution.
                 progressive_found = any(
-                    fmt for fmt in available_formats  # type: ignore
+                    fmt for fmt in available_formats
                     if fmt.get("height") == res_height
                 )
                 if progressive_found:
@@ -313,6 +468,7 @@ class Youtube_Helper:
                 # Raise an exception to trigger the fallback method.
                 raise Exception(f"{vid}: no stream available via yt_dlp")
             po_token = common.get_secrets("po_token")
+
             # Set download options.
             download_opts = {
                 'format': selected_format_str,
@@ -383,6 +539,53 @@ class Youtube_Helper:
             # Log an error message if FPS retrieval fails
             logger.error(f"Failed to retrieve FPS: {e}")
             return None
+
+    @staticmethod
+    def get_video_resolution_label(video_path: str) -> str:
+        """Return the resolution label (e.g., '720p', '1080p') for a given video file.
+
+        This method inspects the video file to determine its frame height and then
+        maps it to a common resolution label. If the resolution does not match a
+        well-known standard, it falls back to returning `<height>p`.
+
+        Args:
+            video_path (str): Path to the video file.
+
+        Returns:
+            str: Resolution label (e.g., "720p", "1080p", "2160p").
+                 Falls back to "<height>p" if no predefined label exists.
+
+        Raises:
+            FileNotFoundError: If the provided video path does not exist.
+            RuntimeError: If the video file cannot be opened with OpenCV.
+        """
+        # Ensure the video file exists
+        if not os.path.exists(video_path):
+            raise FileNotFoundError(f"Video not found: {video_path}")
+
+        # Open video using OpenCV
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            raise RuntimeError(f"Could not open video: {video_path}")
+
+        # Extract video frame height (resolution height in pixels)
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        cap.release()
+
+        # Map common video resolutions to human-readable labels
+        labels = {
+            144: "144p",
+            240: "240p",
+            360: "360p",
+            480: "480p",
+            720: "720p",
+            1080: "1080p",
+            1440: "1440p",
+            2160: "2160p",  # 4K UHD
+        }
+
+        # Return label if known, otherwise fallback to "<height>p"
+        return labels.get(height, f"{height}p")
 
     def trim_video(self, input_path, output_path, start_time, end_time):
         """
@@ -755,25 +958,29 @@ class Youtube_Helper:
             logger.info(f"Folder '{folder_path}' does not exist.")
             return False
 
-    def check_missing_mapping(self, mapping):
+    def delete_youtube_mod_videos(self, folders):
         """
-        Checks the mapping DataFrame for missing CSV label files based on video ID and start time.
+        Deletes files of the form {youtube_id}_mod.mp4
+        from the given list of folders.
 
-        Parameters:
-            mapping (pd.DataFrame): DataFrame containing video IDs and start times.
+        Args:
+            folders (list): List of folder paths to scan.
         """
-        for index, row in mapping.iterrows():
-            video_ids = [id.strip() for id in row["videos"].strip("[]").split(',')]
-            start_times = ast.literal_eval(row["start_time"])
-            for vid_index, (vid, start_times_list) in enumerate(zip(video_ids, start_times)):
-                for start_time in start_times_list:
-                    file_name = f'{vid}_{start_time}.csv'
-                    file_path = os.path.join(self.data, file_name)  # type: ignore
-                    # Check if the file exists
-                    if os.path.isfile(file_path):
-                        pass
-                    else:
-                        logger.info(f"The file '{file_name}' does not exist.")
+        pattern = re.compile(r"^[A-Za-z0-9_-]{11}_mod\.mp4$")
+
+        for folder in folders:
+            if not os.path.exists(folder):
+                logger.info(f"Skipping missing folder: {folder}")
+                continue
+
+            for filename in os.listdir(folder):
+                if pattern.match(filename):
+                    file_path = os.path.join(folder, filename)
+                    try:
+                        os.remove(file_path)
+                        logger.info(f"Deleted: {file_path}")
+                    except Exception as e:
+                        logger.info(f"Failed to delete {file_path}: {e}")
 
     def get_iso_alpha_3(self, country_name, existing_iso):
         """
@@ -852,6 +1059,29 @@ class Youtube_Helper:
         # Save the updated DataFrame back to the same CSV
         data.to_csv(self.mapping, index=False)
         logger.info("Mapping file updated successfully with country population.")
+
+    def get_continent_from_country(self, country):
+        """
+        Returns the continent based on the country name using pycountry_convert.
+        """
+        try:
+            # Convert country name to ISO Alpha-2 code
+            alpha2_code = country_name_to_country_alpha2(country)
+            # Convert ISO Alpha-2 code to continent code
+            continent_code = country_alpha2_to_continent_code(alpha2_code)
+            # Map continent codes to continent names
+            continent_map = {
+                "AF": "Africa",
+                "AS": "Asia",
+                "EU": "Europe",
+                "NA": "North America",
+                "SA": "South America",
+                "OC": "Oceania",
+                "AN": "Antarctica"
+            }
+            return continent_map.get(continent_code, "Unknown")
+        except KeyError:
+            return "Unknown"
 
     def get_upload_date(self, video_id):
         """
@@ -939,8 +1169,13 @@ class Youtube_Helper:
             # Drop the temporary column
             updated_df = updated_df.drop(columns=['traffic_mortality_new'])
 
-            # Save the updated DataFrame back to the same CSV file
-            updated_df.to_csv(self.mapping, index=False)  # type: ignore
+            # Update in-memory mapping
+            self.mapping = updated_df
+
+            # Persist to the original CSV path
+            mapping_path = common.get_configs("mapping")  # <- get the path again
+            updated_df.to_csv(mapping_path, index=False)
+
             logger.info("Mapping file updated successfully with traffic mortality rate.")
 
         except Exception as e:
@@ -1000,8 +1235,12 @@ class Youtube_Helper:
             # Drop the temporary column
             updated_df = updated_df.drop(columns=['gini_new'])
 
-            # Save the updated DataFrame back to the same CSV file
-            updated_df.to_csv(self.mapping, index=False)  # type: ignore
+            # Update in-memory mapping
+            self.mapping = updated_df
+
+            # Persist to the original CSV path
+            mapping_path = common.get_configs("mapping")  # path to the mapping CSV
+            updated_df.to_csv(mapping_path, index=False)
             logger.info("Mapping file updated successfully with GINI value.")
 
         except Exception as e:
@@ -1013,7 +1252,7 @@ class Youtube_Helper:
             config = yaml.safe_load(f)
 
         # Update the track_buffer value
-        config['track_buffer'] = 2 * video_fps
+        config['track_buffer'] = common.get_configs("track_buffer_sec") * video_fps
 
         # Write it back to the YAML file (overwrite)
         with open(yaml_path, 'w') as f:

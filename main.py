@@ -33,7 +33,6 @@ if __name__ == "__main__":
             delete_youtube_video=common.get_configs("delete_youtube_video"),
             data=common.get_configs("data"),
             countries_analyse=common.get_configs("countries_analyse"),
-            check_missing_mapping=common.get_configs("check_missing_mapping"),
             update_ISO_code=common.get_configs("update_ISO_code"),
             update_pop_country=common.get_configs("update_pop_country"),
             update_mortality_rate=common.get_configs("update_mortality_rate"),
@@ -48,14 +47,19 @@ if __name__ == "__main__":
             email_send=common.get_configs("email_send"),
             email_sender=common.get_configs("email_sender"),
             email_recipients=common.get_configs("email_recipients"),
-            compress_youtube_video=common.get_configs("compress_youtube_video")
+            compress_youtube_video=common.get_configs("compress_youtube_video"),
+            external_ssd=common.get_configs("external_ssd"),
+            ftp_server=common.get_configs("ftp_server")
+
         )
 
         # Cache static secret values once before the loop
         secret = SimpleNamespace(
             email_smtp=common.get_secrets("email_smtp"),
             email_account=common.get_secrets("email_account"),
-            email_password=common.get_secrets("email_password")
+            email_password=common.get_secrets("email_password"),
+            ftp_username=common.get_secrets("ftp_username"),
+            ftp_password=common.get_secrets("ftp_password")
         )
 
         # Run this script loop forever
@@ -63,12 +67,18 @@ if __name__ == "__main__":
             # Load the config file
             mapping = pd.read_csv(config.mapping)
 
-            # Check for missing mapping file
-            if config.check_missing_mapping:
-                helper.check_missing_mapping(mapping)
-
             video_paths = config.videos  # folders with videos
-            output_path = config.videos[-1]  # use the last folder with videos to download
+
+            if config.external_ssd:
+                internal_ssd = config.videos[-1]
+
+                # make sure it exists
+                os.makedirs(internal_ssd, exist_ok=True)
+
+                output_path = config.videos[-2]
+            else:
+                output_path = config.videos[-1]  # use the last folder with videos to download
+
             delete_runs_files = config.delete_runs_files
             delete_youtube_video = config.delete_youtube_video
             data_folders = config.data  # use the last folder in the list to store data
@@ -86,7 +96,7 @@ if __name__ == "__main__":
                     mapping["iso3"] = None  # Initialise the column if it doesn't exist
 
                 for index, row in mapping.iterrows():
-                    mapping.at[index, "iso3"] = helper.get_iso_alpha_3(row["country"], row["iso3"])  # type: ignore
+                    mapping.at[index, "iso3"] = helper.get_iso_alpha_3(row["country"], row["iso3"])
 
                 # Save the updated DataFrame back to the same CSV
                 mapping.to_csv(config.mapping, index=False)
@@ -160,13 +170,21 @@ if __name__ == "__main__":
                     # Define a base video file path for the downloaded original video
                     base_video_path = os.path.join(output_path, f"{vid}.mp4")
 
-                    video_fps = 0.0  # store detected FPS value
-
                     # If the base video does not exist, attempt to download it
                     if not any(os.path.exists(os.path.join(path, f"{vid}.mp4")) for path in video_paths):
-                        result = helper.download_video_with_resolution(vid=vid, output_path=output_path)
+                        result = helper.download_videos_from_ftp(filename=vid,
+                                                                 base_url=config.ftp_server,
+                                                                 out_dir=output_path,
+                                                                 username=secret.ftp_username,
+                                                                 password=secret.ftp_password,
+                                                                 # token=None  # only if you switch to token auth
+                                                                 )
+                        if result is None:
+                            result = helper.download_video_with_resolution(vid=vid, output_path=output_path)
+
                         if result:
                             video_file_path, video_title, resolution, video_fps = result
+
                             if video_fps is None or video_fps == 0 or (isinstance(video_fps,
                                                                                   float) and math.isnan(video_fps)):
                                 # Invalid fps: None, 0, or NaN
@@ -193,10 +211,13 @@ if __name__ == "__main__":
                                 continue
                     else:
                         logger.info(f"{vid}: using already downloaded video.")
+
                         # find the first folder where the file exists
                         existing_folder = next((path for path in video_paths if os.path.exists(os.path.join(path, f"{vid}.mp4"))), None)  # noqa: E501
+
                         # if the file exists, use that folder; otherwise, default to the last folder
                         existing_path = existing_folder if existing_folder else video_paths[-1]
+
                         base_video_path = os.path.join(existing_path, f"{vid}.mp4")
                         video_title = vid  # or any fallback title
                         helper.set_video_title(video_title)
@@ -240,6 +261,7 @@ if __name__ == "__main__":
                             else:
                                 bbox_mode = True
                                 found_path = None
+
                         elif config.segmentation_mode and not config.tracking_mode:
                             # Only check seg_paths
                             if seg_paths:
@@ -248,6 +270,7 @@ if __name__ == "__main__":
                             else:
                                 seg_mode = True
                                 found_path = None
+
                         elif config.tracking_mode and config.segmentation_mode:
                             # If both, check both
                             if bbox_paths and seg_paths:
@@ -272,8 +295,15 @@ if __name__ == "__main__":
                             logger.info(f"{vid}: YOLO file {vid}_{start_time}_{video_fps}.csv exists. Skipping segment.")  # noqa:E501
                             continue
 
+                        if config.external_ssd:
+                            shutil.copy2(base_video_path, os.path.join(internal_ssd, f"{vid}.mp4"))
+                            base_video_path = os.path.join(internal_ssd, f"{vid}.mp4")
+
                         # Define a temporary path for the trimmed video segment
-                        trimmed_video_path = os.path.join(output_path, f"{video_title}_mod.mp4")
+                        if config.external_ssd:
+                            trimmed_video_path = os.path.join(internal_ssd, f"{video_title}_mod.mp4")
+                        else:
+                            trimmed_video_path = os.path.join(output_path, f"{video_title}_mod.mp4")
 
                         if start_time is None and end_time is None:
                             logger.info(f"{vid}: no trimming required for this video.")
@@ -357,9 +387,12 @@ if __name__ == "__main__":
                         if config.tracking_mode:
                             os.remove(trimmed_video_path)
 
-                    # Optionally delete the original video after processing if needed
+                        # Optionally delete the original video after processing if needed
+                        if config.external_ssd:
+                            os.remove(base_video_path)
+
                     if delete_youtube_video:
-                        os.remove(base_video_path)
+                        os.remove(os.path.join(output_path, f"{vid}.mp4"))
 
             # Send email that given mapping has been processed
             if config.email_send and counter_processed:
@@ -372,6 +405,7 @@ if __name__ == "__main__":
 
             # Pause the file for sleep_sec seconds before doing analysis again
             if config.sleep_sec:
+                helper.delete_youtube_mod_videos(video_paths)
                 logger.info(f"Sleeping for {config.sleep_sec} s before attempting to go over mapping again.")
                 time.sleep(config.sleep_sec)
 
