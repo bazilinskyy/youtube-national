@@ -20,19 +20,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # Keep to "changed files" on PRs for speed; set to true if you want full runs
+          # Lint only changed files against default branch
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
 
-          # Look for linter configs here
+          # Make SL pick configs from here (mypy, jscpd, etc.)
           LINTER_RULES_PATH: .github/linters
 
-          # Limit scanning to your actual Python package so mypy sees one root
+          # Optional: focus on your real package directory
           FILTER_REGEX_INCLUDE: ^workspace/
           FILTER_REGEX_EXCLUDE: '.*\.md$'
 
-          # Explicit which linters to run
+          # >>> INCLUDE MODE: enable only the linters you want <<<
           VALIDATE_PYTHON_MYPY: true
-          VALIDATE_PYTHON_BLACK: false
-          VALIDATE_PYTHON_ISORT: false
           VALIDATE_COPYPASTE_JSCPD: true
