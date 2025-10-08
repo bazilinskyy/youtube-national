@@ -730,59 +730,149 @@ class Youtube_Helper:
 
     def compress_video(self, input_path, codec="libx265", preset="slow", crf=17):
         """
-        Compresses a video using codec=codec.
+        Compress a video file using ffmpeg with a specified codec, preset, and CRF value.
+
+        This function attempts to compress a video file while maintaining quality. It first
+        checks that the input file exists, detects available GPU encoders, constructs an ffmpeg
+        command, and executes it. If compression succeeds, the compressed video replaces the
+        original. If compression fails, the function cleans up any temporary files and re-raises
+        an appropriate error.
 
         Args:
-            input_path (str): Path to the input video file.
-            codec (str, optional): Codec to use. Use H.265 by default.
-            preset (str, optional): Value for preset.
-            crf (int, optional): Value for crf. 17 is supposed to keep good quality with high level of compression.
+            input_path (str):
+                Path to the input video file that needs to be compressed.
+            codec (str, optional):
+                Codec to use for compression (default: "libx265").
+                Common examples: "libx264" (H.264 CPU), "libx265" (H.265 CPU), or "h264_nvenc" (NVIDIA GPU).
+            preset (str, optional):
+                ffmpeg compression preset (default: "slow").
+                Lower presets = slower encoding but higher compression efficiency.
+            crf (int, optional):
+                Constant Rate Factor controlling quality vs size (default: 17).
+                Lower CRF = higher quality & larger file; higher CRF = more compression & smaller file.
 
         Returns:
-            str: Path to the compressed video.
+            str: Path to the compressed (and replaced) video file.
 
         Raises:
-            e: error.
-            FileNotFoundError: If the input video file does not exist.
-            RuntimeError: If the compression process fails.
+            FileNotFoundError:
+                - If the input file does not exist.
+                - If ffmpeg executable is missing from PATH.
+            RuntimeError:
+                - If ffmpeg fails to compress the video (non-zero exit code).
+            Exception:
+                - For any other unexpected failure.
         """
+
+        # --------------------------------------------------------------------------
+        # 1. Validate that the input file exists
+        # --------------------------------------------------------------------------
         if not os.path.exists(input_path):
             raise FileNotFoundError(f"Input file not found: {input_path}")
 
-        # Extract filename and create output path
+        # --------------------------------------------------------------------------
+        # 2. Prepare output file path
+        #    - Store the temporary output in the project root directory (common.root_dir)
+        # --------------------------------------------------------------------------
         filename = os.path.basename(input_path)
         output_path = os.path.join(common.root_dir, filename)
 
-        # Detect available GPU and set appropriate encoder
+        # --------------------------------------------------------------------------
+        # 3. Detect available GPU encoder
+        #    - If GPU is available (e.g., NVIDIA), use hardware-accelerated codec
+        # --------------------------------------------------------------------------
         codec_hw = self.detect_gpu()
         if codec_hw:
-            codec = codec_hw  # Use detected hardware
+            codec = codec_hw  # Override software codec with hardware one
 
-        # Construct ffmpeg command
+        # --------------------------------------------------------------------------
+        # 4. Build the ffmpeg command
+        #    - "-i": Input file
+        #    - "-c:v": Video codec
+        #    - "-preset": Compression speed/quality trade-off
+        #    - "-crf": Quality/size control
+        #    - "-progress": Emit progress updates
+        #    - "-nostats": Suppress extra logs
+        #    - Output path comes LAST
+        # --------------------------------------------------------------------------
         command = [
             "ffmpeg",
-            "-i", input_path,       # Input file
-            "-c:v", codec,          # Use appropriate codec
-            "-preset", preset,      # Compression speed/efficiency tradeoff
-            "-crf", str(crf),       # Constant Rate Factor (lower = better quality, larger file)
-            output_path,            # Temporary output file
-            "-progress", "pipe:1",  # Enables real-time progress output
-            "-nostats"              # Suppresses extra logs
+            "-i", input_path,
+            "-c:v", codec,
+            "-preset", preset,
+            "-crf", str(crf),
+            "-progress", "pipe:1",
+            "-nostats",
+            output_path,
         ]
 
+        # --------------------------------------------------------------------------
+        # 5. Run the compression process and handle errors
+        # --------------------------------------------------------------------------
         try:
-            # Run ffmpeg command
             video_id = self.extract_youtube_id(input_path)
-            logger.info(f"Started compression of {video_id} with {codec} codec. Current size={os.path.getsize(input_path)}.")  # noqa: E501
-            subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
-            logger.info(f"Finished compression of {video_id} with {codec} codec. New size={os.path.getsize(output_path)}.")  # noqa: E501
-            # Replace the original file with the compressed file
+            logger.info(
+                "Started compression of %s using %s codec. Original size=%d bytes",
+                video_id, codec, os.path.getsize(input_path),
+            )
+
+            # Execute ffmpeg and capture its stdout/stderr output as text
+            # - capture_output=True = (stdout=PIPE, stderr=PIPE)
+            subprocess.run(
+                command,
+                check=True,            # Raise CalledProcessError if exit code != 0
+                capture_output=True,   # Capture both stdout and stderr
+                text=True,             # Return str instead of bytes
+                bufsize=1,
+            )
+
+            logger.info(
+                "Finished compression of %s. Compressed size=%d bytes",
+                video_id, os.path.getsize(output_path),
+            )
+
+            # Replace original with the compressed version
             shutil.move(output_path, input_path)
-        except Exception as e:
-            # Clean up temporary file in case of unexpected errors
+            return input_path
+
+        # --------------------------------------------------------------------------
+        # 6. Handle ffmpeg-specific errors (non-zero exit code)
+        # --------------------------------------------------------------------------
+        except subprocess.CalledProcessError as e:
+            if os.path.exists(output_path):
+                os.remove(output_path)  # Clean up failed output
+
+            stderr_msg = e.stderr.strip() if e.stderr else "no stderr available"
+            logger.error(
+                "Video compression failed (exit code %s): %s. Using uncompressed file.",
+                e.returncode, stderr_msg,
+            )
+            raise RuntimeError(
+                f"ffmpeg failed with exit code {e.returncode}: {stderr_msg}"
+            ) from e
+
+        # --------------------------------------------------------------------------
+        # 7. Handle missing ffmpeg binary or invalid input file path
+        # --------------------------------------------------------------------------
+        except FileNotFoundError as e:
             if os.path.exists(output_path):
                 os.remove(output_path)
-            logger.error(f"Video compression failed: {e.stderr.decode()}. Using uncompressed file.")  # type: ignore
+            logger.error(
+                "Compression failed due to missing file or ffmpeg binary: %s",
+                e,
+            )
+            raise
+
+        # --------------------------------------------------------------------------
+        # 8. Handle any other unexpected error
+        # --------------------------------------------------------------------------
+        except Exception as e:
+            if os.path.exists(output_path):
+                os.remove(output_path)
+            logger.warning(
+                "Unexpected error during video compression: %s", e
+            )
+            raise RuntimeError(f"Unexpected compression error: {e}") from e
 
     def extract_youtube_id(self, file_path):
         """

@@ -96,7 +96,7 @@ if __name__ == "__main__":
                     mapping["iso3"] = None  # Initialise the column if it doesn't exist
 
                 for index, row in mapping.iterrows():
-                    mapping.at[index, "iso3"] = helper.get_iso_alpha_3(row["country"], row["iso3"])
+                    mapping.at[index, "iso3"] = helper.get_iso_alpha_3(row["country"], row["iso3"])  # type: ignore
 
                 # Save the updated DataFrame back to the same CSV
                 mapping.to_csv(config.mapping, index=False)
