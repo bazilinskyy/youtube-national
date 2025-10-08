@@ -1,0 +1,16 @@
+{
+  "threshold": 0,
+  "reporters": ["console"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/.venv/**",
+    "**/venv/**",
+    "**/__pycache__/**",
+    "**/build/**",
+    "**/dist/**",
+    "**/tests/fixtures/**",
+    "**/*.min.js"
+  ],
+  "languages": ["python", "javascript", "typescript"]
+}
