@@ -67,8 +67,8 @@ uv --version
 
 **Step 4:** Clone the repository:
 ```command line
-git clone https://github.com/bazilinskyy/youtube-national
-cd youtube-national
+git clone https://github.com/crowd-dataset/crowd-national
+cd crowd-national
 ```
 
 **Step 5:** Ensure correct Python version. If you don’t already have Python 3.9.19 installed, let `uv` fetch it:
@@ -171,19 +171,19 @@ Configuration of the project needs to be defined in `config`. Please use the `de
 ## Description and analysis of dataset
 Refer to https://github.com/Shaadalam9/pedestrians-in-youtube for a description of the selection criteria for videos in the underlying CROWD dataset.
 
-[![Locations of cities with footage in dataset](figures/map_screenshots_total_time.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_screenshots_total_time.html)
+[![Locations of cities with footage in dataset](figures/map_screenshots_total_time.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/map_screenshots_total_time.html)
 A political world map colored by continent, showing **233 countries** included in the analysis. The shading represents the total duration of dashcam footage from each country, adjusted with a logarithmic scale so that countries with very large or very small totals are both visible. Black dots indicate the cities from which footage was collected.
 
-[![Histogram of pedestrian crossing speeds](figures/hist_speed.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_speed.html)  
+[![Histogram of pedestrian crossing speeds](figures/hist_speed.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/hist_speed.html)  
 Histogram of pedestrian crossing speeds (in m/s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
 
-[![Histogram of pedestrian crossing initiation time](figures/hist_time.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_time.html)  
+[![Histogram of pedestrian crossing initiation time](figures/hist_time.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/hist_time.html)  
 Histogram of pedestrian crossing initiation time (in s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
 
-[![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_combined_country_raw.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_combined_country_raw.html)
+[![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_combined_country_raw.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/time_crossing_combined_country_raw.html)
 Mean time to start crossing (in s, sorted by day).
 
-[![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_combined_country_raw.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_combined_country_raw.html)
+[![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_combined_country_raw.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/crossing_speed_combined_country_raw.html)
 Mean speed of crossing (in m/s, sorted by day).
 
 ### Dataset after filtering
@@ -197,140 +197,140 @@ The dataset undergoes a filtering process to ensure quality and sufficient cover
 - **`reanalyse_waiting_time = false`, `min_waiting_time = 1`, `max_waiting_time = 150`** → Reanalysis of crossing initiation time is disabled; waiting-time values are ignored (note: effective minimum waiting time is **1 s**).  
 - **`check_per_sec_time = 3`** → Performs 3 checks per second to verify if a person remains in the same position as the previous check.  
 
-[![Histogram of pedestrian crossing speeds](figures/hist_speed_filtered.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_speed_filtered.html)  
+[![Histogram of pedestrian crossing speeds](figures/hist_speed_filtered.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/hist_speed_filtered.html)  
 Histogram of pedestrian crossing speeds (in m/s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
 
-[![Histogram of pedestrian crossing initiation time](figures/hist_time_filtered.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/hist_time_filtered.html)  
+[![Histogram of pedestrian crossing initiation time](figures/hist_time_filtered.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/hist_time_filtered.html)  
 Histogram of pedestrian crossing initiation time (in s), computed **per individual pedestrian** and pooled across all locations/countries (i.e., not aggregated by city or country).
 
-[![Location of the cities included in the dataset after filtering](figures/mapbox_map.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/mapbox_map.html)
+[![Location of the cities included in the dataset after filtering](figures/mapbox_map.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/mapbox_map.html)
 Location of the cities included in the dataset after filtering.
 
-[![Total time of footage after filtering](figures/mapbox_map_time.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/mapbox_map_time.html)
+[![Total time of footage after filtering](figures/mapbox_map_time.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/mapbox_map_time.html)
 Total time of footage after filtering.
 
 ### Time to start crossing
-[![Map with mean time to start crossing (in s)](figures/map_crossing_time.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_crossing_time.html)
+[![Map with mean time to start crossing (in s)](figures/map_crossing_time.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/map_crossing_time.html)
 Map with heatmap based on mean time to start crossing (in s).
 
-[![Mean time to start crossing (in s, sorted by average of day and night)](figures/time_crossing_avg_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg_country.html)
+[![Mean time to start crossing (in s, sorted by average of day and night)](figures/time_crossing_avg_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/time_crossing_avg_country.html)
 Mean time to start crossing (in s, sorted by average of day and night).
 
-[![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_combined_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_combined_country.html)
+[![Mean time to start crossing (in s, sorted by average of day)](figures/time_crossing_combined_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/time_crossing_combined_country.html)
 Mean time to start crossing (in s, sorted by day).
 
-[![Mean time to start crossing (in s, sorted alphabetically)](figures/time_crossing_alphabetical_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical_country.html)  
+[![Mean time to start crossing (in s, sorted alphabetically)](figures/time_crossing_alphabetical_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/time_crossing_alphabetical_country.html)  
 Mean time to start crossing (in s, sorted alphabetically).
 
-[![Mean time to start crossing at day (in s, sorted by values)](figures/time_crossing_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_alphabetical_day_country.html)  
+[![Mean time to start crossing at day (in s, sorted by values)](figures/time_crossing_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/time_crossing_alphabetical_day_country.html)  
 Mean time to start crossing at day (in s, sorted by values).
 
-[![Mean time to start crossing at night (in s, sorted by values)](figures/time_crossing_avg_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/time_crossing_avg_night_country.html)  
+[![Mean time to start crossing at night (in s, sorted by values)](figures/time_crossing_avg_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/time_crossing_avg_night_country.html)  
 Mean time to start crossing at night (in s, sorted by values).
 
 ### Speed of crossing
-[![Map with mean speed of crossing (in m/s)](figures/map_speed_crossing.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/map_speed_crossing.html)
+[![Map with mean speed of crossing (in m/s)](figures/map_speed_crossing.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/map_speed_crossing.html)
 Map with heatmap based on mean speed of crossing (in m/s).
 
-[![Mean speed of crossing (in m/s, sorted by average of day and night)](figures/crossing_speed_avg_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_avg_country.html)
+[![Mean speed of crossing (in m/s, sorted by average of day and night)](figures/crossing_speed_avg_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/crossing_speed_avg_country.html)
 Mean speed of crossing (in m/s, sorted by average of day and night).
 
-[![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_combined_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_combined_country.html)
+[![Mean speed of crossing (in m/s, sorted by average of day)](figures/crossing_speed_combined_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/crossing_speed_combined_country.html)
 Mean speed of crossing (in m/s, sorted by day).
 
-[![Mean speed of crossing (in m/s, sorted alphabetically)](figures/crossing_speed_alphabetical_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_country.html)
+[![Mean speed of crossing (in m/s, sorted alphabetically)](figures/crossing_speed_alphabetical_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/crossing_speed_alphabetical_country.html)
 Mean speed of crossing (in m/s, sorted alphabetically).
 
-[![Mean speed of crossing at day (in m/s, sorted by values)](figures/crossing_speed_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_day_country.html)  
+[![Mean speed of crossing at day (in m/s, sorted by values)](figures/crossing_speed_alphabetical_day_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/crossing_speed_alphabetical_day_country.html)  
 Mean speed of crossing at day (in m/s, sorted by values).
 
-[![Mean speed of crossing at night (in m/s, sorted by values)](figures/crossing_speed_alphabetical_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/crossing_speed_alphabetical_night_country.html)  
+[![Mean speed of crossing at night (in m/s, sorted by values)](figures/crossing_speed_alphabetical_night_country.png?raw=true)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/crossing_speed_alphabetical_night_country.html)  
 Mean speed of crossing at night (in m/s, sorted by values).
 
 ### Relationship between computed and statistical metrics
-[![Mean speed of crossing during daytime over mean time to start crossing](figures/scatter_speed_crossing_day_country-time_crossing_day_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_country-time_crossing_day_country.html)  
+[![Mean speed of crossing during daytime over mean time to start crossing](figures/scatter_speed_crossing_day_country-time_crossing_day_country.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_country-time_crossing_day_country.html)  
 Mean speed of crossing (in m/s) during daytime over mean time to start crossing (in s).
 
-[![Mean speed of crossing vs. proportion of pedestrians detected using a cellphone](figures/scatter_speed_crossing_day_night_country_avg-cellphone_normalised.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-cellphone_normalised.html)  
+[![Mean speed of crossing vs. proportion of pedestrians detected using a cellphone](figures/scatter_speed_crossing_day_night_country_avg-cellphone_normalised.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-cellphone_normalised.html)  
 Mean speed of crossing (in m/s) versus the proportion of pedestrians detected using a cellphone.
 
-[![Mean speed of crossing over Gini index](figures/scatter_speed_crossing_day_night_country_avg-gini.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-gini.html)  
+[![Mean speed of crossing over Gini index](figures/scatter_speed_crossing_day_night_country_avg-gini.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-gini.html)  
 Mean speed of crossing (in m/s) over Gini index (income inequality).
 
-[![Mean speed of crossing over literacy rate](figures/scatter_speed_crossing_day_night_country_avg-literacy_rate.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-literacy_rate.html)  
+[![Mean speed of crossing over literacy rate](figures/scatter_speed_crossing_day_night_country_avg-literacy_rate.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-literacy_rate.html)  
 Mean speed of crossing (in m/s) over literacy rate (% of population).
 
-[![Mean speed of crossing over median age](figures/scatter_speed_crossing_day_night_country_avg-med_age.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-med_age.html)  
+[![Mean speed of crossing over median age](figures/scatter_speed_crossing_day_night_country_avg-med_age.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-med_age.html)  
 Mean speed of crossing (in m/s) over median age of the population.
 
-[![Mean speed of crossing over population](figures/scatter_speed_crossing_day_night_country_avg-population_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-population_country.html)  
+[![Mean speed of crossing over population](figures/scatter_speed_crossing_day_night_country_avg-population_country.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-population_country.html)  
 Mean speed of crossing (in m/s) over total population of the country.
 
-[![Mean speed of crossing over mean time to start crossing](figures/scatter_speed_crossing_day_night_country_avg-time_crossing_day_night_country_avg.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-time_crossing_day_night_country_avg.html)  
+[![Mean speed of crossing over mean time to start crossing](figures/scatter_speed_crossing_day_night_country_avg-time_crossing_day_night_country_avg.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-time_crossing_day_night_country_avg.html)  
 Mean speed of crossing (in m/s) over mean time to start crossing (in s).
 
-[![Mean speed of crossing over traffic mortality rate](figures/scatter_speed_crossing_day_night_country_avg-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-traffic_mortality.html)  
+[![Mean speed of crossing over traffic mortality rate](figures/scatter_speed_crossing_day_night_country_avg-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_day_night_country_avg-traffic_mortality.html)  
 Mean speed of crossing (in m/s) over traffic-related mortality (per 100,000 people).
 
-[![Mean speed of crossing at night over mean time to start crossing](figures/scatter_speed_crossing_night_country-time_crossing_night_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_speed_crossing_night_country-time_crossing_night_country.html)  
+[![Mean speed of crossing at night over mean time to start crossing](figures/scatter_speed_crossing_night_country-time_crossing_night_country.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_speed_crossing_night_country-time_crossing_night_country.html)  
 Mean speed of crossing (in m/s) at night over mean time to start crossing (in s).
 
-[![Mean time to start crossing vs. proportion of pedestrians detected using a cellphone](figures/scatter_time_crossing_day_night_country_avg-cellphone_normalised.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-cellphone_normalised.html)  
+[![Mean time to start crossing vs. proportion of pedestrians detected using a cellphone](figures/scatter_time_crossing_day_night_country_avg-cellphone_normalised.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-cellphone_normalised.html)  
 Mean time to start crossing (in s) versus the proportion of pedestrians detected using a cellphone.
 
-[![Mean time to start crossing over Gini index](figures/scatter_time_crossing_day_night_country_avg-gini.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-gini.html)  
+[![Mean time to start crossing over Gini index](figures/scatter_time_crossing_day_night_country_avg-gini.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-gini.html)  
 Mean time to start crossing (in s) over Gini index (income inequality).
 
-[![Mean time to start crossing over literacy rate](figures/scatter_time_crossing_day_night_country_avg-literacy_rate.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-literacy_rate.html)  
+[![Mean time to start crossing over literacy rate](figures/scatter_time_crossing_day_night_country_avg-literacy_rate.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-literacy_rate.html)  
 Mean time to start crossing (in s) over literacy rate (% of population).
 
-[![Mean time to start crossing over median age](figures/scatter_time_crossing_day_night_country_avg-med_age.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-med_age.html)  
+[![Mean time to start crossing over median age](figures/scatter_time_crossing_day_night_country_avg-med_age.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-med_age.html)  
 Mean time to start crossing (in s) over median age of the population.
 
-[![Mean time to start crossing over population](figures/scatter_time_crossing_day_night_country_avg-population_country.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-population_country.html)  
+[![Mean time to start crossing over population](figures/scatter_time_crossing_day_night_country_avg-population_country.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-population_country.html)  
 Mean time to start crossing (in s) over total population of the country.
 
-[![Mean time to start crossing over traffic mortality rate](figures/scatter_time_crossing_day_night_country_avg-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-traffic_mortality.html)  
+[![Mean time to start crossing over traffic mortality rate](figures/scatter_time_crossing_day_night_country_avg-traffic_mortality.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_time_crossing_day_night_country_avg-traffic_mortality.html)  
 Mean time to start crossing (in s) over traffic-related mortality (per 100,000 people).
 
-[![Total footage time over bicycle count (normalised)](figures/scatter_total_time-bicycle_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-bicycle_norm.html)  
+[![Total footage time over bicycle count (normalised)](figures/scatter_total_time-bicycle_norm.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_total_time-bicycle_norm.html)  
 Total footage time (in s) over number of bicycles (normalised per detected persons).
 
-[![Total footage time over pedestrian count (normalised)](figures/scatter_total_time-person_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person_norm.html)  
+[![Total footage time over pedestrian count (normalised)](figures/scatter_total_time-person_norm.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_total_time-person_norm.html)  
 Total footage time (in s) over number of pedestrians (normalised per detected pedestrian).
 
-[![Total footage time over pedestrian count](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_total_time-person.html)  
+[![Total footage time over pedestrian count](figures/scatter_total_time-person.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_total_time-person.html)  
 Total footage time (in s) over total number of pedestrians.
 
-[![Footage with traffic light over footage without traffic light (normalised)](figures/scatter_with_trf_light_norm-without_trf_light_norm.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/scatter_with_trf_light_norm-without_trf_light_norm.html)  
+[![Footage with traffic light over footage without traffic light (normalised)](figures/scatter_with_trf_light_norm-without_trf_light_norm.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/scatter_with_trf_light_norm-without_trf_light_norm.html)  
 Footage with traffic lights over footage without traffic lights, both normalised per population.
 
 ### Correlation matrices
-[![Correlation matrix based on average speed and time to start cross](figures/correlation_matrix_heatmap_averaged.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_averaged.html)
+[![Correlation matrix based on average speed and time to start cross](figures/correlation_matrix_heatmap_averaged.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_averaged.html)
 Correlation matrix of average values of day and night.
 
-[![Correlation matrix at daytime](figures/correlation_matrix_heatmap_day.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_day.html)
+[![Correlation matrix at daytime](figures/correlation_matrix_heatmap_day.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_day.html)
 Correlation matrix at daytime.
 
-[![Correlation matrix at night time](figures/correlation_matrix_heatmap_night.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_night.html)
+[![Correlation matrix at night time](figures/correlation_matrix_heatmap_night.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_night.html)
 Correlation matrix at night time.
 
-[![Correlation matrix for Africa](figures/correlation_matrix_heatmap_Africa.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_Africa.html)
+[![Correlation matrix for Africa](figures/correlation_matrix_heatmap_Africa.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_Africa.html)
 Correlation matrix for Africa.
 
-[![Correlation matrix for Asia](figures/correlation_matrix_heatmap_Asia.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_Asia.html)
+[![Correlation matrix for Asia](figures/correlation_matrix_heatmap_Asia.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_Asia.html)
 Correlation matrix for Asia.
 
-[![Correlation matrix for Oceania](figures/correlation_matrix_heatmap_Oceania.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_Oceania.html)
+[![Correlation matrix for Oceania](figures/correlation_matrix_heatmap_Oceania.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_Oceania.html)
 Correlation matrix for Oceania.
 
-[![Correlation matrix for Europe](figures/correlation_matrix_heatmap_Europe.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_Europe.html)
+[![Correlation matrix for Europe](figures/correlation_matrix_heatmap_Europe.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_Europe.html)
 Correlation matrix for Europe.
 
-[![Correlation matrix for North America](figures/correlation_matrix_heatmap_North%20America.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_North%20America.html)
+[![Correlation matrix for North America](figures/correlation_matrix_heatmap_North%20America.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_North%20America.html)
 Correlation matrix for North America.
 
-[![Correlation matrix for South America](figures/correlation_matrix_heatmap_South%20America.png)](https://htmlpreview.github.io/?https://github.com/bazilinskyy/youtube-national/blob/main/figures/correlation_matrix_heatmap_South%20America.html)
+[![Correlation matrix for South America](figures/correlation_matrix_heatmap_South%20America.png)](https://htmlpreview.github.io/?https://github.com/crowd-dataset/crowd-national/blob/main/figures/correlation_matrix_heatmap_South%20America.html)
 Correlation matrix for South America.
 
 ## Edge cases in analysed data
